@@ -4,7 +4,7 @@
 Readme
 ========
 
-go-gpss is a framework based on conception GPSS (General Purpose Simulation System)
+go-gpss is a framework based on conception GPSS (General Purpose Simulation System).
 It help quick and easy build model for simulation modeling
  
 It include today few blocks:
@@ -14,8 +14,8 @@ It include today few blocks:
 - Facility - Any facility
 - Hole - Hole in which fall in transactions
 All blocks need to add in Pipeline and than start simulation.
-For generate random values used pseudo-random generation function from math/rand
-After simulation you can print report about simulation
+For generate random values used pseudo-random generation function from math/rand.
+After simulation you can print report about simulation.
 
 # Example
 Barbershop: random client go to Barbershop every 18 minutes with deviation 6 minutes.
