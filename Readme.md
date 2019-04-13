@@ -76,6 +76,3 @@ immediately served. Average waiting time in queue 4.47 minutes. Barber busy at
 - Extend report
 - Clear code
 - Make tests
-
-
-  
