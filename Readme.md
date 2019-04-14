@@ -142,7 +142,7 @@ Object name " Wanted to use the toilet "
 Average advance 86.13
 ```
 
-Max count in queue 3 employe. Average waiting time in queue 9.42 minutes.
+Max count in queue 3 employes. Average waiting time in queue 9.42 minutes.
 WC1 was occupied during 14.79 minutes. WC2 was occupied during 13.24 minutes.
 
 # TODO
