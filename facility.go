@@ -37,15 +37,14 @@ func (obj *Facility) GenerateAdvance() int {
 }
 
 func (obj *Facility) HandleTransact(transact ITransaction) {
-	var isTransactSended bool
 	transact.DecTiсks()
 	transact.PrintInfo()
 	if transact.IsTheEnd() {
 		for _, v := range obj.GetDst() {
-			isTransactSended = isTransactSended || v.AppendTransact(transact)
-		}
-		if isTransactSended {
-			obj.tb.Remove(transact)
+			if v.AppendTransact(transact) {
+				obj.tb.Remove(transact)
+				break
+			}
 		}
 	}
 }
