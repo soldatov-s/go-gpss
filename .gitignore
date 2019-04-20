@@ -1,2 +1,3 @@
 # examples binaries
 examples/examples
+examples/*.exe
