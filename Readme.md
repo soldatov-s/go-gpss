@@ -15,9 +15,10 @@ It include today few blocks:
 - Facility - Any facility with adavnce in it.
 - Befacility - As facility, but without adavance in it and present in two parts.
 - Hole - Hole in which fall in transactions
-All blocks need to add in Pipeline and than start simulation.
-For generate random values used pseudo-random generation function from math/rand.
-After simulation you can print report about simulation.
+
+All blocks need to add in Pipeline and than start simulation. For generate random 
+values used pseudo-random generation function from math/rand. After simulation 
+you can print report about simulation.
 
 # Example 1
 Barbershop: random client go to Barbershop every 18 minutes with deviation 6 minutes.
