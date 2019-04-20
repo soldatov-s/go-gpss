@@ -12,7 +12,8 @@ It include today few blocks:
 - Generator - Generator transaction
 - Advance - Advance block used for simulation waiting/holding time
 - Queue - Queue of transaction
-- Facility - Any facility
+- Facility - Any facility with adavnce in it.
+- Befacility - As facility, but without adavance in it and present in two parts.
 - Hole - Hole in which fall in transactions
 All blocks need to add in Pipeline and than start simulation.
 For generate random values used pseudo-random generation function from math/rand.
@@ -71,6 +72,31 @@ We have served 25 client. 26 served at the end of the simulation. No more 1
 client in queue. 11 client not waiting in queue (42.31 percent), but are 
 immediately served. Average waiting time in queue 4.47 minutes. Barber busy at 
 89.17 percent.
+
+# Example 1.1
+Same as Example 1, but used bifacility. Bifacility is a component that inlcude
+two parts - in_elemet and out_element. Between theise elements we can insert 
+any anower component, for example advance. This allow build more complex models.
+```Golang
+p := NewPipeline("Barbershop", true)
+g := NewGenerator("Clients", 18, 6, 0, 0, nil)
+q := NewQueue("Chairs")
+f_in, f_out := NewBifacility("Master")
+a := NewAdvance("Master work", 16, 4)
+h := NewHole("Out")
+p.Append(g, q)
+p.Append(q, f_in)
+p.Append(f_in, a)
+p.Append(a, f_out)
+p.Append(f_out, h)
+p.Append(h)
+p.Start(480)
+<-p.Done
+p.PrintReport() 
+```
+**Important**, 
+The advance and facility components count the average for all transactions that entered into it. Bifacility component count the average value ​​only for 
+transactions that are entered _and_ exited from the component.
 
 # Example 2
 Office with two WC and 10 employees. Employees go to the WC every 90 minutes 
