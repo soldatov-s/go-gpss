@@ -1,5 +1,7 @@
 [![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](https://godoc.org/github.com/soldatov-s/go-gpss)
 [![Build Status](https://travis-ci.org/soldatov-s/go-gpss.svg?branch=master)](https://travis-ci.org/soldatov-s/go-gpss)
+[![Coverage Status](http://codecov.io/github/soldatov-s/go-gpss/coverage.svg?branch=master)](http://codecov.io/github/soldatov-s/go-gpss?branch=master)
+[![codebeat badge](https://codebeat.co/badges/c344eca5-937c-4f96-9d7e-f518d6d2e4e5)](https://codebeat.co/projects/github-com-soldatov-s-go-gpss-master)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
   
 Readme
