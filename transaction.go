@@ -2,22 +2,22 @@
 package gpss
 
 type ITransaction interface {
-	GetId() int
-	GetLife() int
-	SetTiсks(interval int)
-	DecTiсks()
-	GetTicks() int
-	IsTheEnd() bool
-	SetHolderName(holderName string)
-	GetHolderName() string
-	InqQueueTime()
-	GetQueueTime() int
-	ResetQueueTime()
-	GetAdvanceTime() int
-	Kill()
-	IsKilled() bool
-	GetPipeline() IPipeline // Get pipeline for object
-	PrintInfo()
+	GetId() int                      // Get transact ID
+	GetLife() int                    // Get transact time of life, rip - born
+	SetTiсks(interval int)           // Set advance ticks
+	DecTiсks()                       // Decrement ticks
+	GetTicks() int                   // Get current value of ticks
+	IsTheEnd() bool                  // Is ticks value equal zero?
+	SetHolderName(holderName string) // Set holder of transact
+	GetHolderName() string           // Get current holder of transact
+	InqQueueTime()                   // Increment time in queue
+	GetQueueTime() int               // Get current value of time in queue
+	ResetQueueTime()                 // Reset time in queue
+	GetAdvanceTime() int             // Get full time in advice state
+	Kill()                           // Kill transact
+	IsKilled() bool                  // Is transact killed?
+	GetPipeline() IPipeline          // Get pipeline for object
+	PrintInfo()                      // Print info about transact
 }
 
 type Transaction struct {
@@ -59,6 +59,7 @@ func (t *Transaction) PrintInfo() {
 	PrintlnVerbose(verbose)
 }
 
+// Set ticks and increases advance value to same value.
 func (t *Transaction) SetTiсks(interval int) {
 	t.ticks = interval
 	t.advance += interval
@@ -84,6 +85,7 @@ func (t *Transaction) GetHolderName() string {
 	return t.holderName
 }
 
+// Decremet ticks. If ticks is less than zero, set ticks value to zero.
 func (t *Transaction) DecTiсks() {
 	t.ticks--
 	if t.ticks < 0 {

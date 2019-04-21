@@ -97,10 +97,12 @@ func (p *Pipeline) Stop() {
 	close(p.Done)
 }
 
+// Checak that pipeline in verbose mode
 func (p *Pipeline) IsVerbose() bool {
 	return p.verbose
 }
 
+// Print report about work of pipeline
 func (p *Pipeline) PrintReport() {
 	fmt.Println("Pipeline name \"", p.name, "\"")
 	fmt.Println("Simulation time", p.modelTime)
@@ -114,10 +116,12 @@ func (p *Pipeline) PrintReport() {
 	}
 }
 
+// Get value of simulation time
 func (p *Pipeline) GetSimTime() int {
 	return p.simTime
 }
 
+// Get current model time
 func (p *Pipeline) GetModelTime() int {
 	return p.modelTime
 }
