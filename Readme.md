@@ -29,7 +29,7 @@ We have only one barber. Barber spends for each client 16 minutes with deviation
 How long does one haircut last?
 
 ```Golang
-p := NewPipeline("Barbershop", true)
+p := NewPipeline("Barbershop", false)
 g := NewGenerator("Clients", 18, 6, 0, 0, nil)
 q := NewQueue("Chairs")
 f := NewFacility("Master", 16, 4)
@@ -81,7 +81,7 @@ Same as Example 1, but used bifacility. Bifacility is a component that inlcude
 two parts - in_elemet and out_element. Between theise elements we can insert 
 any anower component, for example advance. This allow build more complex models.
 ```Golang
-p := NewPipeline("Barbershop", true)
+p := NewPipeline("Barbershop", false)
 g := NewGenerator("Clients", 18, 6, 0, 0, nil)
 q := NewQueue("Chairs")
 f_in, f_out := NewBifacility("Master")
