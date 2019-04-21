@@ -1,4 +1,7 @@
-// facility
+// Copyright 2019 Sergey Soldatov. All rights reserved.
+// This software may be modified and distributed under the terms
+// of the Apache license. See the LICENSE file for details.
+
 package gpss
 
 import (
@@ -67,7 +70,7 @@ func (obj *Facility) AppendTransact(transact ITransaction) bool {
 		// Facility is busy
 		return false
 	}
-	PrintlnVerbose(obj.GetPipeline().IsVerbose(), "Append transact ", transact.GetId(), " to Facility")
+	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Facility")
 	transact.SetHolderName(obj.name)
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)

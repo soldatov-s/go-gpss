@@ -1,4 +1,7 @@
-// hole
+// Copyright 2019 Sergey Soldatov. All rights reserved.
+// This software may be modified and distributed under the terms
+// of the Apache license. See the LICENSE file for details.
+
 package gpss
 
 import (
@@ -48,7 +51,7 @@ func (obj *Hole) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Hole) AppendTransact(transact ITransaction) bool {
-	PrintlnVerbose(obj.GetPipeline().IsVerbose(), "Append transact ", transact.GetId(), " to Hole")
+	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Hole")
 	transact.SetHolderName(obj.name)
 	obj.tb.Push(transact)
 	return true

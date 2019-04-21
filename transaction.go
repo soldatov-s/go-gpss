@@ -1,4 +1,7 @@
-// transaction
+// Copyright 2019 Sergey Soldatov. All rights reserved.
+// This software may be modified and distributed under the terms
+// of the Apache license. See the LICENSE file for details.
+
 package gpss
 
 type ITransaction interface {
@@ -48,15 +51,14 @@ func (t *Transaction) GetLife() int {
 }
 
 func (t *Transaction) PrintInfo() {
-	verbose := t.GetPipeline().IsVerbose()
-	PrintlnVerbose(verbose, "Transaction Id:\t", t.GetId())
-	PrintlnVerbose(verbose, "Borned:\t\t", t.born)
-	PrintlnVerbose(verbose, "Advance time:\t", t.advance)
-	PrintlnVerbose(verbose, "Transaction life:\t", t.GetPipeline().GetModelTime()-t.born)
-	PrintlnVerbose(verbose, "Holder Name:\t", t.holderName)
-	PrintlnVerbose(verbose, "Tiks:\t\t", t.ticks)
-	PrintlnVerbose(verbose, "Time in queue:\t", t.timequeue)
-	PrintlnVerbose(verbose)
+	trace := t.GetPipeline().GetLogger().GetTrace()
+	trace.Println("Transaction Id:\t", t.GetId())
+	trace.Println("Borned:\t\t", t.born)
+	trace.Println("Advance time:\t", t.advance)
+	trace.Println("Transaction life:\t", t.GetPipeline().GetModelTime()-t.born)
+	trace.Println("Holder Name:\t", t.holderName)
+	trace.Println("Tiks:\t\t", t.ticks)
+	trace.Println("Time in queue:\t", t.timequeue)
 }
 
 // Set ticks and increases advance value to same value.

@@ -1,4 +1,7 @@
-// generator
+// Copyright 2019 Sergey Soldatov. All rights reserved.
+// This software may be modified and distributed under the terms
+// of the Apache license. See the LICENSE file for details.
+
 package gpss
 
 import (
@@ -55,7 +58,7 @@ func NewGenerator(name string, interval, modificator, start, count int, hndl Han
 
 func (obj *Generator) GenerateTransact() {
 	var isTransactSended bool
-	PrintlnVerbose(obj.GetPipeline().IsVerbose(), "Generate transact ", obj.id)
+	obj.GetLogger().GetTrace().Println("Generate transact ", obj.id)
 	t := NewTransaction(obj.id, obj.GetPipeline())
 	t.SetHolderName(obj.name)
 	for _, v := range obj.GetDst() {
@@ -86,7 +89,7 @@ func (obj *Generator) HandleTransacts(wg *sync.WaitGroup) {
 		for {
 			obj.GenerateTransact()
 			if obj.id > obj.Count {
-				PrintlnVerbose(obj.GetPipeline().IsVerbose(), "Stop generate")
+				obj.GetLogger().GetTrace().Println("Stop generate")
 				return
 			}
 		}

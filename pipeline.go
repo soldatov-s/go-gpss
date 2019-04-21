@@ -1,8 +1,13 @@
-// pipeline
+// Copyright 2019 Sergey Soldatov. All rights reserved.
+// This software may be modified and distributed under the terms
+// of the Apache license. See the LICENSE file for details.
+
 package gpss
 
 import (
 	"fmt"
+	"io/ioutil"
+	"os"
 	"reflect"
 	"sort"
 	"sync"
@@ -13,10 +18,10 @@ type IPipeline interface {
 	Delete(obj IBaseObj)                  // Delete object from pipeline
 	Start(value int)                      // Start simulation
 	Stop()                                // Stop simulation
-	IsVerbose() bool                      // Show verbose info
 	GetSimTime() int                      // Get Simulation time
 	GetModelTime() int                    // Get current model time
 	PrintReport()                         // Print report
+	GetLogger() ILogger                   // Get logger
 }
 
 type Pipeline struct {
@@ -25,7 +30,7 @@ type Pipeline struct {
 	modelTime int                 // Current Model Time
 	Done      chan struct{}       // Chan for done
 	simTime   int                 // Simulation time
-	verbose   bool
+	logger    *Logger             // Pipeline logger
 }
 
 // Create new Pipeline
@@ -35,7 +40,11 @@ func NewPipeline(name string, verbose bool) *Pipeline {
 	p.name = name
 	p.Done = make(chan struct{})
 	p.modelTime = 0
-	p.verbose = verbose
+	if !verbose {
+		p.logger = NewLogger(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
+	} else {
+		p.logger = NewLogger(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
+	}
 	return p
 }
 
@@ -76,9 +85,7 @@ func (p *Pipeline) Start(value int) {
 			case <-p.Done:
 				return
 			default:
-				if p.verbose {
-					fmt.Println("\nModelTime ", p.modelTime)
-				}
+				p.logger.Trace.Println("ModelTime ", p.modelTime)
 				wg.Add(len(p.objects))
 				for _, o := range p.objects {
 					o.HandleTransacts(&wg)
@@ -95,11 +102,6 @@ func (p *Pipeline) Start(value int) {
 // Stop simulation
 func (p *Pipeline) Stop() {
 	close(p.Done)
-}
-
-// Checak that pipeline in verbose mode
-func (p *Pipeline) IsVerbose() bool {
-	return p.verbose
 }
 
 // Print report about work of pipeline
@@ -124,4 +126,9 @@ func (p *Pipeline) GetSimTime() int {
 // Get current model time
 func (p *Pipeline) GetModelTime() int {
 	return p.modelTime
+}
+
+// Get logger
+func (p *Pipeline) GetLogger() ILogger {
+	return p.logger
 }

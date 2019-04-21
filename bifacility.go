@@ -1,4 +1,7 @@
-// bifacility
+// Copyright 2019 Sergey Soldatov. All rights reserved.
+// This software may be modified and distributed under the terms
+// of the Apache license. See the LICENSE file for details.
+
 package gpss
 
 import (
@@ -49,7 +52,7 @@ func (obj *InFacility) AppendTransact(transact ITransaction) bool {
 		// Facility is busy
 		return false
 	}
-	PrintlnVerbose(obj.GetPipeline().IsVerbose(), "Append transact ", transact.GetId(), " to Facility")
+	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Facility")
 	transact.SetHolderName(obj.name)
 	obj.HoldedTransactID = transact.GetId()
 	obj.tb.Push(transact)
@@ -93,7 +96,7 @@ func (obj *OutFacility) AppendTransact(transact ITransaction) bool {
 	if obj.inFacility.HoldedTransactID != transact.GetId() {
 		return false
 	}
-	PrintlnVerbose(obj.GetPipeline().IsVerbose(), "Append transact ", transact.GetId(), " to Facility")
+	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Facility")
 	obj.HandleTransact(transact)
 	if obj.tb.GetLen() == 0 {
 		return true

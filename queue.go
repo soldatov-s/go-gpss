@@ -1,4 +1,7 @@
-// queue
+// Copyright 2019 Sergey Soldatov. All rights reserved.
+// This software may be modified and distributed under the terms
+// of the Apache license. See the LICENSE file for details.
+
 package gpss
 
 import (
@@ -64,7 +67,7 @@ func (obj *Queue) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Queue) AppendTransact(transact ITransaction) bool {
-	PrintlnVerbose(obj.GetPipeline().IsVerbose(), "Append transact ", transact.GetId(), " to Queue")
+	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Queue")
 	transact.SetHolderName(obj.name)
 	if !obj.IsObjectAfterMeEmpty(transact) {
 		transact.ResetQueueTime()

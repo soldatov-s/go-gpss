@@ -1,4 +1,7 @@
-// baseobj
+// Copyright 2019 Sergey Soldatov. All rights reserved.
+// This software may be modified and distributed under the terms
+// of the Apache license. See the LICENSE file for details.
+
 package gpss
 
 import (
@@ -54,6 +57,10 @@ func (obj *BaseObj) SetPipeline(pipe IPipeline) {
 
 func (obj *BaseObj) GetPipeline() IPipeline {
 	return obj.pipe
+}
+
+func (obj *BaseObj) GetLogger() ILogger {
+	return obj.pipe.GetLogger()
 }
 
 func (obj *BaseObj) GetTransactTable() ITransactTable {

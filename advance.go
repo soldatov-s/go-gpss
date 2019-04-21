@@ -1,4 +1,7 @@
-// advance
+// Copyright 2019 Sergey Soldatov. All rights reserved.
+// This software may be modified and distributed under the terms
+// of the Apache license. See the LICENSE file for details.
+
 package gpss
 
 import (
@@ -63,7 +66,7 @@ func (obj *Advance) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Advance) AppendTransact(transact ITransaction) bool {
-	PrintlnVerbose(obj.GetPipeline().IsVerbose(), "Append transact ", transact.GetId(), " to Advance")
+	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Advance")
 	transact.SetHolderName(obj.name)
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)
