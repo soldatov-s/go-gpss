@@ -15,7 +15,7 @@ It include today few blocks:
 - Advance - Advance block used for simulation waiting/holding time
 - Queue - Queue of transaction
 - Facility - Any facility with adavnce in it.
-- Befacility - As facility, but without adavance in it and present in two parts.
+- Bifacility - As facility, but without adavance in it and present in two parts.
 - Hole - Hole in which fall in transactions
 
 All blocks need to add in Pipeline and than start simulation. For generate random 
