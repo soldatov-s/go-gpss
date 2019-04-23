@@ -92,6 +92,8 @@ func (obj *Queue) PrintReport() {
 	fmt.Println("Current contents", obj.tb.GetLen())
 	fmt.Printf("Average content %.2f\n", obj.sum_content/float64(obj.GetPipeline().GetSimTime()))
 	fmt.Printf("Average time/trans %.2f\n", obj.sum_timequeue/obj.sum_Entries)
-	fmt.Printf("Average time/trans without zero entries %.2f\n", obj.sum_timequeue/(obj.sum_Entries-obj.sum_zeroEntries))
+	if obj.sum_Entries-obj.sum_zeroEntries > 0 {
+		fmt.Printf("Average time/trans without zero entries %.2f\n", obj.sum_timequeue/(obj.sum_Entries-obj.sum_zeroEntries))
+	}
 	fmt.Println()
 }
