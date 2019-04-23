@@ -59,6 +59,11 @@ func (t *Transaction) Copy() ITransaction {
 	copy_t.id = t.id
 	copy_t.pipe = t.pipe
 	copy_t.born = t.born
+	copy_t.advance = t.advance
+	copy_t.ticks = t.ticks
+	copy_t.rip = t.rip
+	copy_t.timequeue = t.timequeue
+	copy_t.holderName = t.holderName
 	copy_t.parts = t.parts
 	return copy_t
 }
