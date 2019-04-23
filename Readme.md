@@ -220,64 +220,63 @@ timing was randomized):
 Pipeline name " Cafe Simulation "
 Simulation time 480
 Object name " Visitors "
-Generated 25
+Generated 26
 
 Object name " Visitors queue "
 Max content 0
-Total entries 25
-Zero entries 25
+Total entries 26
+Zero entries 26
 Persent zero entries 100.00%
 Current contents 0
 Average content 0.00
 Average time/trans 0.00
 
 Object name " Order Acceptance "
-Average advance 4.76
-Average utilization 24.79%
-Number entries 25.00
-Facility is empty
+Average advance 4.81
+Average utilization 26.04%
+Number entries 26.00
+Transact 26 in facility
 
 Object name " Split orders "
-Average split 1.32
+Average split 1.48
 
 Object name " Queue of orders to barista "
 Max content 0
-Total entries 16
-Zero entries 16
+Total entries 23
+Zero entries 23
 Persent zero entries 100.00%
 Current contents 0
 Average content 0.00
 Average time/trans 0.00
 
 Object name " Queue of orders to cook "
-Max content 1
-Total entries 17
-Zero entries 16
-Persent zero entries 94.12%
+Max content 0
+Total entries 14
+Zero entries 14
+Persent zero entries 100.00%
 Current contents 0
 Average content 0.00
-Average time/trans 0.18
-Average time/trans without zero entries 3.00
+Average time/trans 0.00
 
 Object name " Barista "
-Average advance 4.38
-Average utilization 14.58%
-Number entries 16.00
-Transact 25 in facility
+Average advance 5.48
+Average utilization 26.25%
+Number entries 23.00
+Facility is empty
 
 Object name " Cook "
-Average advance 9.24
-Average utilization 32.71%
-Number entries 17.00
-Transact 25 in facility
+Average advance 8.71
+Average utilization 25.42%
+Number entries 14.00
+Facility is empty
 
 Object name " Aggregate orders "
-Number of aggregated transact 24.00
+Number of aggregated transact 25.00
 
 Object name " Out "
-Killed 24
-Average advance 7.88
-Average life 13.04
+Killed 25
+Average advance 12.12
+Average life 12.72
 ```
 
 We have served 24 client. 25 served at the end of the simulation. No clients in 

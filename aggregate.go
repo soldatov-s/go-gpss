@@ -20,27 +20,31 @@ func NewAggregate(name string) *Aggregate {
 	return obj
 }
 
+func (obj *Aggregate) SendToDst(transact ITransaction) bool {
+	for _, v := range obj.GetDst() {
+		if v.AppendTransact(transact) {
+			obj.tb.Remove(transact)
+			obj.sum_transact++
+			return true
+		}
+	}
+	return false
+}
+
 func (obj *Aggregate) HandleTransact(transact ITransaction) {
 	transact.PrintInfo()
 	part, parts := transact.GetParts()
 	if parts == 0 {
-		for _, v := range obj.GetDst() {
-			if v.AppendTransact(transact) {
-				obj.tb.Remove(transact)
-				obj.sum_transact++
-				return
-			}
+		if obj.SendToDst(transact) {
+			return
 		}
 	}
 	holded_tr := obj.tb.GetItem(transact.GetId())
 	if holded_tr == nil {
 		transact.SetParts(0, parts-1)
 		if parts-1 == 0 {
-			for _, v := range obj.GetDst() {
-				if v.AppendTransact(transact) {
-					obj.sum_transact++
-					return
-				}
+			if obj.SendToDst(transact) {
+				return
 			}
 		}
 		obj.tb.Push(transact)
@@ -49,14 +53,14 @@ func (obj *Aggregate) HandleTransact(transact ITransaction) {
 		holded_part, holded_parts := holded_tr.transact.GetParts()
 		if holded_part != part {
 			holded_tr.transact.SetParts(0, holded_parts-1)
+			if holded_tr.transact.GetAdvanceTime() < transact.GetAdvanceTime() {
+				holded_tr.transact.SetTiсks(transact.GetAdvanceTime())
+				holded_tr.transact.SetTiсks(0)
+			}
 		}
 		if holded_parts-1 == 0 {
-			for _, v := range obj.GetDst() {
-				if v.AppendTransact(transact) {
-					obj.tb.Remove(transact)
-					obj.sum_transact++
-					return
-				}
+			if obj.SendToDst(transact) {
+				return
 			}
 		}
 
