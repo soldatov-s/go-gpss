@@ -14,8 +14,10 @@ It include today few blocks:
 - Generator - Generator transaction
 - Advance - Advance block used for simulation waiting/holding time
 - Queue - Queue of transaction
-- Facility - Any facility with adavnce in it.
-- Bifacility - As facility, but without advance in it and present in two parts.
+- Facility - Any facility with adavnce in it
+- Bifacility - As facility, but without advance in it and present in two parts
+- Split - split transact to multiple parts
+- Aggregare - aggregate multiple parts of transact in transact
 - Hole - Hole in which fall in transactions
 
 All blocks need to add in Pipeline and than start simulation. For generate random 
@@ -98,7 +100,8 @@ p.Start(480)
 p.PrintReport() 
 ```
 **Important**, 
-The advance and facility components count the average for all transactions that entered into it. Bifacility component count the average value ​​only for 
+The advance and facility components count the average for all transactions that 
+entered into it. Bifacility component count the average value ​​only for 
 transactions that are entered _and_ exited from the component.
 
 # Example 2
@@ -173,6 +176,117 @@ Average advance 86.13
 
 Max count in queue 3 employes. Average waiting time in queue 9.42 minutes.
 WC1 was occupied during 14.79 minutes. WC2 was occupied during 13.24 minutes.
+
+# Example 3
+Small cafeteria with one barista and cook. Random client go to cafeteria every 
+18 minutes with deviation 6 minutes. Cashier spends for each client 5 minutes 
+with deviation 3 minutes. Сlient can request coffee/tea and/or burger/cake 
+(one or two positions in order). Barista spends 5 minutes with deviation 2 
+minutes for one order. Cook spends 10 minutes with deviation 5 minutes for one 
+order.
+How many people will be served in a cafe? How many people will be in queue?
+
+```Golang
+p := NewPipeline("Cafe Simulation", false)
+g := NewGenerator("Visitors", 18, 6, 0, 0, nil)
+q := NewQueue("Visitors queue")
+orders_f := NewFacility("Order Acceptance", 5, 3)
+split := NewSplit("Split orders", 1, 1, nil)
+barista_q := NewQueue("Queue of orders to barista")
+barista_f := NewFacility("Barista", 5, 2)
+cook_q := NewQueue("Queue of orders to cook")
+cook_f := NewFacility("Cook", 10, 5)
+aggregate := NewAggregate("Aggregate orders")
+h := NewHole("Out")
+p.Append(g, q)
+p.Append(q, orders_f)
+p.Append(orders_f, split)
+p.Append(split, barista_q, cook_q)
+p.Append(barista_q, barista_f)
+p.Append(cook_q, cook_f)
+p.Append(barista_f, aggregate)
+p.Append(cook_f, aggregate)
+p.Append(aggregate, h)
+p.Append(h)
+p.Start(480)
+<-p.Done
+p.PrintReport()
+```
+
+In report we will see next information (may be diferent values, becouse 
+timing was randomized):
+
+```bash
+Pipeline name " Cafe Simulation "
+Simulation time 480
+Object name " Visitors "
+Generated 25
+
+Object name " Visitors queue "
+Max content 0
+Total entries 25
+Zero entries 25
+Persent zero entries 100.00%
+Current contents 0
+Average content 0.00
+Average time/trans 0.00
+
+Object name " Order Acceptance "
+Average advance 4.76
+Average utilization 24.79%
+Number entries 25.00
+Facility is empty
+
+Object name " Split orders "
+Average split 1.32
+
+Object name " Queue of orders to barista "
+Max content 0
+Total entries 16
+Zero entries 16
+Persent zero entries 100.00%
+Current contents 0
+Average content 0.00
+Average time/trans 0.00
+
+Object name " Queue of orders to cook "
+Max content 1
+Total entries 17
+Zero entries 16
+Persent zero entries 94.12%
+Current contents 0
+Average content 0.00
+Average time/trans 0.18
+Average time/trans without zero entries 3.00
+
+Object name " Barista "
+Average advance 4.38
+Average utilization 14.58%
+Number entries 16.00
+Transact 25 in facility
+
+Object name " Cook "
+Average advance 9.24
+Average utilization 32.71%
+Number entries 17.00
+Transact 25 in facility
+
+Object name " Aggregate orders "
+Number of aggregated transact 24.00
+
+Object name " Out "
+Killed 24
+Average advance 7.88
+Average life 13.04
+```
+
+We have served 24 client. 25 served at the end of the simulation. No clients in 
+queue. Barista busy at 14.58 percent, cook busy at 32.71 percent.
+
+# Fixes
+- Fixed report, ordered by id in Pipeline
+- Fixed HoldedTransactID in facility, zeroing after removing transact
+- Fixed Generator, Modificator is used now
 
 # TODO
 - Extend list of blocks
