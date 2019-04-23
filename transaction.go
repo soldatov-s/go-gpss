@@ -20,7 +20,16 @@ type ITransaction interface {
 	Kill()                           // Kill transact
 	IsKilled() bool                  // Is transact killed?
 	GetPipeline() IPipeline          // Get pipeline for object
+	SetParts(part, parts int)        // Set parts info
+	GetParts() (int, int)            // Get parts info
 	PrintInfo()                      // Print info about transact
+	Copy() ITransaction              // Create copy of transact
+}
+
+// Struct for splitting
+type Parts struct {
+	part  int // Part id
+	parts int // Number of parts
 }
 
 type Transaction struct {
@@ -32,6 +41,8 @@ type Transaction struct {
 	holderName string    // Holder object name
 	timequeue  int       // Time in queue at this moment
 	pipe       IPipeline // Pipeline
+	parts      Parts     /* For splitting. Default is "0/0". After splitting
+	may be "1/6" - first part of six parts or "5/6" - fifth part of six parts */
 }
 
 func NewTransaction(id int, pipe IPipeline) *Transaction {
@@ -39,7 +50,17 @@ func NewTransaction(id int, pipe IPipeline) *Transaction {
 	t.id = id
 	t.pipe = pipe
 	t.born = pipe.GetModelTime()
+	t.parts = Parts{0, 0}
 	return t
+}
+
+func (t *Transaction) Copy() ITransaction {
+	copy_t := &Transaction{}
+	copy_t.id = t.id
+	copy_t.pipe = t.pipe
+	copy_t.born = t.born
+	copy_t.parts = t.parts
+	return copy_t
 }
 
 func (t *Transaction) GetId() int {
@@ -52,13 +73,10 @@ func (t *Transaction) GetLife() int {
 
 func (t *Transaction) PrintInfo() {
 	trace := t.GetPipeline().GetLogger().GetTrace()
-	trace.Println("Transaction Id:\t", t.GetId())
-	trace.Println("Borned:\t\t", t.born)
-	trace.Println("Advance time:\t", t.advance)
-	trace.Println("Transaction life:\t", t.GetPipeline().GetModelTime()-t.born)
-	trace.Println("Holder Name:\t", t.holderName)
-	trace.Println("Tiks:\t\t", t.ticks)
-	trace.Println("Time in queue:\t", t.timequeue)
+	trace.Println("Transaction Id:\t", t.GetId(), "Borned:\t", t.born,
+		"Advance time:\t", t.advance, "Transaction life:\t",
+		t.GetPipeline().GetModelTime()-t.born, "Holder Name:\t", t.holderName,
+		"Tiks:\t\t", t.ticks, "Time in queue:\t", t.timequeue)
 }
 
 // Set ticks and increases advance value to same value.
@@ -117,4 +135,12 @@ func (t *Transaction) GetPipeline() IPipeline {
 
 func (t *Transaction) ResetQueueTime() {
 	t.timequeue = 0
+}
+
+func (t *Transaction) GetParts() (int, int) {
+	return t.parts.part, t.parts.parts
+}
+
+func (t *Transaction) SetParts(part, parts int) {
+	t.parts = Parts{part, parts}
 }
