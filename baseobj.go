@@ -10,6 +10,8 @@ import (
 )
 
 type IBaseObj interface {
+	SetID(int)                          // Set object ID
+	GetID() int                         // Get object ID
 	GetName() string                    // Get object name
 	SetDst([]IBaseObj)                  // Set dst for object
 	GetDst() []IBaseObj                 // Get dst for object
@@ -26,6 +28,7 @@ type BaseObj struct {
 	dst     []IBaseObj
 	pipe    IPipeline
 	tb      ITransactTable
+	id      int
 }
 
 func NewBaseObj(name string) *BaseObj {
@@ -57,6 +60,14 @@ func (obj *BaseObj) SetPipeline(pipe IPipeline) {
 
 func (obj *BaseObj) GetPipeline() IPipeline {
 	return obj.pipe
+}
+
+func (obj *BaseObj) SetID(id int) {
+	obj.id = id
+}
+
+func (obj *BaseObj) GetID() int {
+	return obj.id
 }
 
 func (obj *BaseObj) GetLogger() ILogger {
