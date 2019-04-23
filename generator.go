@@ -31,7 +31,7 @@ func GenerateBorn(obj *Generator) int {
 	var born int
 	born += obj.Interval
 	if obj.Modificator > 0 {
-		GetRandom(-obj.Modificator, obj.Modificator)
+		born += GetRandom(-obj.Modificator, obj.Modificator)
 	}
 	if obj.GetPipeline() != nil {
 		born += obj.GetPipeline().GetModelTime()
