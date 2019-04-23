@@ -46,6 +46,7 @@ func (obj *Facility) HandleTransact(transact ITransaction) {
 		for _, v := range obj.GetDst() {
 			if v.AppendTransact(transact) {
 				obj.tb.Remove(transact)
+				obj.HoldedTransactID = 0
 				break
 			}
 		}
@@ -85,7 +86,7 @@ func (obj *Facility) PrintReport() {
 	obj.BaseObj.PrintReport()
 	avr := obj.sum_advance / obj.cnt_transact
 	fmt.Printf("Average advance %.2f\n", avr)
-	fmt.Printf("Average utilization %.2f\n", 100*avr*obj.cnt_transact/float64(obj.GetPipeline().GetSimTime()))
+	fmt.Printf("Average utilization %.2f%%\n", 100*avr*obj.cnt_transact/float64(obj.GetPipeline().GetSimTime()))
 	fmt.Printf("Number entries %.2f\n", obj.cnt_transact)
 	if obj.HoldedTransactID != 0 {
 		fmt.Println("Transact", obj.HoldedTransactID, "in facility")
