@@ -53,6 +53,7 @@ func NewPipeline(name string, verbose bool) *Pipeline {
 func (p *Pipeline) Append(obj IBaseObj, dst ...IBaseObj) {
 	obj.SetDst(dst)
 	obj.SetPipeline(p)
+	obj.SetID(len(p.objects))
 	p.objects[obj.GetName()] = obj
 }
 
@@ -108,14 +109,20 @@ func (p *Pipeline) Stop() {
 func (p *Pipeline) PrintReport() {
 	fmt.Println("Pipeline name \"", p.name, "\"")
 	fmt.Println("Simulation time", p.modelTime)
-	sortedKeys := make([]string, 0, len(p.objects))
-	for k := range p.objects {
-		sortedKeys = append(sortedKeys, k)
+	sortedObjects := make([]IBaseObj, 0, len(p.objects))
+	for _, v := range p.objects {
+		sortedObjects = append(sortedObjects, v)
 	}
-	sort.Strings(sortedKeys)
-	for _, k := range sortedKeys {
-		p.objects[k].PrintReport()
+
+	name := func(p1, p2 IBaseObj) bool {
+		return p1.GetID() < p2.GetID()
 	}
+
+	By(name).Sort(sortedObjects)
+	for _, v := range sortedObjects {
+		v.PrintReport()
+	}
+
 }
 
 // Get value of simulation time
@@ -131,4 +138,34 @@ func (p *Pipeline) GetModelTime() int {
 // Get logger
 func (p *Pipeline) GetLogger() ILogger {
 	return p.logger
+}
+
+type By func(p1, p2 IBaseObj) bool
+
+func (by By) Sort(objects []IBaseObj) {
+	objs := &objectSorter{
+		objects: objects,
+		by:      by,
+	}
+	sort.Sort(objs)
+}
+
+type objectSorter struct {
+	objects []IBaseObj
+	by      By
+}
+
+// Len is part of sort.Interface.
+func (s *objectSorter) Len() int {
+	return len(s.objects)
+}
+
+// Swap is part of sort.Interface.
+func (s *objectSorter) Swap(i, j int) {
+	s.objects[i], s.objects[j] = s.objects[j], s.objects[i]
+}
+
+// Less is part of sort.Interface. It is implemented by calling the "by" closure in the sorter.
+func (s *objectSorter) Less(i, j int) bool {
+	return s.by(s.objects[i], s.objects[j])
 }
