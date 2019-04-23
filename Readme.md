@@ -17,7 +17,7 @@ It include today few blocks:
 - Facility - Any facility with adavnce in it
 - Bifacility - As facility, but without advance in it and present in two parts
 - Split - split transact to multiple parts
-- Aggregare - aggregate multiple parts of transact in transact
+- Aggregate - aggregate multiple parts of transact in transact
 - Hole - Hole in which fall in transactions
 
 All blocks need to add in Pipeline and than start simulation. For generate random 
@@ -180,11 +180,11 @@ WC1 was occupied during 14.79 minutes. WC2 was occupied during 13.24 minutes.
 # Example 3
 Small cafeteria with one barista and cook. Random client go to cafeteria every 
 18 minutes with deviation 6 minutes. Cashier spends for each client 5 minutes 
-with deviation 3 minutes. Сlient can request coffee/tea and/or burger/cake 
-(one or two positions in order). Barista spends 5 minutes with deviation 2 
+with deviation 3 minutes. Сlient can request coffee/tea and/or burger/piece of 
+cake (one or two positions in order). Barista spends 5 minutes with deviation 2 
 minutes for one order. Cook spends 10 minutes with deviation 5 minutes for one 
 order.
-How many people will be served in a cafe? How many people will be in queue?
+How many people can be served in a cafe? How many people will be in queue?
 
 ```Golang
 p := NewPipeline("Cafe Simulation", false)
