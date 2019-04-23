@@ -40,7 +40,8 @@ func main() {
 	// p.Append(h)
 	// p.Start(480)
 
-	// Comment code before and uncoment next code for test Barbershop
+	// Comment code before and uncoment next code for test Barbershop with
+	// bifacility
 	// p := NewPipeline("Barbershop", true)
 	// g := NewGenerator("Clients", 18, 6, 0, 0, nil)
 	// q := NewQueue("Chairs")
@@ -52,6 +53,31 @@ func main() {
 	// p.Append(f_in, a)
 	// p.Append(a, f_out)
 	// p.Append(f_out, h)
+	// p.Append(h)
+	// p.Start(480)
+
+	// Comment code before and uncoment next code for test small cafe
+	// with barista and cook. Used split and aggregate components
+	// p := NewPipeline("Cafe Simulation", false)
+	// g := NewGenerator("Visitors", 18, 6, 0, 0, nil)
+	// q := NewQueue("Visitors queue")
+	// orders_f := NewFacility("Order Acceptance", 5, 3)
+	// split := NewSplit("Split orders", 1, 1, nil)
+	// barista_q := NewQueue("Queue of orders to barista")
+	// barista_f := NewFacility("Barista", 5, 2)
+	// cook_q := NewQueue("Queue of orders to cook")
+	// cook_f := NewFacility("Cook", 10, 5)
+	// aggregate := NewAggregate("Aggregate orders")
+	// h := NewHole("Out")
+	// p.Append(g, q)
+	// p.Append(q, orders_f)
+	// p.Append(orders_f, split)
+	// p.Append(split, barista_q, cook_q)
+	// p.Append(barista_q, barista_f)
+	// p.Append(cook_q, cook_f)
+	// p.Append(barista_f, aggregate)
+	// p.Append(cook_f, aggregate)
+	// p.Append(aggregate, h)
 	// p.Append(h)
 	// p.Start(480)
 
