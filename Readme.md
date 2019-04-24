@@ -30,6 +30,11 @@ We have only one barber. Barber spends for each client 16 minutes with deviation
 4 minutes. How many people will get a haircut per day? How many people will be in queue?
 How long does one haircut last?
 
+<p align="center">
+  <img src="/images/pic01.jpg" width="200" height="100" alt="Pic01"/>
+</p>
+### Pic 01 - Barbershop simulation
+
 ```Golang
 p := NewPipeline("Barbershop", false)
 g := NewGenerator("Clients", 18, 6, 0, 0, nil)
@@ -112,6 +117,11 @@ of 10 minutes. The way from the WC lasts 5 minutes with a deviation of 3 minutes
 How many people will be in queue? How long will the worker wait for the toilet 
 to be empty? How much time will each toilet be occupied?
 
+<p align="center">
+  <img src="/images/pic02.jpg" width="200" height="100" alt="Pic02"/>
+</p>
+### Pic 02 - WC simulation
+
 ```Golang
 p := NewPipeline("Water Closet Simulation", false)
 g := NewGenerator("Office", 0, 0, 0, 10, nil)
@@ -185,6 +195,11 @@ cake (one or two positions in order). Barista spends 5 minutes with deviation 2
 minutes for one order. Cook spends 10 minutes with deviation 5 minutes for one 
 order.
 How many people can be served in a cafe? How many people will be in queue?
+
+<p align="center">
+  <img src="/images/pic03.jpg" width="200" height="100" alt="Pic03"/>
+</p>
+### Pic 03 - Cafe simulation
 
 ```Golang
 p := NewPipeline("Cafe Simulation", false)
