@@ -31,9 +31,10 @@ We have only one barber. Barber spends for each client 16 minutes with deviation
 How long does one haircut last?
 
 <p align="center">
-  <img src="/images/pic01.jpg" width="200" height="100" alt="Pic01"/>
+  <img src="/images/pic01.jpg" width="300" height="400" alt="Pic01"/>
+  <br /> 
+  <b>Pic 01 - Barbershop simulation</b>
 </p>
-### Pic 01 - Barbershop simulation
 
 ```Golang
 p := NewPipeline("Barbershop", false)
@@ -118,9 +119,10 @@ How many people will be in queue? How long will the worker wait for the toilet
 to be empty? How much time will each toilet be occupied?
 
 <p align="center">
-  <img src="/images/pic02.jpg" width="200" height="100" alt="Pic02"/>
+  <img src="/images/pic02.jpg" width="400" height="650" alt="Pic03"/>
+  <br /> 
+  <b>Pic 02 - WC simulation</b>
 </p>
-### Pic 02 - WC simulation
 
 ```Golang
 p := NewPipeline("Water Closet Simulation", false)
@@ -197,9 +199,10 @@ order.
 How many people can be served in a cafe? How many people will be in queue?
 
 <p align="center">
-  <img src="/images/pic03.jpg" width="200" height="100" alt="Pic03"/>
+  <img src="/images/pic03.jpg" width="400" height="650" alt="Pic03"/>
+  <br /> 
+  <b>Pic 03 - Cafe simulation</b>
 </p>
-### Pic 03 - Cafe simulation
 
 ```Golang
 p := NewPipeline("Cafe Simulation", false)
