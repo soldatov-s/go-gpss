@@ -51,7 +51,7 @@ p.Start(480)
 p.PrintReport()
 ```
 
-Full source [example1.go](examples/example1/example1.go).  
+Full source [example1.go](examples/example1/main.go).  
 
 In report we will see next information (may be diferent values, becouse 
 timing was randomized):
@@ -109,7 +109,7 @@ p.Start(480)
 p.PrintReport() 
 ```
 
-Full source [example1.go](examples/example1/example1.go).  
+Full source [example1.go](examples/example1/main.go).  
 
 **Important**, 
 The advance and facility components count the average for all transactions that 
@@ -151,7 +151,7 @@ p.Start(540)
 p.PrintReport()
 ```
 
-Full source [example2.go](examples/example2/example2.go).  
+Full source [example2.go](examples/example2/main.go).  
 In report we will see next information (may be diferent values, becouse 
 timing was randomized):
 
@@ -238,7 +238,7 @@ p.Start(480)
 p.PrintReport()
 ```
 
-Full source [example3.go](examples/example3/example3.go).  
+Full source [example3.go](examples/example3/main.go).  
 In report we will see next information (may be diferent values, becouse 
 timing was randomized):
 
