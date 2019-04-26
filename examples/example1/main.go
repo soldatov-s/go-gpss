@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Test Barbershop
-	p := NewPipeline("Barbershop", true)
+	p := NewPipeline("Barbershop", false)
 	g := NewGenerator("Clients", 18, 6, 0, 0, nil)
 	q := NewQueue("Chairs")
 	f := NewFacility("Master", 16, 4)
@@ -25,7 +25,7 @@ func main() {
 
 	// Comment code before and uncoment next code for test Barbershop with
 	// bifacility
-	// p := NewPipeline("Barbershop", true)
+	// p := NewPipeline("Barbershop", false)
 	// g := NewGenerator("Clients", 18, 6, 0, 0, nil)
 	// q := NewQueue("Chairs")
 	// f_in, f_out := NewBifacility("Master")
