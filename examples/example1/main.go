@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	// Comment code before and uncoment next code for test Barbershop
+	// Test Barbershop
 	p := NewPipeline("Barbershop", true)
 	g := NewGenerator("Clients", 18, 6, 0, 0, nil)
 	q := NewQueue("Chairs")

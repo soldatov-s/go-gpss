@@ -11,8 +11,7 @@ import (
 )
 
 func main() {
-	// Comment code before and uncoment next code for test small cafe
-	// with barista and cook. Used split and aggregate components
+	// Test small cafe with barista and cook. Used split and aggregate components
 	p := NewPipeline("Cafe Simulation", false)
 	g := NewGenerator("Visitors", 18, 6, 0, 0, nil)
 	q := NewQueue("Visitors queue")
