@@ -50,6 +50,9 @@ p.Start(480)
 <-p.Done
 p.PrintReport()
 ```
+
+Full source [example1.go](examples/example1/example1.go).  
+
 In report we will see next information (may be diferent values, becouse 
 timing was randomized):
 
@@ -105,6 +108,9 @@ p.Start(480)
 <-p.Done
 p.PrintReport() 
 ```
+
+Full source [example1.go](examples/example1/example1.go).  
+
 **Important**, 
 The advance and facility components count the average for all transactions that 
 entered into it. Bifacility component count the average value ​​only for 
@@ -145,6 +151,7 @@ p.Start(540)
 p.PrintReport()
 ```
 
+Full source [example2.go](examples/example2/example2.go).  
 In report we will see next information (may be diferent values, becouse 
 timing was randomized):
 
@@ -231,6 +238,7 @@ p.Start(480)
 p.PrintReport()
 ```
 
+Full source [example3.go](examples/example3/example3.go).  
 In report we will see next information (may be diferent values, becouse 
 timing was randomized):
 

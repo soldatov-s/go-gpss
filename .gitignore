@@ -1,3 +1,4 @@
 # examples binaries
-examples/examples
-examples/*.exe
+examples/example*/*
+!examples/example*/*.go
+examples/*/*.exe
