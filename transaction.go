@@ -5,25 +5,28 @@
 package gpss
 
 type ITransaction interface {
-	GetId() int                      // Get transact ID
-	GetLife() int                    // Get transact time of life, rip - born
-	SetTiсks(interval int)           // Set advance ticks
-	DecTiсks()                       // Decrement ticks
-	GetTicks() int                   // Get current value of ticks
-	IsTheEnd() bool                  // Is ticks value equal zero?
-	SetHolderName(holderName string) // Set holder of transact
-	GetHolderName() string           // Get current holder of transact
-	InqQueueTime()                   // Increment time in queue
-	GetQueueTime() int               // Get current value of time in queue
-	ResetQueueTime()                 // Reset time in queue
-	GetAdvanceTime() int             // Get full time in advice state
-	Kill()                           // Kill transact
-	IsKilled() bool                  // Is transact killed?
-	GetPipeline() IPipeline          // Get pipeline for object
-	SetParts(part, parts int)        // Set parts info
-	GetParts() (int, int)            // Get parts info
-	PrintInfo()                      // Print info about transact
-	Copy() ITransaction              // Create copy of transact
+	GetId() int                                 // Get transact ID
+	GetLife() int                               // Get transact time of life, rip - born
+	SetTiсks(interval int)                      // Set advance ticks
+	DecTiсks()                                  // Decrement ticks
+	GetTicks() int                              // Get current value of ticks
+	IsTheEnd() bool                             // Is ticks value equal zero?
+	SetHolderName(holderName string)            // Set holder of transact
+	GetHolderName() string                      // Get current holder of transact
+	InqQueueTime()                              // Increment time in queue
+	GetQueueTime() int                          // Get current value of time in queue
+	ResetQueueTime()                            // Reset time in queue
+	GetAdvanceTime() int                        // Get full time in advice state
+	Kill()                                      // Kill transact
+	IsKilled() bool                             // Is transact killed?
+	GetPipeline() IPipeline                     // Get pipeline for object
+	SetParts(part, parts int)                   // Set parts info
+	GetParts() (int, int)                       // Get parts info
+	SetParameters(parameters []Parameter)       // Set parameters to transuct
+	GetAllParameters() map[string]interface{}   // Get all parameters of trunsact
+	GetParameterByName(name string) interface{} // Get parameter of trunsuct by name
+	PrintInfo()                                 // Print info about transact
+	Copy() ITransaction                         // Create copy of transact
 }
 
 // Struct for splitting
@@ -43,6 +46,7 @@ type Transaction struct {
 	pipe       IPipeline // Pipeline
 	parts      Parts     /* For splitting. Default is "0/0". After splitting
 	may be "1/6" - first part of six parts or "5/6" - fifth part of six parts */
+	parameters map[string]interface{}
 }
 
 func NewTransaction(id int, pipe IPipeline) *Transaction {
@@ -51,6 +55,7 @@ func NewTransaction(id int, pipe IPipeline) *Transaction {
 	t.pipe = pipe
 	t.born = pipe.GetModelTime()
 	t.parts = Parts{0, 0}
+	t.parameters = make(map[string]interface{})
 	return t
 }
 
@@ -65,6 +70,10 @@ func (t *Transaction) Copy() ITransaction {
 	copy_t.timequeue = t.timequeue
 	copy_t.holderName = t.holderName
 	copy_t.parts = t.parts
+	copy_t.parameters = make(map[string]interface{})
+	for key, value := range t.parameters {
+		copy_t.parameters[key] = value
+	}
 	return copy_t
 }
 
@@ -148,4 +157,18 @@ func (t *Transaction) GetParts() (int, int) {
 
 func (t *Transaction) SetParts(part, parts int) {
 	t.parts = Parts{part, parts}
+}
+
+func (t *Transaction) SetParameters(parameters []Parameter) {
+	for _, v := range parameters {
+		t.parameters[v.name] = v.value
+	}
+}
+
+func (t *Transaction) GetAllParameters() map[string]interface{} {
+	return t.parameters
+}
+
+func (t *Transaction) GetParameterByName(name string) interface{} {
+	return t.parameters[name]
 }
