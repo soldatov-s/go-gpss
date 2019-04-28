@@ -10,7 +10,7 @@ import (
 )
 
 type IFacility interface {
-	GenerateAdvance() int
+	IsEmpty() bool
 }
 
 type Facility struct {
@@ -45,6 +45,7 @@ func (obj *Facility) HandleTransact(transact ITransaction) {
 	if transact.IsTheEnd() {
 		for _, v := range obj.GetDst() {
 			if v.AppendTransact(transact) {
+				transact.SetParameters([]Parameter{{name: "Facility", value: nil}})
 				obj.tb.Remove(transact)
 				obj.HoldedTransactID = 0
 				break
@@ -76,6 +77,7 @@ func (obj *Facility) AppendTransact(transact ITransaction) bool {
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)
 	transact.SetTiсks(advance)
+	transact.SetParameters([]Parameter{{name: "Facility", value: obj.name}})
 	obj.HoldedTransactID = transact.GetId()
 	obj.tb.Push(transact)
 	obj.cnt_transact++
@@ -94,4 +96,12 @@ func (obj *Facility) PrintReport() {
 		fmt.Println("Facility is empty")
 	}
 	fmt.Println()
+}
+
+func (obj *Facility) IsEmpty() bool {
+	if obj.tb.GetLen() != 0 {
+		// Facility is busy
+		return false
+	}
+	return true
 }

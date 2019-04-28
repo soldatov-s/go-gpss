@@ -48,6 +48,7 @@ func (obj *InFacility) AppendTransact(transact ITransaction) bool {
 	}
 	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Facility")
 	transact.SetHolderName(obj.name)
+	transact.SetParameters([]Parameter{{name: "Facility", value: obj.name}})
 	obj.HoldedTransactID = transact.GetId()
 	obj.tb.Push(transact)
 	obj.cnt_transact++
@@ -70,12 +71,21 @@ func (obj *InFacility) PrintReport() {
 	fmt.Println()
 }
 
+func (obj *InFacility) IsEmpty() bool {
+	if obj.tb.GetLen() != 0 {
+		// Facility is busy
+		return false
+	}
+	return true
+}
+
 func (obj *OutFacility) HandleTransact(transact ITransaction) {
 	transact.PrintInfo()
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
 			advance := obj.GetPipeline().GetModelTime() - obj.inFacility.timeOfInput
 			obj.inFacility.sum_advance += float64(advance)
+			transact.SetParameters([]Parameter{{name: "Facility", value: nil}})
 			obj.tb.Remove(transact)
 		}
 	}
