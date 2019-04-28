@@ -37,10 +37,12 @@ func NewCheck(name string, hndl HandleCheckingFunc, falseObj IBaseObj, parameter
 func (obj *Check) AppendTransact(transact ITransaction) bool {
 	transact.PrintInfo()
 	if !obj.HandleChecking(obj, transact) {
-		if obj.falseObj.AppendTransact(transact) {
-			return true
-		} else {
-			return false
+		if obj.falseObj != nil {
+			if obj.falseObj.AppendTransact(transact) {
+				return true
+			} else {
+				return false
+			}
 		}
 	}
 	for _, v := range obj.GetDst() {
