@@ -83,6 +83,11 @@ func (obj *BaseObj) AppendTransact(t ITransaction) bool {
 	return true
 }
 
+func (obj *BaseObj) HandleTransacts(wg *sync.WaitGroup) {
+	wg.Done()
+	return
+}
+
 func (obj *BaseObj) PrintReport() {
 	fmt.Println("Object name \"", obj.name, "\"")
 }

@@ -6,7 +6,6 @@ package gpss
 
 import (
 	"fmt"
-	"sync"
 )
 
 type InFacility struct {
@@ -40,11 +39,6 @@ func (obj *InFacility) HandleTransact(transact ITransaction) {
 			break
 		}
 	}
-}
-
-func (obj *InFacility) HandleTransacts(wg *sync.WaitGroup) {
-	wg.Done()
-	return
 }
 
 func (obj *InFacility) AppendTransact(transact ITransaction) bool {
@@ -85,11 +79,6 @@ func (obj *OutFacility) HandleTransact(transact ITransaction) {
 			obj.tb.Remove(transact)
 		}
 	}
-}
-
-func (obj *OutFacility) HandleTransacts(wg *sync.WaitGroup) {
-	wg.Done()
-	return
 }
 
 func (obj *OutFacility) AppendTransact(transact ITransaction) bool {
