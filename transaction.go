@@ -101,6 +101,7 @@ func (t *Transaction) SetTiсks(interval int) {
 
 func (t *Transaction) InqQueueTime() {
 	t.timequeue++
+	t.advance++
 }
 
 func (t *Transaction) GetTicks() int {
