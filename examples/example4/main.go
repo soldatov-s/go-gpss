@@ -11,9 +11,21 @@ import (
 )
 
 func main() {
+	// TODO: adds all object from pic04.jpg
 	restaurant := NewPipeline("Restaurant  Simulation", false)
 	visitors_g := NewGenerator("Visitors", 18, 6, 0, 0, nil)
+	out := NewHole("Out")
 	visitors_q := NewQueue("Visitors queue")
+	CheckQueueHndl := func(obj *Check, transact ITransaction) bool {
+		var queue IQueue
+		queue = obj.GetPipeline().GetObjByName("Check size of Visitors queue").(IQueue)
+		if queue.GetLength() >= 6 {
+			return false
+		} else {
+			return true
+		}
+	}
+	check_queue := NewCheck("Check size of Visitors queue", CheckQueueHndl, out)
 	hostes1_f := NewFacility("Hostes 1", 5, 3)
 	hostes2_f := NewFacility("Hostes 2", 5, 3)
 	tb1_in, tb1_out := NewBifacility("Table 1")
@@ -38,9 +50,9 @@ func main() {
 	aggregate := NewAggregate("Aggregate orders")
 	visitors_eating := NewAdvance("Visitors eating", 45, 10)
 	visitors_pays := NewAdvance("Visitors pays", 5, 2)
-	out := NewHole("Out")
 
-	restaurant.Append(visitors_g, visitors_q)
+	restaurant.Append(visitors_g, check_queue)
+	restaurant.Append(check_queue, visitors_q)
 	restaurant.Append(visitors_q, hostes1_f, hostes2_f)
 	restaurant.Append(hostes1_f, tb1_in, tb2_in, tb3_in, tb4_in, tb5_in,
 		tb7_in, tb8_in)
