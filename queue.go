@@ -10,7 +10,8 @@ import (
 )
 
 type IQueue interface {
-	IsObjectAfterMeEmpty(transact ITransaction) bool
+	IsObjectAfterMeEmpty(transact ITransaction) bool // Check that after queue exist empty object
+	GetLength() int                                  // Get queue length
 }
 
 type Queue struct {
@@ -33,6 +34,7 @@ func (obj *Queue) HandleTransact(transact ITransaction) {
 	transact.PrintInfo()
 }
 
+// Check that after queue exist empty object
 func (obj *Queue) IsObjectAfterMeEmpty(transact ITransaction) bool {
 	for _, o := range obj.GetDst() {
 		if o.AppendTransact(transact) {
@@ -40,6 +42,11 @@ func (obj *Queue) IsObjectAfterMeEmpty(transact ITransaction) bool {
 		}
 	}
 	return false
+}
+
+// Get queue length
+func (obj *Queue) GetLength() int {
+	return obj.tb.GetLen()
 }
 
 func (obj *Queue) HandleTransacts(wg *sync.WaitGroup) {
