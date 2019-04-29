@@ -20,6 +20,7 @@ type IPipeline interface {
 	Stop()                                // Stop simulation
 	GetSimTime() int                      // Get Simulation time
 	GetModelTime() int                    // Get current model time
+	GetObjByName(name string) IBaseObj    // Get object from pipeline by name
 	PrintReport()                         // Print report
 	GetLogger() ILogger                   // Get logger
 }
@@ -138,6 +139,11 @@ func (p *Pipeline) GetModelTime() int {
 // Get logger
 func (p *Pipeline) GetLogger() ILogger {
 	return p.logger
+}
+
+// Get object from pipeline by name
+func (p *Pipeline) GetObjByName(name string) IBaseObj {
+	return p.objects[name]
 }
 
 type By func(p1, p2 IBaseObj) bool
