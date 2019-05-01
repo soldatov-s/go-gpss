@@ -135,11 +135,11 @@ func (p *Pipeline) PrintReport() {
 		sortedObjects = append(sortedObjects, v)
 	}
 
-	name := func(p1, p2 IBaseObj) bool {
+	id := func(p1, p2 IBaseObj) bool {
 		return p1.GetID() < p2.GetID()
 	}
 
-	By(name).Sort(sortedObjects)
+	By(id).Sort(sortedObjects)
 	for _, v := range sortedObjects {
 		v.PrintReport()
 	}
