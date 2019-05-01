@@ -88,8 +88,6 @@ func (obj *Aggregate) PrintReport() {
 			_, parts := item.transact.GetParts()
 			fmt.Printf("transact %d wait %d parts\n", item.transact.GetId(), parts)
 		}
-		fmt.Println()
 	}
-
 	fmt.Println()
 }
