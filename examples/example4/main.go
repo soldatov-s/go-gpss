@@ -82,6 +82,7 @@ func main() {
 	// 10. Create the Assign that dish is cooked, includes bar
 	assign := NewAssign("After kitchen", dish_state)
 	// 11. Create the Checks for checking that this dishes for this table
+	// id_table is a number of first table in group which served by waiter
 	check_tb_number := func(obj *Check, transact ITransaction, id_table int) bool {
 		for i := 0; i < 3; i++ {
 			table_name := fmt.Sprintf("Table %d", i+id_table)
@@ -120,7 +121,7 @@ func main() {
 		check_tb_10_Hndl, check_tb_13_Hndl, check_tb_16_Hndl, check_tb_19_Hndl,
 		check_tb_22_Hndl}
 	for i := 0; i < cnt_waiters; i++ {
-		check_name := fmt.Sprintf("Is it order for table %d, %d, %d?", i+1, i+2, i+3)
+		check_name := fmt.Sprintf("Is it order for table %d, %d, %d?", i*3+1, i*3+2, i*3+3)
 		check_tb[i] = NewCheck(check_name, check_tb_hndls[i], nil)
 	}
 	// 12. Create the Advance for eating simulation
@@ -157,7 +158,6 @@ func main() {
 	restaurant.Append(cook1_f, assign)
 	restaurant.Append(cook2_f, assign)
 	restaurant.Append(cook3_f, assign)
-	restaurant.Append(cook4_f, assign)
 	restaurant.Append(cook4_f, assign)
 	restaurant.Append(barman1_f, assign)
 	restaurant.Append(barman2_f, assign)
