@@ -15,11 +15,12 @@ type IFacility interface {
 
 type Facility struct {
 	BaseObj
-	Interval         int
-	Modificator      int
-	HoldedTransactID int
-	sum_advance      float64
-	cnt_transact     float64
+	Interval          int
+	Modificator       int
+	HoldedTransactID  int
+	bakupFacilityName string
+	sum_advance       float64
+	cnt_transact      float64
 }
 
 func NewFacility(name string, interval, modificator int) *Facility {
@@ -45,7 +46,13 @@ func (obj *Facility) HandleTransact(transact ITransaction) {
 	if transact.IsTheEnd() {
 		for _, v := range obj.GetDst() {
 			if v.AppendTransact(transact) {
-				transact.SetParameters([]Parameter{{name: "Facility", value: nil}})
+				transact.SetParameters([]Parameter{{Name: "Facility", Value: nil}})
+				if obj.bakupFacilityName != "" {
+					transact.SetParameters([]Parameter{{Name: "Facility",
+						Value: obj.bakupFacilityName}})
+				} else {
+					transact.SetParameters([]Parameter{{Name: "Facility", Value: nil}})
+				}
 				obj.tb.Remove(transact)
 				obj.HoldedTransactID = 0
 				break
@@ -77,8 +84,9 @@ func (obj *Facility) AppendTransact(transact ITransaction) bool {
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)
 	transact.SetTiсks(advance)
-	transact.SetParameters([]Parameter{{name: "Facility", value: obj.name}})
+	transact.SetParameters([]Parameter{{Name: "Facility", Value: obj.name}})
 	obj.HoldedTransactID = transact.GetId()
+	obj.bakupFacilityName = transact.GetParameterByName("Facility").(string)
 	obj.tb.Push(transact)
 	obj.cnt_transact++
 	return true

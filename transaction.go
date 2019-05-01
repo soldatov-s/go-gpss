@@ -162,10 +162,10 @@ func (t *Transaction) SetParts(part, parts int) {
 
 func (t *Transaction) SetParameters(parameters []Parameter) {
 	for _, v := range parameters {
-		if v.value != nil {
-			t.parameters[v.name] = v.value
+		if v.Value != nil {
+			t.parameters[v.Name] = v.Value
 		} else {
-			delete(t.parameters, v.name)
+			delete(t.parameters, v.Name)
 		}
 	}
 }

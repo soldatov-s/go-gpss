@@ -11,15 +11,16 @@ type Assign struct {
 }
 
 type Parameter struct {
-	name  string
-	value interface{}
+	Name  string
+	Value interface{}
 }
 
 // Pass name of Assign and array of parameters in form
 // Parameter{name: "param1_name", value: param1_value},
 // Parameter{name: "param2_name", value: param2_value} ...
-func NewAssign(name *string, parameters ...Parameter) *Assign {
+func NewAssign(name string, parameters ...Parameter) *Assign {
 	obj := &Assign{parameters: parameters}
+	obj.name = name
 	return obj
 }
 

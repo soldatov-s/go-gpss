@@ -16,8 +16,8 @@ type HandleCheckingFunc func(obj *Check, transact ITransaction) bool
 func Checking(obj *Check, transact ITransaction) bool {
 	res := true
 	for _, v := range obj.parameters {
-		parameter := transact.GetParameterByName(v.name)
-		if parameter != v.value {
+		parameter := transact.GetParameterByName(v.Name)
+		if parameter != v.Value {
 			res = bool(res && false)
 		}
 	}
@@ -36,6 +36,7 @@ func NewCheck(name string, hndl HandleCheckingFunc, falseObj IBaseObj, parameter
 
 func (obj *Check) AppendTransact(transact ITransaction) bool {
 	transact.PrintInfo()
+	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Check")
 	if !obj.HandleChecking(obj, transact) {
 		if obj.falseObj != nil {
 			if obj.falseObj.AppendTransact(transact) {
@@ -47,7 +48,6 @@ func (obj *Check) AppendTransact(transact ITransaction) bool {
 	}
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
-			obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Check")
 			return true
 		}
 	}

@@ -10,16 +10,22 @@ import (
 
 type InFacility struct {
 	BaseObj
+	// Holded transast ID
 	HoldedTransactID int
-	cnt_transact     float64
-	sum_advance      float64
-	timeOfInput      int
+	// For backuping Facility/Bifacility name if we includes Bifacility in Bifacility
+	bakupFacilityName string
+	// For counting the transacts that go through Bifacility
+	cnt_transact float64
+	// For counting the advance of transact
+	sum_advance float64
+	// For saving time of input transact in Bifacility
+	timeOfInput int
 }
 
 type OutFacility struct {
 	BaseObj
+	// Pointer to inFacility structure
 	inFacility *InFacility
-	isOut      bool
 }
 
 func NewBifacility(name string) (*InFacility, *OutFacility) {
@@ -48,8 +54,9 @@ func (obj *InFacility) AppendTransact(transact ITransaction) bool {
 	}
 	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Facility")
 	transact.SetHolderName(obj.name)
-	transact.SetParameters([]Parameter{{name: "Facility", value: obj.name}})
+	transact.SetParameters([]Parameter{{Name: "Facility", Value: obj.name}})
 	obj.HoldedTransactID = transact.GetId()
+	obj.bakupFacilityName = transact.GetParameterByName("Facility").(string)
 	obj.tb.Push(transact)
 	obj.cnt_transact++
 	obj.timeOfInput = obj.GetPipeline().GetModelTime()
@@ -85,7 +92,12 @@ func (obj *OutFacility) HandleTransact(transact ITransaction) {
 		if v.AppendTransact(transact) {
 			advance := obj.GetPipeline().GetModelTime() - obj.inFacility.timeOfInput
 			obj.inFacility.sum_advance += float64(advance)
-			transact.SetParameters([]Parameter{{name: "Facility", value: nil}})
+			if obj.inFacility.bakupFacilityName != "" {
+				transact.SetParameters([]Parameter{{Name: "Facility",
+					Value: obj.inFacility.bakupFacilityName}})
+			} else {
+				transact.SetParameters([]Parameter{{Name: "Facility", Value: nil}})
+			}
 			obj.tb.Remove(transact)
 		}
 	}
