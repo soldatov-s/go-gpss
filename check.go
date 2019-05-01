@@ -8,12 +8,12 @@ import (
 	"fmt"
 )
 
-// Check is object for check parameters of transact or any another parameters
-// sumulation model. Check maybe have two results: true ir false. You can replace
-// Checking Handler with your handler.
+// Check compares parameters of Transaction or any another parameters of sumulation
+// model, and controls the destination of the Active Transaction based on the
+// result of the comparison.
 type Check struct {
 	BaseObj
-	// Checking handler
+	// Function for checking
 	HandleChecking HandleCheckingFunc
 	// Destination object in case false result of checking
 	falseObj IBaseObj
@@ -25,8 +25,10 @@ type Check struct {
 	cnt_false int
 }
 
+// Checking function signature
 type HandleCheckingFunc func(obj *Check, transact ITransaction) bool
 
+// Default function for checking
 func Checking(obj *Check, transact ITransaction) bool {
 	res := true
 	for _, v := range obj.parameters {
@@ -38,6 +40,10 @@ func Checking(obj *Check, transact ITransaction) bool {
 	return res
 }
 
+// Creates new Check.
+// name - name of object; hndl - function for checking; falseObj - destination
+// of the Active Transaction in case false result of checking; parameters -
+// parameters for checking
 func NewCheck(name string, hndl HandleCheckingFunc, falseObj IBaseObj, parameters ...Parameter) *Check {
 	obj := &Check{parameters: parameters, falseObj: falseObj}
 	obj.name = name

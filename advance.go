@@ -9,18 +9,24 @@ import (
 	"sync"
 )
 
+// IAdvance implements Advance interface
 type IAdvance interface {
 	GenerateAdvance() int
 }
 
+// An Advance block delays the progress of a Transaction for a specified amount
+// of simulated time
 type Advance struct {
 	BaseObj
-	Interval     int
-	Modificator  int
-	sum_advance  float64
-	sum_transact float64
+	Interval     int     // The mean time increment
+	Modificator  int     // The time half-range
+	sum_advance  float64 // Totalize advance for all transacts
+	sum_transact float64 // Counter of transacts
 }
 
+// Creates new Advance.
+// name - name of object; interval - the mean time increment;
+// modificator - the time half-range
 func NewAdvance(name string, interval, modificator int) *Advance {
 	obj := &Advance{}
 	obj.BaseObj.Init(name)

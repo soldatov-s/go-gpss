@@ -11,15 +11,19 @@ go-gpss is a framework based on conception GPSS (General Purpose Simulation Syst
 It help quick and easy build model for simulation modeling
  
 It include today few blocks:
-- Generator - Generator transaction
-- Advance - Advance block used for simulation waiting/holding time
+- Generator - sequentially generates Transactions
+- Advance - delays the progress of a Transaction for a specified amount of simulated time
 - Queue - Queue of transaction
-- Facility - Any facility with adavnce in it
-- Bifacility - As facility, but without advance in it and present in two parts
-- Split - split transact to multiple parts
-- Aggregate - aggregate multiple parts of transact in transact
+- Facility - facility entity with Advance in it
+- Bifacility - as Facility, but without Advance in it and present in two parts, first for takes ownership of a Facility, second for release ownership of a Facility
+- Split - creates assembly set of sub-transactions of a Transaction
+- Aggregate - aggregate multiple sub-transactions in Transaction
+- Check - compares parameters of Transaction or any another parameters of simulation model, and controls the destination of the Active Transaction based on the result of the comparison
+- Assign - sets parameters of Active Transaction 
+- Count - counts all Transactions which pass through the block
 - Hole - Hole in which fall in transactions
 
+Active Transaction is a Transaction in current block.
 All blocks need to add in Pipeline and than start simulation. For generate random 
 values used pseudo-random generation function from math/rand. After simulation 
 you can print report about simulation.

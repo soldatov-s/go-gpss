@@ -9,11 +9,14 @@ import (
 	"sync"
 )
 
+// Aggregate multiple sub-transactions in Transaction
 type Aggregate struct {
 	BaseObj
-	sum_transact float64
+	sum_transact float64 // Counter of all fully aggregated transactions
 }
 
+// Creates new Aggregate
+// name - name of object
 func NewAggregate(name string) *Aggregate {
 	obj := &Aggregate{}
 	obj.BaseObj.Init(name)

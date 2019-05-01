@@ -9,13 +9,17 @@ import (
 	"sync"
 )
 
+// IFacility implements Facility interface
 type IFacility interface {
 	IsEmpty() bool
 }
 
+// Facility entity with advance in it
 type Facility struct {
 	BaseObj
-	Interval    int
+	// The mean time increment
+	Interval int
+	// The time half-range
 	Modificator int
 	// Holded transast ID
 	HoldedTransactID int
@@ -27,6 +31,9 @@ type Facility struct {
 	cnt_transact float64
 }
 
+// Creates new Facility.
+// name - name of object; interval - the mean time increment;
+// modificator - the time half-range
 func NewFacility(name string, interval, modificator int) *Facility {
 	obj := &Facility{}
 	obj.BaseObj.Init(name)

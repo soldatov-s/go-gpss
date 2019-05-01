@@ -11,15 +11,17 @@ import (
 
 type HandleSplittingFunc func(obj *Split, transact ITransaction)
 
+// A Split creates assembly set of sub-transactions of a Transaction
 type Split struct {
 	BaseObj
-	Cntsplit        int
-	Modificator     int
-	sum_split       float64
-	sum_transact    float64
-	HandleSplitting HandleSplittingFunc
+	Cntsplit        int                 // Number of related Transactions to be created
+	Modificator     int                 // The count half-range
+	sum_split       float64             // Counter of sub-transactions
+	sum_transact    float64             // Counter of transactions
+	HandleSplitting HandleSplittingFunc // Function for splitting transaction
 }
 
+// Default splitting function
 func Splitting(obj *Split, transact ITransaction) {
 	cntsplit := obj.Cntsplit
 	if obj.Modificator > 0 {
@@ -35,11 +37,11 @@ func Splitting(obj *Split, transact ITransaction) {
 
 	obj.sum_split += float64(cntsplit)
 	if cntsplit == len(obj.GetDst()) {
-		// Default case, cntsplit equal length of GetDst()
+		// Default case, cntsplit equal to length of GetDst()
 		for i, v := range obj.GetDst() {
 			tr := transact.Copy()
 			tr.SetParts(i+1, cntsplit)
-			v.AppendTransact(tr) // Take in mind that after split must be only Queues
+			v.AppendTransact(tr) // Take in mind that after Split must be only Queues
 		}
 	} else {
 		// Another case, cntsplit can be smaller than length of GetDst()
@@ -63,6 +65,9 @@ func Splitting(obj *Split, transact ITransaction) {
 	}
 }
 
+// Creates new Split.
+// name - name of object; cntsplit - number of related Transactions to be created;
+// modificator - the count half-range; hndl - function for splitting transaction
 func NewSplit(name string, cntsplit, modificator int, hndl HandleSplittingFunc) *Split {
 	obj := &Split{}
 	obj.name = name

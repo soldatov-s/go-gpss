@@ -4,10 +4,14 @@
 
 package gpss
 
+// A Bifacility as facility, but without advance in it and present in two parts,
+// first for takes ownership of a Facility, second for release ownership of a Facility
+
 import (
 	"fmt"
 )
 
+// The first part of a Bifacility, it takes ownership of a Facility
 type InFacility struct {
 	BaseObj
 	// Holded transast ID
@@ -22,12 +26,15 @@ type InFacility struct {
 	timeOfInput int
 }
 
+// The second part of a Bifacility, for release ownership of a Facility
 type OutFacility struct {
 	BaseObj
 	// Pointer to inFacility structure
 	inFacility *InFacility
 }
 
+// Creates new Bifacility (InFacility + OutFacility).
+// name - name of object
 func NewBifacility(name string) (*InFacility, *OutFacility) {
 	inObj := &InFacility{}
 	inObj.BaseObj.Init(name)

@@ -9,6 +9,7 @@ import (
 	"sync"
 )
 
+// IGenerator implements Generator interface
 type IGenerator interface {
 	GenerateBorn(obj *Generator, modelTime int) int
 	GenerateTransact()
@@ -16,17 +17,19 @@ type IGenerator interface {
 
 type HandleBornFunc func(obj *Generator) int
 
+// A Generator sequentially generates transactions
 type Generator struct {
 	BaseObj
-	Interval    int
-	Modificator int
-	Start       int
-	Count       int
-	id          int
-	nextborn    int
-	HandleBorn  HandleBornFunc
+	Interval    int            // Mean inter generation time
+	Modificator int            // Inter generation time half-range
+	Start       int            // Start delay time
+	Count       int            // Creation limit. Max count of transactions.
+	id          int            // ID of new transaction
+	nextborn    int            // The time when will create new transaction
+	HandleBorn  HandleBornFunc // Function for generate transaction
 }
 
+// Default function for generate transaction
 func GenerateBorn(obj *Generator) int {
 	var born int
 	born += obj.Interval
@@ -39,6 +42,11 @@ func GenerateBorn(obj *Generator) int {
 	return born
 }
 
+// Creates new Generator.
+// name - name of object; interval - mean inter generation time;
+// modificator - inter generation time half-range; start - start delay time;
+// count - creation limit, max count of transactions; hndl - function for generate
+// transaction
 func NewGenerator(name string, interval, modificator, start, count int, hndl HandleBornFunc) *Generator {
 	obj := &Generator{}
 	obj.name = name
@@ -56,6 +64,7 @@ func NewGenerator(name string, interval, modificator, start, count int, hndl Han
 	return obj
 }
 
+// Generates transaction and it send into the simulation
 func (obj *Generator) GenerateTransact() {
 	var isTransactSended bool
 	obj.GetLogger().GetTrace().Println("Generate transact ", obj.id)

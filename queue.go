@@ -14,6 +14,7 @@ type IQueue interface {
 	GetLength() int                                  // Get queue length
 }
 
+// Queue of transaction
 type Queue struct {
 	BaseObj
 	sum_timequeue   float64 // Sum all transact queue time
@@ -23,6 +24,8 @@ type Queue struct {
 	sum_content     float64 // Sum content in queue
 }
 
+// Creates new Queue.
+// name - name of object
 func NewQueue(name string) *Queue {
 	obj := &Queue{}
 	obj.BaseObj.Init(name)
