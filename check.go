@@ -4,6 +4,10 @@
 
 package gpss
 
+import (
+	"fmt"
+)
+
 // Check is object for check parameters of transact or any another parameters
 // sumulation model. Check maybe have two results: true ir false. You can replace
 // Checking Handler with your handler.
@@ -49,26 +53,27 @@ func (obj *Check) AppendTransact(transact ITransaction) bool {
 	transact.PrintInfo()
 	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Check")
 	if !obj.HandleChecking(obj, transact) {
+		obj.cnt_false++
 		if obj.falseObj != nil {
 			if obj.falseObj.AppendTransact(transact) {
-				obj.cnt_true++
 				return true
 			} else {
-				obj.cnt_false++
 				return false
 			}
 		}
+		return false
 	}
+	obj.cnt_true++
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
-			obj.cnt_true++
 			return true
 		}
 	}
-	obj.cnt_false++
 	return false
 }
 
 func (obj *Check) PrintReport() {
+	obj.BaseObj.PrintReport()
+	fmt.Printf("Check result true %d\tCheck result false %d\n\n", obj.cnt_true, obj.cnt_false)
 	return
 }
