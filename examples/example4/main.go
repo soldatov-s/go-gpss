@@ -13,13 +13,13 @@ import (
 func main() {
 	restaurant := NewPipeline("Restaurant  Simulation", false)
 	// 1. Create the Generator and Queue of Visitors, create a Hole
-	visitors_g := NewGenerator("Visitors", 18, 6, 0, 0, nil)
+	visitors_g := NewGenerator("Visitors", 10, 5, 0, 0, nil)
 	out := NewHole("Out")
 	visitors_q := NewQueue("Visitors queue")
 	// 2. Create the Check for checking size the Queue of Visitors
 	CheckQueueHndl := func(obj *Check, transact ITransaction) bool {
-		queue := obj.GetPipeline().GetObjByName("Check size of Visitors queue").(IQueue)
-		if queue.GetLength() >= 6 {
+		queue := obj.GetPipeline().GetObjByName("Visitors queue")
+		if queue.(IQueue).GetLength() >= 6 {
 			return false
 		}
 		return true
@@ -39,7 +39,7 @@ func main() {
 	// 5. Check that we have empty table
 	CheckEmptyTableHndl := func(obj *Check, transact ITransaction) bool {
 		for i := 0; i < cnt_tables; i++ {
-			table_name := fmt.Sprintf("Table %d", i)
+			table_name := fmt.Sprintf("Table %d", i+1)
 			table := obj.GetPipeline().GetObjByName(table_name).(IFacility)
 			if table.IsEmpty() {
 				return true
@@ -62,10 +62,10 @@ func main() {
 	// 7. Create the Split for splitting Visitors order to dishes
 	// Maybe 1 or 5 dishes, includes bar
 	dishes_sp := NewSplit("Selected dishes", 3, 2, nil)
-	// 8. Check that transact is a coocked dishes. If false, this transact is
+	// 8. Create the Check that transact is a coocked dishes. If false, this transact is
 	// an order from tables, needs split to dishes
-	dish_state := Parameter{Name: "Dish state", Value: "Cooked"}
-	check_is_cooked := NewCheck("Is the dishes coked?", nil, dishes_sp, dish_state)
+	dish_state := Parameter{Name: "State", Value: "After kitchen"}
+	check_is_cooked := NewCheck("After kitchen?", nil, dishes_sp, dish_state)
 	// 9. Create the Queue and Facility for cooks and barmans. Each cook cooking
 	// only one type of dishes: meat, sushi, salats, dessert
 	cook1_q := NewQueue("Queue of orders to cook 1 (meat dishes)")
@@ -80,7 +80,7 @@ func main() {
 	barman1_f := NewFacility("Barman 1", 4, 2)
 	barman2_f := NewFacility("Barman 2", 4, 2)
 	// 10. Create the Assign that dish is cooked, includes bar
-	assign := NewAssign("The dish is cooked", dish_state)
+	assign := NewAssign("After kitchen", dish_state)
 	// 11. Create the Checks for checking that this dishes for this table
 	check_tb_number := func(obj *Check, transact ITransaction, id_table int) bool {
 		for i := 0; i < 3; i++ {
