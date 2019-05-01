@@ -15,12 +15,16 @@ type IFacility interface {
 
 type Facility struct {
 	BaseObj
-	Interval          int
-	Modificator       int
-	HoldedTransactID  int
+	Interval    int
+	Modificator int
+	// Holded transast ID
+	HoldedTransactID int
+	// For backuping Facility/Bifacility name if we includes Facility in Bifacility
 	bakupFacilityName string
-	sum_advance       float64
-	cnt_transact      float64
+	// For counting the advance of transact
+	sum_advance float64
+	// For counting the transacts that go through Bifacility
+	cnt_transact float64
 }
 
 func NewFacility(name string, interval, modificator int) *Facility {
@@ -54,7 +58,7 @@ func (obj *Facility) HandleTransact(transact ITransaction) {
 					transact.SetParameters([]Parameter{{Name: "Facility", Value: nil}})
 				}
 				obj.tb.Remove(transact)
-				obj.HoldedTransactID = 0
+				obj.HoldedTransactID = -1
 				break
 			}
 		}
@@ -95,15 +99,14 @@ func (obj *Facility) AppendTransact(transact ITransaction) bool {
 func (obj *Facility) PrintReport() {
 	obj.BaseObj.PrintReport()
 	avr := obj.sum_advance / obj.cnt_transact
-	fmt.Printf("Average advance %.2f\n", avr)
-	fmt.Printf("Average utilization %.2f%%\n", 100*avr*obj.cnt_transact/float64(obj.GetPipeline().GetSimTime()))
-	fmt.Printf("Number entries %.2f\n", obj.cnt_transact)
-	if obj.HoldedTransactID != 0 {
-		fmt.Println("Transact", obj.HoldedTransactID, "in facility")
+	fmt.Printf("Average advance %.2f \tAverage utilization %.2f%%\tNumber entries %.2f \t", avr,
+		100*avr*obj.cnt_transact/float64(obj.GetPipeline().GetSimTime()), obj.cnt_transact)
+	if obj.HoldedTransactID > 0 {
+		fmt.Print("Transact ", obj.HoldedTransactID, " in facility")
 	} else {
-		fmt.Println("Facility is empty")
+		fmt.Print("Facility is empty")
 	}
-	fmt.Println()
+	fmt.Printf("\n\n")
 }
 
 func (obj *Facility) IsEmpty() bool {

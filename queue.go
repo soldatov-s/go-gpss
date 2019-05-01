@@ -92,13 +92,10 @@ func (obj *Queue) AppendTransact(transact ITransaction) bool {
 
 func (obj *Queue) PrintReport() {
 	obj.BaseObj.PrintReport()
-	fmt.Println("Max content", obj.max_content)
-	fmt.Println("Total entries", obj.sum_Entries)
-	fmt.Println("Zero entries", obj.sum_zeroEntries)
-	fmt.Printf("Persent zero entries %.2f%%\n", 100*obj.sum_zeroEntries/obj.sum_Entries)
-	fmt.Println("Current contents", obj.tb.GetLen())
-	fmt.Printf("Average content %.2f\n", obj.sum_content/float64(obj.GetPipeline().GetSimTime()))
-	fmt.Printf("Average time/trans %.2f\n", obj.sum_timequeue/obj.sum_Entries)
+	fmt.Printf("Max content %d\tTotal entries %2.f\tZero entries %2.f\tPersent zero entries %.2f%%\n",
+		obj.max_content, obj.sum_Entries, obj.sum_zeroEntries, 100*obj.sum_zeroEntries/obj.sum_Entries)
+	fmt.Printf("Current contents %d\tAverage content %.2f\tAverage time/trans %.2f\n", obj.tb.GetLen(),
+		obj.sum_content/float64(obj.GetPipeline().GetSimTime()), obj.sum_timequeue/obj.sum_Entries)
 	if obj.sum_Entries-obj.sum_zeroEntries > 0 {
 		fmt.Printf("Average time/trans without zero entries %.2f\n", obj.sum_timequeue/(obj.sum_Entries-obj.sum_zeroEntries))
 	}

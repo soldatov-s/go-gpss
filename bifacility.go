@@ -67,15 +67,14 @@ func (obj *InFacility) AppendTransact(transact ITransaction) bool {
 func (obj *InFacility) PrintReport() {
 	obj.BaseObj.PrintReport()
 	avr := obj.sum_advance / obj.cnt_transact
-	fmt.Printf("Average advance %.2f\n", avr)
-	fmt.Printf("Average utilization %.2f\n", 100*avr*obj.cnt_transact/float64(obj.GetPipeline().GetSimTime()))
-	fmt.Printf("Number entries %.2f\n", obj.cnt_transact)
-	if obj.HoldedTransactID != 0 {
-		fmt.Println("Transact", obj.HoldedTransactID, "in facility")
+	fmt.Printf("Average advance %.2f \tAverage utilization %.2f%%\tNumber entries %.2f \t", avr,
+		100*avr*obj.cnt_transact/float64(obj.GetPipeline().GetSimTime()), obj.cnt_transact)
+	if obj.HoldedTransactID > 0 {
+		fmt.Print("Transact ", obj.HoldedTransactID, " in facility")
 	} else {
-		fmt.Println("Facility is empty")
+		fmt.Print("Facility is empty")
 	}
-	fmt.Println()
+	fmt.Printf("\n\n")
 }
 
 func (obj *InFacility) IsEmpty() bool {
