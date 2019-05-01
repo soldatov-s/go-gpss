@@ -14,15 +14,17 @@ import (
 )
 
 type IPipeline interface {
-	Append(obj IBaseObj, src ...IBaseObj) // Append  object to pipeline
-	Delete(obj IBaseObj)                  // Delete object from pipeline
-	Start(value int)                      // Start simulation
-	Stop()                                // Stop simulation
-	GetSimTime() int                      // Get Simulation time
-	GetModelTime() int                    // Get current model time
-	GetObjByName(name string) IBaseObj    // Get object from pipeline by name
-	PrintReport()                         // Print report
-	GetLogger() ILogger                   // Get logger
+	Append(obj IBaseObj, src ...IBaseObj)           // Append  object to pipeline
+	AppendMultiple(obj []IBaseObj, dst ...IBaseObj) // Append  multiple objects to pipeline
+	AppendISlice(obj IBaseObj, dst []IBaseObj)      // Append slice IBaseObj
+	Delete(obj IBaseObj)                            // Delete object from pipeline
+	Start(value int)                                // Start simulation
+	Stop()                                          // Stop simulation
+	GetSimTime() int                                // Get Simulation time
+	GetModelTime() int                              // Get current model time
+	GetObjByName(name string) IBaseObj              // Get object from pipeline by name
+	PrintReport()                                   // Print report
+	GetLogger() ILogger                             // Get logger
 }
 
 type Pipeline struct {
@@ -52,6 +54,24 @@ func NewPipeline(name string, verbose bool) *Pipeline {
 // Append object to pipeline. Src is multiple sources of transact for appended
 // object.
 func (p *Pipeline) Append(obj IBaseObj, dst ...IBaseObj) {
+	obj.SetDst(dst)
+	obj.SetPipeline(p)
+	obj.SetID(len(p.objects))
+	p.objects[obj.GetName()] = obj
+}
+
+// Append multiple objects to pipeline.  Src is multiple sources of transact
+// for appended object.
+func (p *Pipeline) AppendMultiple(obj []IBaseObj, dst ...IBaseObj) {
+	for _, o := range obj {
+		o.SetDst(dst)
+		o.SetPipeline(p)
+		o.SetID(len(p.objects))
+		p.objects[o.GetName()] = o
+	}
+}
+
+func (p *Pipeline) AppendISlice(obj IBaseObj, dst []IBaseObj) {
 	obj.SetDst(dst)
 	obj.SetPipeline(p)
 	obj.SetID(len(p.objects))
