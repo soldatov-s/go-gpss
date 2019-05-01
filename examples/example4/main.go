@@ -11,85 +11,165 @@ import (
 )
 
 func main() {
-	// TODO: adds all object from pic04.jpg
 	restaurant := NewPipeline("Restaurant  Simulation", false)
+	// 1. Create the Generator and Queue of Visitors, create a Hole
 	visitors_g := NewGenerator("Visitors", 18, 6, 0, 0, nil)
 	out := NewHole("Out")
 	visitors_q := NewQueue("Visitors queue")
+	// 2. Create the Check for checking size the Queue of Visitors
 	CheckQueueHndl := func(obj *Check, transact ITransaction) bool {
-		var queue IQueue
-		queue = obj.GetPipeline().GetObjByName("Check size of Visitors queue").(IQueue)
+		queue := obj.GetPipeline().GetObjByName("Check size of Visitors queue").(IQueue)
 		if queue.GetLength() >= 6 {
 			return false
-		} else {
-			return true
 		}
+		return true
 	}
 	check_queue := NewCheck("Check size of Visitors queue", CheckQueueHndl, out)
+	// 3. Create are Hostes
 	hostes1_f := NewFacility("Hostes 1", 5, 3)
 	hostes2_f := NewFacility("Hostes 2", 5, 3)
-	tb1_in, tb1_out := NewBifacility("Table 1")
-	tb2_in, tb2_out := NewBifacility("Table 2")
-	tb3_in, tb3_out := NewBifacility("Table 3")
-	tb4_in, tb4_out := NewBifacility("Table 4")
-	tb5_in, tb5_out := NewBifacility("Table 5")
-	tb6_in, tb6_out := NewBifacility("Table 6")
-	tb7_in, tb7_out := NewBifacility("Table 7")
-	tb8_in, tb8_out := NewBifacility("Table 8")
+	// 4. Create are Tables
+	cnt_tables := 24
+	tables_in := make([]IBaseObj, cnt_tables)
+	tables_out := make([]IBaseObj, cnt_tables)
+	for i := 0; i < cnt_tables; i++ {
+		table_name := fmt.Sprintf("Table %d", i+1)
+		tables_in[i], tables_out[i] = NewBifacility(table_name)
+	}
+	// 5. Check that we have empty table
+	CheckEmptyTableHndl := func(obj *Check, transact ITransaction) bool {
+		for i := 0; i < cnt_tables; i++ {
+			table_name := fmt.Sprintf("Table %d", i)
+			table := obj.GetPipeline().GetObjByName(table_name).(IFacility)
+			if table.IsEmpty() {
+				return true
+			}
+		}
+		return false
+	}
+	check_empty_table := NewCheck("Check empty table", CheckEmptyTableHndl, nil)
+	// 6. Create the Queues and Facilities for waiters
+	cnt_waiters := 8
+	waiters_queue := make([]IBaseObj, cnt_waiters)
+	waiters_facility := make([]IBaseObj, cnt_waiters)
+	for i := 0; i < cnt_waiters; i++ {
+		queue_name := fmt.Sprintf("Queue waiter %d", i+1)
+		waiters_queue[i] = NewQueue(queue_name)
+		facility_name := fmt.Sprintf("Waiter %d", i+1)
+		waiters_facility[i] = NewFacility(facility_name, 5, 3)
+
+	}
+	// 7. Create the Split for splitting Visitors order to dishes
+	// Maybe 1 or 5 dishes, includes bar
 	dishes_sp := NewSplit("Selected dishes", 3, 2, nil)
+	// 8. Check that transact is a coocked dishes. If false, this transact is
+	// an order from tables, needs split to dishes
+	dish_state := Parameter{Name: "Dish state", Value: "Cooked"}
+	check_is_cooked := NewCheck("Is the dishes coked?", nil, dishes_sp, dish_state)
+	// 9. Create the Queue and Facility for cooks and barmans. Each cook cooking
+	// only one type of dishes: meat, sushi, salats, dessert
 	cook1_q := NewQueue("Queue of orders to cook 1 (meat dishes)")
 	cook2_q := NewQueue("Queue of orders to cook 2 (fish dishes)")
 	cook3_q := NewQueue("Queue of orders to cook 3 (salats)")
 	cook4_q := NewQueue("Queue of orders to cook 4 (dessert)")
 	bar_q := NewQueue("Queue of orders to bar")
 	cook1_f := NewFacility("Cook 1 (meat dishes)", 15, 5)
-	cook2_f := NewFacility("Cook 2 (fish dishes)", 15, 5)
-	cook3_f := NewFacility("Cook 3 (salats)", 15, 5)
-	cook4_f := NewFacility("Cook 4 (dessert)", 15, 5)
-	bar_f := NewFacility("Bar", 15, 5)
-	aggregate := NewAggregate("Aggregate orders")
+	cook2_f := NewFacility("Cook 2 (sushi)", 7, 3)
+	cook3_f := NewFacility("Cook 3 (salats)", 10, 4)
+	cook4_f := NewFacility("Cook 4 (dessert)", 20, 5)
+	barman1_f := NewFacility("Barman 1", 4, 2)
+	barman2_f := NewFacility("Barman 2", 4, 2)
+	// 10. Create the Assign that dish is cooked, includes bar
+	assign := NewAssign("The dish is cooked", dish_state)
+	// 11. Create the Checks for checking that this dishes for this table
+	check_tb_number := func(obj *Check, transact ITransaction, id_table int) bool {
+		for i := 0; i < 3; i++ {
+			table_name := fmt.Sprintf("Table %d", i+id_table)
+			if transact.GetParameterByName("Facility").(string) == table_name {
+				return true
+			}
+		}
+		return false
+	}
+	check_tb_1_Hndl := func(obj *Check, transact ITransaction) bool {
+		return check_tb_number(obj, transact, 1)
+	}
+	check_tb_4_Hndl := func(obj *Check, transact ITransaction) bool {
+		return check_tb_number(obj, transact, 4)
+	}
+	check_tb_7_Hndl := func(obj *Check, transact ITransaction) bool {
+		return check_tb_number(obj, transact, 7)
+	}
+	check_tb_10_Hndl := func(obj *Check, transact ITransaction) bool {
+		return check_tb_number(obj, transact, 10)
+	}
+	check_tb_13_Hndl := func(obj *Check, transact ITransaction) bool {
+		return check_tb_number(obj, transact, 13)
+	}
+	check_tb_16_Hndl := func(obj *Check, transact ITransaction) bool {
+		return check_tb_number(obj, transact, 16)
+	}
+	check_tb_19_Hndl := func(obj *Check, transact ITransaction) bool {
+		return check_tb_number(obj, transact, 19)
+	}
+	check_tb_22_Hndl := func(obj *Check, transact ITransaction) bool {
+		return check_tb_number(obj, transact, 22)
+	}
+	check_tb := make([]IBaseObj, cnt_waiters)
+	check_tb_hndls := []HandleCheckingFunc{check_tb_1_Hndl, check_tb_4_Hndl, check_tb_7_Hndl,
+		check_tb_10_Hndl, check_tb_13_Hndl, check_tb_16_Hndl, check_tb_19_Hndl,
+		check_tb_22_Hndl}
+	for i := 0; i < cnt_waiters; i++ {
+		check_name := fmt.Sprintf("Is it order for table %d, %d, %d?", i+1, i+2, i+3)
+		check_tb[i] = NewCheck(check_name, check_tb_hndls[i], nil)
+	}
+	// 12. Create the Advance for eating simulation
 	visitors_eating := NewAdvance("Visitors eating", 45, 10)
+	// 13. Create the Aggregate for aggregate dishes to order
+	aggregate := NewAggregate("Aggregate dishes")
+	// 14. Create the Advance for payment simulation
 	visitors_pays := NewAdvance("Visitors pays", 5, 2)
-
+	// 15. Append objects to a pipeline
 	restaurant.Append(visitors_g, check_queue)
 	restaurant.Append(check_queue, visitors_q)
-	restaurant.Append(visitors_q, hostes1_f, hostes2_f)
-	restaurant.Append(hostes1_f, tb1_in, tb2_in, tb3_in, tb4_in, tb5_in,
-		tb7_in, tb8_in)
-	restaurant.Append(hostes2_f, tb1_in, tb2_in, tb3_in, tb4_in, tb5_in,
-		tb7_in, tb8_in)
-	restaurant.Append(tb1_in, dishes_sp)
-	restaurant.Append(tb2_in, dishes_sp)
-	restaurant.Append(tb3_in, dishes_sp)
-	restaurant.Append(tb4_in, dishes_sp)
-	restaurant.Append(tb5_in, dishes_sp)
-	restaurant.Append(tb6_in, dishes_sp)
-	restaurant.Append(tb7_in, dishes_sp)
-	restaurant.Append(tb8_in, dishes_sp)
+	restaurant.Append(visitors_q, check_empty_table)
+	restaurant.Append(check_empty_table, hostes1_f, hostes2_f)
+	restaurant.AppendISlice(hostes1_f, tables_in)
+	restaurant.AppendISlice(hostes2_f, tables_in)
+
+	for i := 0; i < cnt_waiters; i++ {
+		for j := 0; j < 3; j++ {
+			restaurant.Append(tables_in[j+i*3], waiters_queue[i])
+		}
+	}
+
+	for i := 0; i < cnt_waiters; i++ {
+		restaurant.Append(waiters_queue[i], waiters_facility[i])
+	}
+
+	restaurant.AppendMultiple(waiters_facility, check_is_cooked)
 	restaurant.Append(dishes_sp, cook1_q, cook2_q, cook3_q, cook4_q, bar_q)
 	restaurant.Append(cook1_q, cook1_f)
 	restaurant.Append(cook2_q, cook2_f)
 	restaurant.Append(cook3_q, cook3_f)
 	restaurant.Append(cook4_q, cook4_f)
-	restaurant.Append(bar_q, bar_f)
-	restaurant.Append(cook1_f, aggregate)
-	restaurant.Append(cook2_f, aggregate)
-	restaurant.Append(cook3_f, aggregate)
-	restaurant.Append(cook4_f, aggregate)
-	restaurant.Append(cook4_f, aggregate)
-	restaurant.Append(bar_f, aggregate)
-	restaurant.Append(aggregate, visitors_eating)
-	restaurant.Append(visitors_eating, visitors_pays)
-	restaurant.Append(visitors_pays, tb1_out, tb2_out, tb3_out, tb4_out, tb5_out,
-		tb6_out, tb7_out, tb8_out)
-	restaurant.Append(tb1_out, out)
-	restaurant.Append(tb2_out, out)
-	restaurant.Append(tb3_out, out)
-	restaurant.Append(tb4_out, out)
-	restaurant.Append(tb5_out, out)
-	restaurant.Append(tb6_out, out)
-	restaurant.Append(tb7_out, out)
-	restaurant.Append(tb8_out, out)
+	restaurant.Append(bar_q, barman1_f, barman2_f)
+	restaurant.Append(cook1_f, assign)
+	restaurant.Append(cook2_f, assign)
+	restaurant.Append(cook3_f, assign)
+	restaurant.Append(cook4_f, assign)
+	restaurant.Append(cook4_f, assign)
+	restaurant.Append(barman1_f, assign)
+	restaurant.Append(barman2_f, assign)
+	restaurant.AppendISlice(assign, check_tb)
+	for i := 0; i < cnt_waiters; i++ {
+		restaurant.Append(check_tb[i], waiters_queue[i])
+	}
+	restaurant.Append(check_is_cooked, visitors_eating)
+	restaurant.Append(visitors_eating, aggregate)
+	restaurant.Append(aggregate, visitors_pays)
+	restaurant.AppendISlice(visitors_pays, tables_out)
+	restaurant.AppendMultiple(tables_out, out)
 	restaurant.Append(out)
 	restaurant.Start(480)
 
