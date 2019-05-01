@@ -48,20 +48,20 @@ func (obj *Facility) HandleTransact(transact ITransaction) {
 	transact.DecTiсks()
 	transact.PrintInfo()
 	if transact.IsTheEnd() {
+		if obj.bakupFacilityName != "" {
+			transact.SetParameters([]Parameter{{Name: "Facility",
+				Value: obj.bakupFacilityName}})
+		} else {
+			transact.SetParameters([]Parameter{{Name: "Facility", Value: nil}})
+		}
 		for _, v := range obj.GetDst() {
 			if v.AppendTransact(transact) {
-				transact.SetParameters([]Parameter{{Name: "Facility", Value: nil}})
-				if obj.bakupFacilityName != "" {
-					transact.SetParameters([]Parameter{{Name: "Facility",
-						Value: obj.bakupFacilityName}})
-				} else {
-					transact.SetParameters([]Parameter{{Name: "Facility", Value: nil}})
-				}
 				obj.tb.Remove(transact)
 				obj.HoldedTransactID = -1
-				break
+				return
 			}
 		}
+		transact.SetParameters([]Parameter{{Name: "Facility", Value: obj.name}})
 	}
 }
 func (obj *Facility) HandleTransacts(wg *sync.WaitGroup) {
@@ -88,9 +88,11 @@ func (obj *Facility) AppendTransact(transact ITransaction) bool {
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)
 	transact.SetTiсks(advance)
+	if transact.GetParameterByName("Facility") != nil {
+		obj.bakupFacilityName = transact.GetParameterByName("Facility").(string)
+	}
 	transact.SetParameters([]Parameter{{Name: "Facility", Value: obj.name}})
 	obj.HoldedTransactID = transact.GetId()
-	obj.bakupFacilityName = transact.GetParameterByName("Facility").(string)
 	obj.tb.Push(transact)
 	obj.cnt_transact++
 	return true

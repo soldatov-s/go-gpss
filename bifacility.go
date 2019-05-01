@@ -42,7 +42,7 @@ func (obj *InFacility) HandleTransact(transact ITransaction) {
 	transact.PrintInfo()
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
-			break
+			return
 		}
 	}
 }
@@ -54,9 +54,11 @@ func (obj *InFacility) AppendTransact(transact ITransaction) bool {
 	}
 	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Facility")
 	transact.SetHolderName(obj.name)
+	if transact.GetParameterByName("Facility") != nil {
+		obj.bakupFacilityName = transact.GetParameterByName("Facility").(string)
+	}
 	transact.SetParameters([]Parameter{{Name: "Facility", Value: obj.name}})
 	obj.HoldedTransactID = transact.GetId()
-	obj.bakupFacilityName = transact.GetParameterByName("Facility").(string)
 	obj.tb.Push(transact)
 	obj.cnt_transact++
 	obj.timeOfInput = obj.GetPipeline().GetModelTime()
@@ -87,19 +89,23 @@ func (obj *InFacility) IsEmpty() bool {
 
 func (obj *OutFacility) HandleTransact(transact ITransaction) {
 	transact.PrintInfo()
+	if obj.inFacility.bakupFacilityName != "" {
+		transact.SetParameters([]Parameter{{Name: "Facility",
+			Value: obj.inFacility.bakupFacilityName}})
+	} else {
+		transact.SetParameters([]Parameter{{Name: "Facility", Value: nil}})
+	}
+
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
 			advance := obj.GetPipeline().GetModelTime() - obj.inFacility.timeOfInput
 			obj.inFacility.sum_advance += float64(advance)
-			if obj.inFacility.bakupFacilityName != "" {
-				transact.SetParameters([]Parameter{{Name: "Facility",
-					Value: obj.inFacility.bakupFacilityName}})
-			} else {
-				transact.SetParameters([]Parameter{{Name: "Facility", Value: nil}})
-			}
 			obj.tb.Remove(transact)
+			obj.inFacility.HoldedTransactID = -1
+			return
 		}
 	}
+	transact.SetParameters([]Parameter{{Name: "Facility", Value: obj.name}})
 }
 
 func (obj *OutFacility) AppendTransact(transact ITransaction) bool {
