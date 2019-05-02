@@ -83,46 +83,21 @@ func main() {
 	assign := NewAssign("After kitchen", dish_state)
 	// 11. Create the Checks for checking that this dishes for this table
 	// id_table is a number of first table in group which served by waiter
-	check_tb_number := func(obj *Check, transact ITransaction, id_table int) bool {
-		for i := 0; i < 3; i++ {
-			table_name := fmt.Sprintf("Table %d", i+id_table)
-			if transact.GetParameterByName("Facility").(string) == table_name {
-				return true
+	check_tb_number := func(id_table int) HandleCheckingFunc {
+		return func(obj *Check, transact ITransaction) bool {
+			for i := 0; i < 3; i++ {
+				table_name := fmt.Sprintf("Table %d", i+id_table)
+				if transact.GetParameterByName("Facility").(string) == table_name {
+					return true
+				}
 			}
+			return false
 		}
-		return false
-	}
-	check_tb_1_Hndl := func(obj *Check, transact ITransaction) bool {
-		return check_tb_number(obj, transact, 1)
-	}
-	check_tb_4_Hndl := func(obj *Check, transact ITransaction) bool {
-		return check_tb_number(obj, transact, 4)
-	}
-	check_tb_7_Hndl := func(obj *Check, transact ITransaction) bool {
-		return check_tb_number(obj, transact, 7)
-	}
-	check_tb_10_Hndl := func(obj *Check, transact ITransaction) bool {
-		return check_tb_number(obj, transact, 10)
-	}
-	check_tb_13_Hndl := func(obj *Check, transact ITransaction) bool {
-		return check_tb_number(obj, transact, 13)
-	}
-	check_tb_16_Hndl := func(obj *Check, transact ITransaction) bool {
-		return check_tb_number(obj, transact, 16)
-	}
-	check_tb_19_Hndl := func(obj *Check, transact ITransaction) bool {
-		return check_tb_number(obj, transact, 19)
-	}
-	check_tb_22_Hndl := func(obj *Check, transact ITransaction) bool {
-		return check_tb_number(obj, transact, 22)
 	}
 	check_tb := make([]IBaseObj, cnt_waiters)
-	check_tb_hndls := []HandleCheckingFunc{check_tb_1_Hndl, check_tb_4_Hndl, check_tb_7_Hndl,
-		check_tb_10_Hndl, check_tb_13_Hndl, check_tb_16_Hndl, check_tb_19_Hndl,
-		check_tb_22_Hndl}
 	for i := 0; i < cnt_waiters; i++ {
 		check_name := fmt.Sprintf("Is it order for table %d, %d, %d?", i*3+1, i*3+2, i*3+3)
-		check_tb[i] = NewCheck(check_name, check_tb_hndls[i], nil)
+		check_tb[i] = NewCheck(check_name, check_tb_number(i*3+1), nil)
 	}
 	// 12. Create the Advance for eating simulation
 	visitors_eating := NewAdvance("Visitors eating", 45, 10)
