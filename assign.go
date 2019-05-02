@@ -4,18 +4,23 @@
 
 package gpss
 
-// Assign set a value of parameter of transact
+// Modify Transaction Parameters of Active Transaction
 type Assign struct {
 	BaseObj
+	// Parameters for modification
 	parameters []Parameter
 }
 
+// Parameter for modification
 type Parameter struct {
-	Name  string
-	Value interface{}
+	Name  string      // Name of parameter
+	Value interface{} // Value of parameter
 }
 
-// Pass name of Assign and array of parameters in form
+// Creates new Assign.
+// name - name of object
+// parameters - parameters for assign.
+// Example:
 // Parameter{name: "param1_name", value: param1_value},
 // Parameter{name: "param2_name", value: param2_value} ...
 func NewAssign(name string, parameters ...Parameter) *Assign {

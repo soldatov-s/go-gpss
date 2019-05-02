@@ -9,10 +9,6 @@ import (
 	"sync"
 )
 
-// IHole implements Hole interface
-type IHole interface {
-}
-
 // Hole in which fall in transactions
 type Hole struct {
 	BaseObj
@@ -21,7 +17,8 @@ type Hole struct {
 	cnt_transact float64 // How much killed
 }
 
-// Constructor of Hole , pass only name Hole
+// Creates new Hole
+// name - name of object
 func NewHole(name string) *Hole {
 	obj := &Hole{}
 	obj.BaseObj.Init(name)

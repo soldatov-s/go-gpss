@@ -8,10 +8,12 @@ import (
 	"fmt"
 )
 
+// Counts all Transactions which pass through the block, it present in two parts,
+// first for increment Count value, second for decrement Count value
 type Count struct {
 	BaseObj
-	value   *int
-	inc_dec int
+	value   *int // Value of counter
+	inc_dec int  // Value of increment/decrement
 }
 
 // Creates two objects, for incremet and decrement. After enter transact in

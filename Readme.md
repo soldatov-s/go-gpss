@@ -13,17 +13,17 @@ It help quick and easy build model for simulation modeling
 It include today few blocks:
 - Generator - sequentially generates Transactions
 - Advance - delays the progress of a Transaction for a specified amount of simulated time
-- Queue - Queue of transaction
+- Queue - Queue of Transactions
 - Facility - facility entity with Advance in it
-- Bifacility - as Facility, but without Advance in it and present in two parts, first for takes ownership of a Facility, second for release ownership of a Facility
+- Bifacility - as Facility, but without Advance in it, it present in two parts, first for takes ownership of a Facility, second for release ownership of a Facility
 - Split - creates assembly set of sub-transactions of a Transaction
 - Aggregate - aggregate multiple sub-transactions in Transaction
 - Check - compares parameters of Transaction or any another parameters of simulation model, and controls the destination of the Active Transaction based on the result of the comparison
-- Assign - sets parameters of Active Transaction 
-- Count - counts all Transactions which pass through the block
-- Hole - Hole in which fall in transactions
+- Assign - modify Transaction Parameters of Active Transaction 
+- Count - counts all Transactions which pass through the block, it present in two parts, first for increment Count value, second for decrement Count value
+- Hole - Hole in which fall in Transactions
 
-Active Transaction is a Transaction in current block.
+Active Transaction is a Transaction in current block.  
 All blocks need to add in Pipeline and than start simulation. For generate random 
 values used pseudo-random generation function from math/rand. After simulation 
 you can print report about simulation.
