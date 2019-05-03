@@ -14,6 +14,7 @@ func main() {
 	restaurant := NewPipeline("Restaurant  Simulation", false)
 	// 1. Create the Generator and Queue of Visitors, create a Hole
 	visitors_g := NewGenerator("Visitors", 10, 5, 0, 0, nil)
+	// visitors_g := NewGenerator("Visitors", 0, 0, 0, 1, nil)
 	out := NewHole("Out")
 	visitors_q := NewQueue("Visitors queue")
 	// 2. Create the Check for checking size the Queue of Visitors
