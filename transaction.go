@@ -5,6 +5,7 @@
 package gpss
 
 type ITransaction interface {
+	SetID(int)                                  // Set transact ID
 	GetId() int                                 // Get transact ID
 	GetLife() int                               // Get transact time of life, rip - born
 	SetTiсks(interval int)                      // Set advance ticks
@@ -20,8 +21,8 @@ type ITransaction interface {
 	Kill()                                      // Kill transact
 	IsKilled() bool                             // Is transact killed?
 	GetPipeline() IPipeline                     // Get pipeline for object
-	SetParts(part, parts int)                   // Set parts info
-	GetParts() (int, int)                       // Get parts info
+	SetParts(part, parts, parent_id int)        // Set parts info
+	GetParts() (int, int, int)                  // Get parts info
 	SetParameters(parameters []Parameter)       // Set parameters to transuct
 	GetAllParameters() map[string]interface{}   // Get all parameters of trunsact
 	GetParameterByName(name string) interface{} // Get parameter of trunsuct by name
@@ -31,8 +32,9 @@ type ITransaction interface {
 
 // Struct for splitting
 type Parts struct {
-	part  int // Part id
-	parts int // Number of parts
+	part      int // Part id
+	parts     int // Number of parts
+	parent_id int // ID of parent transaction, for splitting
 }
 
 type Transaction struct {
@@ -46,7 +48,7 @@ type Transaction struct {
 	pipe       IPipeline // Pipeline
 	parts      Parts     /* For splitting. Default is "0/0". After splitting
 	may be "1/6" - first part of six parts or "5/6" - fifth part of six parts */
-	parameters map[string]interface{}
+	parameters map[string]interface{} // Parameters of transaction
 }
 
 func NewTransaction(id int, pipe IPipeline) *Transaction {
@@ -54,7 +56,7 @@ func NewTransaction(id int, pipe IPipeline) *Transaction {
 	t.id = id
 	t.pipe = pipe
 	t.born = pipe.GetModelTime()
-	t.parts = Parts{0, 0}
+	t.parts = Parts{0, 0, 0}
 	t.parameters = make(map[string]interface{})
 	return t
 }
@@ -75,6 +77,10 @@ func (t *Transaction) Copy() ITransaction {
 		copy_t.parameters[key] = value
 	}
 	return copy_t
+}
+
+func (t *Transaction) SetID(id int) {
+	t.id = id
 }
 
 func (t *Transaction) GetId() int {
@@ -152,12 +158,12 @@ func (t *Transaction) ResetQueueTime() {
 	t.timequeue = 0
 }
 
-func (t *Transaction) GetParts() (int, int) {
-	return t.parts.part, t.parts.parts
+func (t *Transaction) GetParts() (int, int, int) {
+	return t.parts.part, t.parts.parts, t.parts.parent_id
 }
 
-func (t *Transaction) SetParts(part, parts int) {
-	t.parts = Parts{part, parts}
+func (t *Transaction) SetParts(part, parts, parent_id int) {
+	t.parts = Parts{part, parts, parent_id}
 }
 
 func (t *Transaction) SetParameters(parameters []Parameter) {
