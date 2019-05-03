@@ -112,6 +112,10 @@ func (obj *Facility) PrintReport() {
 		100*avr*obj.cnt_transact/float64(obj.GetPipeline().GetSimTime()), obj.cnt_transact)
 	if obj.HoldedTransactID > 0 {
 		fmt.Print("Transact ", obj.HoldedTransactID, " in facility")
+		part, _, parent_id := obj.tb.GetItem(obj.HoldedTransactID).transact.GetParts()
+		if parent_id > 0 {
+			fmt.Print(", parent transact ", parent_id, " part ", part)
+		}
 	} else {
 		fmt.Print("Facility is empty")
 	}
