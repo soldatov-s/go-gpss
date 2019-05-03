@@ -40,7 +40,9 @@ func Splitting(obj *Split, transact ITransaction) {
 		// Default case, cntsplit equal to length of GetDst()
 		for i, v := range obj.GetDst() {
 			tr := transact.Copy()
-			tr.SetParts(i+1, cntsplit)
+			parent_id := tr.GetId()
+			tr.SetID(obj.GetPipeline().GetIDNewTransaction())
+			tr.SetParts(i+1, cntsplit, parent_id)
 			v.AppendTransact(tr) // Take in mind that after Split must be only Queues
 		}
 	} else {
@@ -52,7 +54,9 @@ func Splitting(obj *Split, transact ITransaction) {
 			for _, v := range obj.GetDst() {
 				if GetRandomBool() && !dsts[part_id-1] {
 					tr := transact.Copy()
-					tr.SetParts(part_id, cntsplit)
+					parent_id := tr.GetId()
+					tr.SetID(obj.GetPipeline().GetIDNewTransaction())
+					tr.SetParts(part_id, cntsplit, parent_id)
 					v.AppendTransact(tr)
 					dsts[part_id-1] = true
 					part_id++

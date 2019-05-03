@@ -23,6 +23,7 @@ type IPipeline interface {
 	GetSimTime() int                                // Get Simulation time
 	GetModelTime() int                              // Get current model time
 	GetObjByName(name string) IBaseObj              // Get object from pipeline by name
+	GetIDNewTransaction() int                       // Get ID for new transaction
 	PrintReport()                                   // Print report
 	GetLogger() ILogger                             // Get logger
 }
@@ -34,6 +35,7 @@ type Pipeline struct {
 	Done      chan struct{}       // Chan for done
 	simTime   int                 // Simulation time
 	logger    *Logger             // Pipeline logger
+	id        int                 // ID of new transaction
 }
 
 // Create new Pipeline
@@ -43,6 +45,7 @@ func NewPipeline(name string, verbose bool) *Pipeline {
 	p.name = name
 	p.Done = make(chan struct{})
 	p.modelTime = 0
+	p.id = 0
 	if !verbose {
 		p.logger = NewLogger(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
 	} else {
@@ -194,4 +197,9 @@ func (s *objectSorter) Swap(i, j int) {
 // Less is part of sort.Interface. It is implemented by calling the "by" closure in the sorter.
 func (s *objectSorter) Less(i, j int) bool {
 	return s.by(s.objects[i], s.objects[j])
+}
+
+func (p *Pipeline) GetIDNewTransaction() int {
+	p.id++
+	return p.id
 }
