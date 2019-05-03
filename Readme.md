@@ -331,6 +331,7 @@ This example will be use Assign and Check blocks.
   <br /> 
   <b>Pic 04 - Restaurant simulation</b>
 </p>
+
 Full source [example4](examples/example4/main.go).  
 
 # Fixes
