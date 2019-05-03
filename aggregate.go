@@ -34,40 +34,37 @@ func (obj *Aggregate) SendToDst(transact ITransaction) bool {
 	return false
 }
 
-func (obj *Aggregate) HandleTransact(transact ITransaction) {
+func (obj *Aggregate) HandleTransact(transact ITransaction) bool {
 	transact.PrintInfo()
-	part, parts := transact.GetParts()
-	if parts == 0 {
-		if obj.SendToDst(transact) {
-			return
-		}
+	_, parts, parent_id := transact.GetParts()
+	if parent_id == 0 {
+		return obj.SendToDst(transact)
 	}
-	holded_tr := obj.tb.GetItem(transact.GetId())
+	holded_tr := obj.tb.GetItem(parent_id)
 	if holded_tr == nil {
-		transact.SetParts(0, parts-1)
+		tr := transact.Copy()
+		tr.SetID(parent_id)
+		tr.SetParts(0, parts-1, 0)
 		if parts-1 == 0 {
-			if obj.SendToDst(transact) {
-				return
-			}
+			return obj.SendToDst(tr)
 		}
-		obj.tb.Push(transact)
-		return
+		obj.tb.Push(tr)
 	} else {
-		holded_part, holded_parts := holded_tr.transact.GetParts()
-		if holded_part != part {
-			holded_tr.transact.SetParts(0, holded_parts-1)
-			if holded_tr.transact.GetAdvanceTime() < transact.GetAdvanceTime() {
-				holded_tr.transact.SetTiсks(transact.GetAdvanceTime())
-				holded_tr.transact.SetTiсks(0)
-			}
+		// Update Advance
+		if holded_tr.transact.GetAdvanceTime() < transact.GetAdvanceTime() {
+			holded_tr.transact.SetTiсks(transact.GetAdvanceTime())
+			holded_tr.transact.SetTiсks(0)
 		}
+		_, holded_parts, _ := holded_tr.transact.GetParts()
 		if holded_parts-1 == 0 {
-			if obj.SendToDst(transact) {
-				return
-			}
+			// We aggregate all parts
+			holded_tr.transact.SetParts(0, 0, 0)
+			return obj.SendToDst(holded_tr.transact)
+		} else {
+			holded_tr.transact.SetParts(0, holded_parts-1, 0)
 		}
-
 	}
+	return true
 }
 
 func (obj *Aggregate) HandleTransacts(wg *sync.WaitGroup) {
@@ -76,10 +73,10 @@ func (obj *Aggregate) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Aggregate) AppendTransact(transact ITransaction) bool {
-	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Advance")
+	fmt.Println("Append transact ", transact.GetId(), " to Aggregate")
+	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Aggregate")
 	transact.SetHolderName(obj.name)
-	obj.HandleTransact(transact)
-	return true
+	return obj.HandleTransact(transact)
 }
 
 func (obj *Aggregate) PrintReport() {
@@ -88,7 +85,7 @@ func (obj *Aggregate) PrintReport() {
 	if obj.tb.GetLen() > 0 {
 		fmt.Println("Await end aggregate:")
 		for _, item := range obj.tb.GetItems() {
-			_, parts := item.transact.GetParts()
+			_, parts, _ := item.transact.GetParts()
 			fmt.Printf("transact %d wait %d parts\n", item.transact.GetId(), parts)
 		}
 	}
