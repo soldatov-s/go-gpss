@@ -73,7 +73,6 @@ func (obj *Aggregate) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Aggregate) AppendTransact(transact ITransaction) bool {
-	fmt.Println("Append transact ", transact.GetId(), " to Aggregate")
 	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Aggregate")
 	transact.SetHolderName(obj.name)
 	return obj.HandleTransact(transact)
