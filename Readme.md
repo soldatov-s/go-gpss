@@ -327,13 +327,11 @@ How many people can be served in a restaurant? What will be the employment of
 the staff?
 This example will be use Assign and Check blocks.  
 <p align="center">
-  <a href="/images/pic04.jpg">
   <img src="/images/pic04.jpg" width="400" height="650" alt="Pic03"/>
-  </a>
   <br /> 
   <b>Pic 04 - Restaurant simulation</b>
 </p>
-Full source [example4](examples/example4/main.go).
+Full source [example4](examples/example4/main.go).  
 
 # Fixes
 - Fixed report, ordered by id in Pipeline
