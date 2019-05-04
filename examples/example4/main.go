@@ -26,9 +26,9 @@ func main() {
 		return true
 	}
 	check_queue := NewCheck("Check size of Visitors queue", CheckQueueHndl, out)
-	// 3. Create are Hostes
-	hostes1_f := NewFacility("Hostes 1", 5, 3)
-	hostes2_f := NewFacility("Hostes 2", 5, 3)
+	// 3. Create are Hostess
+	hostes1_f := NewFacility("hostess 1", 5, 3)
+	hostes2_f := NewFacility("Hostess 2", 5, 3)
 	// 4. Create are Tables
 	cnt_tables := 24
 	tables_in := make([]IBaseObj, cnt_tables)
