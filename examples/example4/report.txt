@@ -1,0 +1,256 @@
+Pipeline name " Restaurant  Simulation "
+Simulation time 480
+Object name " Visitors "
+Generated 52
+
+Object name " Check size of Visitors queue "
+Check result true 52	Check result false 0
+
+Object name " Visitors queue "
+Max content 0	Total entries 52	Zero entries 52	Persent zero entries 100.00%
+Current contents 0	Average content 0.00	Average time/trans 0.00
+
+Object name " Check empty table "
+Check result true 52	Check result false 0
+
+Object name " Hostes 1 "
+Average advance 5.82 	Average utilization 53.33%	Number entries 44.00 	Facility is empty
+
+Object name " Hostes 2 "
+Average advance 5.62 	Average utilization 9.38%	Number entries 8.00 	Transact 205 in facility
+
+Object name " Table 1 "
+Average advance 78.00 	Average utilization 48.75%	Number entries 3.00 	Transact 110 in facility
+
+Object name " Table 2 "
+Average advance 89.50 	Average utilization 74.58%	Number entries 4.00 	Transact 172 in facility
+
+Object name " Table 3 "
+Average advance 106.67 	Average utilization 66.67%	Number entries 3.00 	Transact 148 in facility
+
+Object name " Table 4 "
+Average advance 62.75 	Average utilization 52.29%	Number entries 4.00 	Transact 142 in facility
+
+Object name " Table 5 "
+Average advance 89.00 	Average utilization 55.62%	Number entries 3.00 	Transact 143 in facility
+
+Object name " Table 6 "
+Average advance 108.00 	Average utilization 67.50%	Number entries 3.00 	Transact 178 in facility
+
+Object name " Table 7 "
+Average advance 104.67 	Average utilization 65.42%	Number entries 3.00 	Transact 184 in facility
+
+Object name " Table 8 "
+Average advance 70.75 	Average utilization 58.96%	Number entries 4.00 	Transact 158 in facility
+
+Object name " Table 9 "
+Average advance 117.00 	Average utilization 73.12%	Number entries 3.00 	Transact 203 in facility
+
+Object name " Table 10 "
+Average advance 78.00 	Average utilization 32.50%	Number entries 2.00 	Transact 118 in facility
+
+Object name " Table 11 "
+Average advance 84.50 	Average utilization 35.21%	Number entries 2.00 	Transact 133 in facility
+
+Object name " Table 12 "
+Average advance 85.50 	Average utilization 35.62%	Number entries 2.00 	Transact 152 in facility
+
+Object name " Table 13 "
+Average advance 85.50 	Average utilization 35.62%	Number entries 2.00 	Transact 163 in facility
+
+Object name " Table 14 "
+Average advance 106.00 	Average utilization 44.17%	Number entries 2.00 	Transact 190 in facility
+
+Object name " Table 15 "
+Average advance 106.00 	Average utilization 44.17%	Number entries 2.00 	Transact 196 in facility
+
+Object name " Table 16 "
+Average advance 106.00 	Average utilization 44.17%	Number entries 2.00 	Transact 200 in facility
+
+Object name " Table 17 "
+Average advance 110.50 	Average utilization 46.04%	Number entries 2.00 	Transact 204 in facility
+
+Object name " Table 18 "
+Average advance 0.00 	Average utilization 0.00%	Number entries 1.00 	Transact 111 in facility
+
+Object name " Table 19 "
+Average advance 0.00 	Average utilization 0.00%	Number entries 1.00 	Transact 119 in facility
+
+Object name " Table 20 "
+Average advance 0.00 	Average utilization 0.00%	Number entries 1.00 	Transact 120 in facility
+
+Object name " Table 21 "
+Average advance 0.00 	Average utilization 0.00%	Number entries 1.00 	Transact 136 in facility
+
+Object name " Table 22 "
+Average advance 0.00 	Average utilization 0.00%	Number entries 1.00 	Transact 169 in facility
+
+Object name " Table 23 "
+Average advance NaN 	Average utilization NaN%	Number entries 0.00 	Facility is empty
+
+Object name " Table 24 "
+Average advance NaN 	Average utilization NaN%	Number entries 0.00 	Facility is empty
+
+Object name " Queue waiter 1 "
+Max content 5	Total entries 45	Zero entries 23	Persent zero entries 51.11%
+Current contents 0	Average content 0.35	Average time/trans 4.18
+Average time/trans without zero entries 8.55
+
+Object name " Queue waiter 2 "
+Max content 3	Total entries 40	Zero entries 19	Persent zero entries 47.50%
+Current contents 0	Average content 0.24	Average time/trans 3.42
+Average time/trans without zero entries 6.52
+
+Object name " Queue waiter 3 "
+Max content 2	Total entries 37	Zero entries 25	Persent zero entries 67.57%
+Current contents 0	Average content 0.12	Average time/trans 1.92
+Average time/trans without zero entries 5.92
+
+Object name " Queue waiter 4 "
+Max content 1	Total entries 18	Zero entries 12	Persent zero entries 66.67%
+Current contents 0	Average content 0.03	Average time/trans 1.22
+Average time/trans without zero entries 3.67
+
+Object name " Queue waiter 5 "
+Max content 3	Total entries 21	Zero entries 10	Persent zero entries 47.62%
+Current contents 0	Average content 0.22	Average time/trans 5.48
+Average time/trans without zero entries 10.45
+
+Object name " Queue waiter 6 "
+Max content 0	Total entries 11	Zero entries 11	Persent zero entries 100.00%
+Current contents 0	Average content 0.00	Average time/trans 0.00
+
+Object name " Queue waiter 7 "
+Max content 1	Total entries  8	Zero entries  7	Persent zero entries 87.50%
+Current contents 0	Average content 0.02	Average time/trans 1.12
+Average time/trans without zero entries 9.00
+
+Object name " Queue waiter 8 "
+Max content 2	Total entries  4	Zero entries  2	Persent zero entries 50.00%
+Current contents 0	Average content 0.02	Average time/trans 3.25
+Average time/trans without zero entries 6.50
+
+Object name " Waiter 1 "
+Average advance 5.40 	Average utilization 50.62%	Number entries 45.00 	Facility is empty
+
+Object name " Waiter 2 "
+Average advance 5.25 	Average utilization 43.75%	Number entries 40.00 	Facility is empty
+
+Object name " Waiter 3 "
+Average advance 5.57 	Average utilization 42.92%	Number entries 37.00 	Transact 167 in facility, parent transact 158 part 4
+
+Object name " Waiter 4 "
+Average advance 4.72 	Average utilization 17.71%	Number entries 18.00 	Facility is empty
+
+Object name " Waiter 5 "
+Average advance 5.62 	Average utilization 24.58%	Number entries 21.00 	Facility is empty
+
+Object name " Waiter 6 "
+Average advance 5.64 	Average utilization 12.92%	Number entries 11.00 	Transact 204 in facility
+
+Object name " Waiter 7 "
+Average advance 4.88 	Average utilization 8.12%	Number entries 8.00 	Facility is empty
+
+Object name " Waiter 8 "
+Average advance 7.00 	Average utilization 5.83%	Number entries 4.00 	Facility is empty
+
+Object name " Selected dishes "
+Average split 3.16
+
+Object name " Queue of orders to cook 1 (meat dishes) "
+Max content 17	Total entries 46	Zero entries  3	Persent zero entries 6.52%
+Current contents 16	Average content 8.59	Average time/trans 60.39
+Average time/trans without zero entries 64.60
+
+Object name " Queue of orders to cook 2 (fish dishes) "
+Max content 2	Total entries 37	Zero entries 21	Persent zero entries 56.76%
+Current contents 0	Average content 0.15	Average time/trans 2.35
+Average time/trans without zero entries 5.44
+
+Object name " Queue of orders to cook 3 (salats) "
+Max content 1	Total entries 27	Zero entries 16	Persent zero entries 59.26%
+Current contents 0	Average content 0.12	Average time/trans 2.52
+Average time/trans without zero entries 6.18
+
+Object name " Queue of orders to cook 4 (dessert) "
+Max content 6	Total entries 25	Zero entries  5	Persent zero entries 20.00%
+Current contents 4	Average content 1.94	Average time/trans 30.44
+Average time/trans without zero entries 38.05
+
+Object name " Queue of orders to bar "
+Max content 0	Total entries 23	Zero entries 23	Persent zero entries 100.00%
+Current contents 0	Average content 0.00	Average time/trans 0.00
+
+Object name " Cook 1 (meat dishes) "
+Average advance 14.63 	Average utilization 91.46%	Number entries 30.00 	Transact 132 in facility, parent transact 120 part 1
+
+Object name " Cook 2 (sushi) "
+Average advance 7.32 	Average utilization 56.46%	Number entries 37.00 	Transact 207 in facility, parent transact 203 part 2
+
+Object name " Cook 3 (salats) "
+Average advance 9.59 	Average utilization 53.96%	Number entries 27.00 	Transact 208 in facility, parent transact 203 part 3
+
+Object name " Cook 4 (dessert) "
+Average advance 20.19 	Average utilization 88.33%	Number entries 21.00 	Transact 176 in facility, parent transact 169 part 4
+
+Object name " Barman 1 "
+Average advance 5.10 	Average utilization 22.29%	Number entries 21.00 	Transact 210 in facility, parent transact 203 part 5
+
+Object name " Barman 2 "
+Average advance 4.00 	Average utilization 1.67%	Number entries 2.00 	Facility is empty
+
+Object name " Is it order for table 1, 2, 3? "
+Check result true 35	Check result false 98
+
+Object name " Is it order for table 4, 5, 6? "
+Check result true 30	Check result false 68
+
+Object name " Is it order for table 7, 8, 9? "
+Check result true 27	Check result false 41
+
+Object name " Is it order for table 10, 11, 12? "
+Check result true 12	Check result false 29
+
+Object name " Is it order for table 13, 14, 15? "
+Check result true 15	Check result false 14
+
+Object name " Is it order for table 16, 17, 18? "
+Check result true 6	Check result false 8
+
+Object name " Is it order for table 19, 20, 21? "
+Check result true 5	Check result false 3
+
+Object name " Is it order for table 22, 23, 24? "
+Check result true 3	Check result false 0
+
+Object name " After kitchen? "
+Check result true 132	Check result false 50
+
+Object name " Visitors eating "
+Average advance 45.86
+
+Object name " Aggregate dishes "
+Number of aggregated transact 29.00
+Await end aggregate:
+transact 172 wait 3 parts
+transact 143 wait 1 parts
+transact 119 wait 1 parts
+transact 148 wait 2 parts
+transact 163 wait 1 parts
+transact 169 wait 2 parts
+transact 152 wait 2 parts
+transact 142 wait 1 parts
+transact 158 wait 2 parts
+transact 110 wait 1 parts
+transact 118 wait 1 parts
+transact 178 wait 3 parts
+
+Object name " Visitors pays "
+Average advance 4.55
+
+Object name " Out "
+Killed 29
+Average advance 229.55
+Average life 152.31
+
+Exit program

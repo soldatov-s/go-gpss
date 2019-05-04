@@ -1,4 +1,5 @@
 # examples binaries
 examples/example*/*
 !examples/example*/*.go
+!examples/example*/*.txt
 examples/*/*.exe
