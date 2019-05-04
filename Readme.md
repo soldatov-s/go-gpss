@@ -341,10 +341,10 @@ On the basis of the [report](examples/example4/report.txt) the following conclus
 - the restaurant served 29 visitors and none left without visiting the restaurant
 - all visitors did not wait in queue
 - at the end of the simulation, 12 visitors have already received some of the dishes and are waiting for the remaining
-- cook 1 and cook 4 have a very large utilization (91.46%, 88.33%)
-- barman 2 has a very low utilization (1.67%)
+- a cook 1 and a cook 4 have a very large utilization (91.46%, 88.33%)
+- a barman 2 has a very low utilization (1.67%)
 - half of the waiters have a very small utilization
-- hostess 2 has a very low utilization (9.38%)
+- a hostess 2 has a very low utilization (9.38%)
 
 We can say that our restaurant is a very big and has a lot of extra staff.
 
