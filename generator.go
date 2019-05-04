@@ -26,10 +26,10 @@ type Generator struct {
 	Count       int            // Creation limit. Max count of transactions.
 	id          int            // ID of new transaction
 	nextborn    int            // The time when will create new transaction
-	HandleBorn  HandleBornFunc // Function for generate transaction
+	HandleBorn  HandleBornFunc // Function for generate born time of transaction
 }
 
-// Default function for generate transaction
+// Default function for generate born time of transaction
 func GenerateBorn(obj *Generator) int {
 	var born int
 	born += obj.Interval
@@ -46,7 +46,7 @@ func GenerateBorn(obj *Generator) int {
 // name - name of object; interval - mean inter generation time;
 // modificator - inter generation time half-range; start - start delay time;
 // count - creation limit, max count of transactions; hndl - function for generate
-// transaction
+// born time of transaction
 func NewGenerator(name string, interval, modificator, start, count int, hndl HandleBornFunc) *Generator {
 	obj := &Generator{}
 	obj.name = name
