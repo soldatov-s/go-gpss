@@ -335,7 +335,7 @@ This example will be use Assign and Check blocks.
 
 Full source [example4](examples/example4/main.go).  
 
-On the basis of the report the following conclusions can be made (there may be different values, because the time was randomized):
+On the basis of the [report](examples/example4/report.txt) the following conclusions can be made (there may be different values, because the time was randomized):
 - two tables are not used (23 and 24) and a quarter of the tables have very low utilization
 - the restaurant served 29 visitors and none left without visiting the restaurant
 - all visitors did not wait in queue
