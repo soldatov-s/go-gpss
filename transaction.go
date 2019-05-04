@@ -51,7 +51,7 @@ type Transaction struct {
 	parameters map[string]interface{} // Parameters of transaction
 }
 
-func NewTransaction(id int, pipe IPipeline) *Transaction {
+func NewTransaction(id int, pipe IPipeline) ITransaction {
 	t := &Transaction{}
 	t.id = id
 	t.pipe = pipe
