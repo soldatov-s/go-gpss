@@ -313,18 +313,19 @@ We have served 24 client. 25 served at the end of the simulation. No clients in
 queue. Barista busy at 14.58 percent, cook busy at 32.71 percent.
 
 # Example 4
-Simulation of Restaurant. We have restaurant with 24 tables, 8 waiters,
-2 hostes, 4 cooks and 2 barmans. Random client go to restaurant every 
-10 minutes with deviation 5 minutes. If queue to restaurant more than 6, clients 
-go out. Hostes spends for each client 5 minutes with deviation 3 minutes. 
-Waiters spends for client for each client 5 minutes with deviation 
-3 minutes (both for take orders and giving dishes).
-Сlient can request 4 dishes and one drink. Barman spends 4 minutes with deviation 2 
-minutes for one order. Cooks spends 7..15 minutes with deviation 3..5 minutes for one 
-order. Clients spends for eating 45 minutes with deviation 10 minutes. And
-clients spends for payment 5 minutes with deviation 2 minutes.
-How many people can be served in a restaurant? What will be the employment of 
-the staff?
+Simulation of Restaurant. We have restaurant with 24 tables, staff: 
+8 waiters, 2 hostes, 4 cooks and 2 barmans. Random visitors go to restaurant 
+every 10 minutes with deviation 5 minutes. If queue to restaurant contains 
+more than 6 people, visitors leave restaurant without waiting free tables. 
+Hostes spends for each visitor 5 minutes with deviation 3 minutes. Waiters spends 
+for each visitor 5 minutes with deviation 3 minutes (both for take orders and giving dishes).
+Visitor can request 4 dishes and one drink. Barman spends 4 minutes with deviation 
+2 minutes for one drink. Cooks spends 7..15 minutes with deviation 3..5 minutes 
+for one dish. Visitor eats one dish for 45 minutes with deviation 10 minutes. 
+And visitors spends for payment 5 minutes with deviation 2 minutes.
+How many people can serve a restaurant?
+How many free tables in restaurant?
+Are there many or few staff in the restaurant?
 This example will be use Assign and Check blocks.  
 <p align="center">
   <img src="/images/pic04.jpg" width="400" height="650" alt="Pic03"/>
@@ -333,6 +334,18 @@ This example will be use Assign and Check blocks.
 </p>
 
 Full source [example4](examples/example4/main.go).  
+
+On the basis of the report the following conclusions can be made (there may be different values, because the time was randomized):
+- two tables are not used (23 and 24) and a quarter of the tables have very low utilization
+- the restaurant served 29 visitors and none left without visiting the restaurant
+- all visitors did not wait in queue
+- at the end of the simulation, 12 visitors have already received some of the dishes and are waiting for the remaining
+- cook 1 and cook 4 have a very large utilization (91.46%, 88.33%)
+- barman 2 has a very low utilization (1.67%)
+- half of the waiters have a very small utilization
+- hostess 2 has a very low utilization (9.38%)
+
+We can say that our restaurant is a very big and has a lot of extra staff.
 
 # Fixes
 - Fixed report, ordered by id in Pipeline
