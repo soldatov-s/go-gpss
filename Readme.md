@@ -313,7 +313,7 @@ We have served 24 client. 25 served at the end of the simulation. No clients in
 queue. Barista busy at 14.58 percent, cook busy at 32.71 percent.
 
 # Example 4
-Simulation of Restaurant. We have restaurant with 24 tables, staff: 
+Simulation of Restaurant. We have restaurant with 24 tables and staff: 
 8 waiters, 2 hostes, 4 cooks and 2 barmans. Random visitors enter to restaurant 
 every 10 minutes with deviation 5 minutes. If queue to restaurant contains 
 more than 6 people, visitors leave restaurant without waiting free tables. 
@@ -346,7 +346,9 @@ On the basis of the [report](examples/example4/report.txt) the following conclus
 - half of the waiters have a very small utilization
 - a hostess 2 has a very low utilization (9.38%)
 
-We can say that our restaurant is a very big and has a lot of extra staff.
+We can say that our restaurant very big and have many staff. Or we opened a restaurant in a bad place, and there are too few visitors.  
+I tested model when clients enter to restaurant every 5 minutes with deviation 3 minutes and utilization rate began to grow.
+If needs developer can change how will be splits orders between cooks or adds splits order between waiters for uniform distribution of orders.
 
 # Fixes
 - Fixed report, ordered by id in Pipeline
