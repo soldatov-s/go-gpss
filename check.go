@@ -30,14 +30,13 @@ type HandleCheckingFunc func(obj *Check, transact ITransaction) bool
 
 // Default function for checking
 func Checking(obj *Check, transact ITransaction) bool {
-	res := true
 	for _, v := range obj.parameters {
 		parameter := transact.GetParameterByName(v.Name)
 		if parameter != v.Value {
-			res = bool(res && false)
+			return false
 		}
 	}
-	return res
+	return true
 }
 
 // Creates new Check.
