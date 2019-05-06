@@ -348,7 +348,7 @@ On the basis of the [report](examples/example4/report.txt) the following conclus
 
 We can say that our restaurant very big and have many staff. Or we opened a restaurant in a bad place, and there are too few visitors.  
 I tested model when clients enter to restaurant every 5 minutes with deviation 3 minutes and utilization rate began to grow.
-If needs developer can change how will be splits orders between cooks or adds splits order between waiters for uniform distribution of orders.
+If it necessary developer can change how will be splits orders between cooks or add an order split between waiters for uniform distribution of orders.
 
 # Fixes
 - Fixed report, ordered by id in Pipeline
