@@ -338,7 +338,7 @@ Full source [example4](examples/example4/main.go).
 
 On the basis of the [report](examples/example4/report.txt) the following conclusions can be made (there may be different values, because the time was randomized):
 - two tables are not used (23 and 24) and a quarter of the tables have very low utilization
-- the restaurant served 29 visitors and none left without visiting the restaurant
+- the restaurant served 29 visitors and none left without visiting to the restaurant
 - all visitors did not wait in queue
 - at the end of the simulation, 12 visitors have already received some of the dishes and are waiting for the remaining
 - a cook 1 and a cook 4 have a very large utilization (91.46%, 88.33%)
@@ -360,3 +360,9 @@ If it necessary developer can change how will be splits orders between cooks or 
 - Extend report
 - Clear code
 - Make tests
+
+# Features of go-gpss
+- pipeline as block for pipline
+- generate schem based on pipeline
+- generate report in the form of a table
+- visualizate simulation
