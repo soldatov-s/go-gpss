@@ -317,12 +317,12 @@ Simulation of Restaurant. We have restaurant with 24 tables and staff:
 8 waiters, 2 hostes, 4 cooks and 2 barmans. Random visitors enter to restaurant 
 every 10 minutes with deviation 5 minutes. If queue to restaurant contains 
 more than 6 people, visitors leave restaurant without waiting free tables. 
-Hostess spends for each visitor 5 minutes with deviation 3 minutes. Waiters spends 
+Hostess spend for each visitor 5 minutes with deviation 3 minutes. Waiters spend 
 for each visitor 5 minutes with deviation 3 minutes (both for take orders and giving dishes).
-Visitor can request 4 dishes and one drink. Barman spends 4 for one drink minutes 
-with deviation 2 minutes for one drink. Cooks spends 7...15 minutes with deviation 
+Visitor can request 4 dishes and one drink. Barman spend 4 for one drink minutes 
+with deviation 2 minutes for one drink. Cooks spend 7...15 minutes with deviation 
 3...5 minutes for one dish. Visitor eats one dish for 45 minutes with deviation 
-10 minutes. And visitors spends for payment 5 minutes with deviation 2 minutes.
+10 minutes. And visitors spend for payment 5 minutes with deviation 2 minutes.
 
 How many people can to serve a restaurant?
 How many empty tables in restaurant?
