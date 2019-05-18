@@ -88,7 +88,7 @@ func main() {
 		return func(obj *Check, transact ITransaction) bool {
 			for i := 0; i < 3; i++ {
 				table_name := fmt.Sprintf("Table %d", i+id_table)
-				if transact.GetParameterByName("Facility").(string) == table_name {
+				if transact.GetParameter("Facility").(string) == table_name {
 					return true
 				}
 			}
