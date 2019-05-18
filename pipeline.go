@@ -6,8 +6,6 @@ package gpss
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
 	"reflect"
 	"sort"
 	"sync"
@@ -25,7 +23,6 @@ type IPipeline interface {
 	GetObjByName(name string) IBaseObj              // Get object from pipeline by name
 	GetIDNewTransaction() int                       // Get ID for new transaction
 	PrintReport()                                   // Print report
-	GetLogger() ILogger                             // Get logger
 }
 
 type Pipeline struct {
@@ -34,23 +31,17 @@ type Pipeline struct {
 	modelTime int                 // Current Model Time
 	Done      chan struct{}       // Chan for done
 	simTime   int                 // Simulation time
-	logger    *Logger             // Pipeline logger
 	id        int                 // ID of new transaction
 }
 
 // Create new Pipeline
-func NewPipeline(name string, verbose bool) *Pipeline {
+func NewPipeline(name string) *Pipeline {
 	p := &Pipeline{}
 	p.objects = make(map[string]IBaseObj)
 	p.name = name
 	p.Done = make(chan struct{})
 	p.modelTime = 0
 	p.id = 0
-	if !verbose {
-		p.logger = NewLogger(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
-	} else {
-		p.logger = NewLogger(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
-	}
 	return p
 }
 
@@ -110,7 +101,7 @@ func (p *Pipeline) Start(value int) {
 			case <-p.Done:
 				return
 			default:
-				p.logger.Trace.Println("ModelTime ", p.modelTime)
+				Logger.Trace.Println("ModelTime ", p.modelTime)
 				wg.Add(len(p.objects))
 				for _, o := range p.objects {
 					o.HandleTransacts(&wg)
@@ -157,11 +148,6 @@ func (p *Pipeline) GetSimTime() int {
 // Get current model time
 func (p *Pipeline) GetModelTime() int {
 	return p.modelTime
-}
-
-// Get logger
-func (p *Pipeline) GetLogger() ILogger {
-	return p.logger
 }
 
 // Get object from pipeline by name

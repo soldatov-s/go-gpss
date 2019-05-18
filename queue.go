@@ -77,7 +77,7 @@ func (obj *Queue) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Queue) AppendTransact(transact ITransaction) bool {
-	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Queue")
+	Logger.Trace.Println("Append transact ", transact.GetId(), " to Queue")
 	transact.SetHolderName(obj.name)
 	if !obj.IsObjectAfterMeEmpty(transact) {
 		transact.ResetQueueTime()

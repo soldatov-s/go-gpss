@@ -6,17 +6,14 @@ package gpss
 
 import (
 	"io"
+	"io/ioutil"
 	"log"
+	"os"
 )
 
-type ILogger interface {
-	GetTrace() *log.Logger
-	GetInfo() *log.Logger
-	GetWarning() *log.Logger
-	GetError() *log.Logger
-}
+var Logger *LoggerGpss = NewLogger(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
 
-type Logger struct {
+type LoggerGpss struct {
 	Trace   *log.Logger
 	Info    *log.Logger
 	Warning *log.Logger
@@ -27,8 +24,8 @@ func NewLogger(
 	traceHandle io.Writer,
 	infoHandle io.Writer,
 	warningHandle io.Writer,
-	errorHandle io.Writer) *Logger {
-	logger := &Logger{}
+	errorHandle io.Writer) *LoggerGpss {
+	logger := &LoggerGpss{}
 
 	logger.Trace = log.New(traceHandle,
 		"TRACE: ",
@@ -49,18 +46,6 @@ func NewLogger(
 	return logger
 }
 
-func (logger *Logger) GetTrace() *log.Logger {
-	return logger.Trace
-}
-
-func (logger *Logger) GetInfo() *log.Logger {
-	return logger.Info
-}
-
-func (logger *Logger) GetWarning() *log.Logger {
-	return logger.Warning
-}
-
-func (logger *Logger) GetError() *log.Logger {
-	return logger.Error
+func EnableVerbose() {
+	Logger = NewLogger(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
 }

@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	p := NewPipeline("Water Closet Simulation", false)
+	p := NewPipeline("Water Closet Simulation")
 	g := NewGenerator("Office", 0, 0, 0, 10, nil)
 	a1 := NewAdvance("Wanted to use the toilet", 90, 60)
 	a2 := NewAdvance("Path to WC", 5, 3)

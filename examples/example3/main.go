@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Test small cafe with barista and cook. Used split and aggregate components
-	p := NewPipeline("Cafe Simulation", false)
+	p := NewPipeline("Cafe Simulation")
 	g := NewGenerator("Visitors", 18, 6, 0, 0, nil)
 	q := NewQueue("Visitors queue")
 	orders_f := NewFacility("Order Acceptance", 5, 3)

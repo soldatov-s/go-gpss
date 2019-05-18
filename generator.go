@@ -67,7 +67,7 @@ func NewGenerator(name string, interval, modificator, start, count int, hndl Han
 // Generates transaction and it send into the simulation
 func (obj *Generator) GenerateTransact() {
 	var isTransactSended bool
-	obj.GetLogger().GetTrace().Println("Generate transact ", obj.id)
+	Logger.Trace.Println("Generate transact ", obj.id)
 	t := NewTransaction(obj.GetPipeline())
 	t.SetHolderName(obj.name)
 	for _, v := range obj.GetDst() {
@@ -98,7 +98,7 @@ func (obj *Generator) HandleTransacts(wg *sync.WaitGroup) {
 		for {
 			obj.GenerateTransact()
 			if obj.id > obj.Count {
-				obj.GetLogger().GetTrace().Println("Stop generate")
+				Logger.Trace.Println("Stop generate")
 				return
 			}
 		}

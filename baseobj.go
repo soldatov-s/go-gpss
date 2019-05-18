@@ -70,10 +70,6 @@ func (obj *BaseObj) GetID() int {
 	return obj.id
 }
 
-func (obj *BaseObj) GetLogger() ILogger {
-	return obj.pipe.GetLogger()
-}
-
 func (obj *BaseObj) GetTransactTable() ITransactTable {
 	return obj.tb
 }

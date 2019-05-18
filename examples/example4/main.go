@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	restaurant := NewPipeline("Restaurant  Simulation", false)
+	restaurant := NewPipeline("Restaurant  Simulation")
 	// 1. Create the Generator and Queue of Visitors, create a Hole
 	visitors_g := NewGenerator("Visitors", 10, 5, 0, 0, nil)
 	// visitors_g := NewGenerator("Visitors", 0, 0, 0, 1, nil)

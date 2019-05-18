@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Test Barbershop
-	p := NewPipeline("Barbershop", false)
+	p := NewPipeline("Barbershop")
 	g := NewGenerator("Clients", 18, 6, 0, 0, nil)
 	q := NewQueue("Chairs")
 	f := NewFacility("Master", 16, 4)

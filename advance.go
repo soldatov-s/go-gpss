@@ -72,7 +72,7 @@ func (obj *Advance) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Advance) AppendTransact(transact ITransaction) bool {
-	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Advance")
+	Logger.Trace.Println("Append transact ", transact.GetId(), " to Advance")
 	transact.SetHolderName(obj.name)
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)

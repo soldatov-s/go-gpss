@@ -37,7 +37,7 @@ func (obj *Count) AppendTransact(transact ITransaction) bool {
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
 			*obj.value += obj.inc_dec
-			obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Count")
+			Logger.Trace.Println("Append transact ", transact.GetId(), " to Count")
 			return true
 		}
 	}

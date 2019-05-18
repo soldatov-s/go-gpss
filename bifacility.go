@@ -59,7 +59,7 @@ func (obj *InFacility) AppendTransact(transact ITransaction) bool {
 		// Facility is busy
 		return false
 	}
-	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Facility")
+	Logger.Trace.Println("Append transact ", transact.GetId(), " to Facility")
 	transact.SetHolderName(obj.name)
 	if transact.GetParameter("Facility") != nil {
 		obj.bakupFacilityName = transact.GetParameter("Facility").(string)
@@ -119,7 +119,7 @@ func (obj *OutFacility) AppendTransact(transact ITransaction) bool {
 	if obj.inFacility.HoldedTransactID != transact.GetId() {
 		return false
 	}
-	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Facility")
+	Logger.Trace.Println("Append transact ", transact.GetId(), " to Facility")
 	obj.HandleTransact(transact)
 	if obj.tb.GetLen() == 0 {
 		return true

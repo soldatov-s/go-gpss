@@ -51,7 +51,7 @@ func (obj *Hole) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Hole) AppendTransact(transact ITransaction) bool {
-	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Hole")
+	Logger.Trace.Println("Append transact ", transact.GetId(), " to Hole")
 	transact.SetHolderName(obj.name)
 	obj.tb.Push(transact)
 	return true

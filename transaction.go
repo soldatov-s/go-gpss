@@ -88,8 +88,7 @@ func (t *Transaction) GetLife() int {
 }
 
 func (t *Transaction) PrintInfo() {
-	trace := t.GetPipeline().GetLogger().GetTrace()
-	trace.Println("Transaction Id:\t", t.GetId(),
+	Logger.Trace.Println("Transaction Id:\t", t.GetId(),
 		"Borned:\t", t.GetIntParameter("born"),
 		"Advance time:\t", t.GetIntParameter("advance"),
 		"Transaction life:\t", t.GetPipeline().GetModelTime()-t.GetIntParameter("born"),

@@ -96,7 +96,7 @@ func (obj *Split) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Split) AppendTransact(transact ITransaction) bool {
-	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Split")
+	Logger.Trace.Println("Append transact ", transact.GetId(), " to Split")
 	transact.SetHolderName(obj.name)
 	obj.sum_transact++
 	obj.HandleTransact(transact)

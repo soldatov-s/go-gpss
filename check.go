@@ -56,7 +56,7 @@ func NewCheck(name string, hndl HandleCheckingFunc, falseObj IBaseObj, parameter
 
 func (obj *Check) AppendTransact(transact ITransaction) bool {
 	transact.PrintInfo()
-	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Check")
+	Logger.Trace.Println("Append transact ", transact.GetId(), " to Check")
 	if !obj.HandleChecking(obj, transact) {
 		obj.cnt_false++
 		if obj.falseObj != nil {

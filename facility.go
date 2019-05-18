@@ -90,7 +90,7 @@ func (obj *Facility) AppendTransact(transact ITransaction) bool {
 		// Facility is busy
 		return false
 	}
-	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Facility")
+	Logger.Trace.Println("Append transact ", transact.GetId(), " to Facility")
 	transact.SetHolderName(obj.name)
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)
