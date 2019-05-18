@@ -5,29 +5,30 @@
 package gpss
 
 type ITransaction interface {
-	SetID(int)                                  // Set transact ID
-	GetId() int                                 // Get transact ID
-	GetLife() int                               // Get transact time of life, rip - born
-	SetTiсks(interval int)                      // Set advance ticks
-	DecTiсks()                                  // Decrement ticks
-	GetTicks() int                              // Get current value of ticks
-	IsTheEnd() bool                             // Is ticks value equal zero?
-	SetHolderName(holderName string)            // Set holder of transact
-	GetHolderName() string                      // Get current holder of transact
-	InqQueueTime()                              // Increment time in queue
-	GetQueueTime() int                          // Get current value of time in queue
-	ResetQueueTime()                            // Reset time in queue
-	GetAdvanceTime() int                        // Get full time in advice state
-	Kill()                                      // Kill transact
-	IsKilled() bool                             // Is transact killed?
-	GetPipeline() IPipeline                     // Get pipeline for object
-	SetParts(part, parts, parent_id int)        // Set parts info
-	GetParts() (int, int, int)                  // Get parts info
-	SetParameters(parameters []Parameter)       // Set parameters to transuct
-	GetAllParameters() map[string]interface{}   // Get all parameters of trunsact
-	GetParameterByName(name string) interface{} // Get parameter of trunsuct by name
-	PrintInfo()                                 // Print info about transact
-	Copy() ITransaction                         // Create copy of transact
+	SetID(int)                                   // Set transact ID
+	GetId() int                                  // Get transact ID
+	GetLife() int                                // Get transact time of life, rip - born
+	SetTiсks(interval int)                       // Set advance ticks
+	DecTiсks()                                   // Decrement ticks
+	GetTicks() int                               // Get current value of ticks
+	IsTheEnd() bool                              // Is ticks value equal zero?
+	SetHolderName(holderName string)             // Set holder of transact
+	GetHolderName() string                       // Get current holder of transact
+	InqQueueTime()                               // Increment time in queue
+	GetQueueTime() int                           // Get current value of time in queue
+	ResetQueueTime()                             // Reset time in queue
+	GetAdvanceTime() int                         // Get full time in advice state
+	Kill()                                       // Kill transact
+	IsKilled() bool                              // Is transact killed?
+	GetPipeline() IPipeline                      // Get pipeline for object
+	SetParts(part, parts, parent_id int)         // Set parts info
+	GetParts() (int, int, int)                   // Get parts info
+	SetParameters(parameters []Parameter)        // Set parameters to transuct
+	GetParameters() map[string]interface{}       // Get all parameters of trunsact
+	SetParameter(name string, value interface{}) // Set value of parameter
+	GetParameter(name string) interface{}        // Get parameter of trunsact by name
+	PrintInfo()                                  // Print info about transact
+	Copy() ITransaction                          // Create copy of transact
 }
 
 // Struct for splitting
@@ -38,39 +39,28 @@ type Parts struct {
 }
 
 type Transaction struct {
-	id         int       // Transact ID
-	born       int       // Moment of borning
-	rip        int       // Kill moment
-	advance    int       // Full time in advice state
-	ticks      int       // Tiks for change state
-	holderName string    // Holder object name
-	timequeue  int       // Time in queue at this moment
-	pipe       IPipeline // Pipeline
-	parts      Parts     /* For splitting. Default is "0/0". After splitting
+	pipe  IPipeline // Pipeline
+	parts Parts     /* For splitting. Default is "0/0". After splitting
 	may be "1/6" - first part of six parts or "5/6" - fifth part of six parts */
 	parameters map[string]interface{} // Parameters of transaction
 }
 
-func NewTransaction(id int, pipe IPipeline) ITransaction {
+func NewTransaction(pipe IPipeline) ITransaction {
 	t := &Transaction{}
-	t.id = id
-	t.pipe = pipe
-	t.born = pipe.GetModelTime()
-	t.parts = Parts{0, 0, 0}
 	t.parameters = make(map[string]interface{})
+	t.SetParameters([]Parameter{
+		{Name: "id", Value: pipe.GetIDNewTransaction()}, // Transact ID
+		{Name: "born", Value: pipe.GetModelTime()},      // Moment of borning
+	})
+	t.pipe = pipe
+
+	t.parts = Parts{0, 0, 0}
 	return t
 }
 
 func (t *Transaction) Copy() ITransaction {
 	copy_t := &Transaction{}
-	copy_t.id = t.id
 	copy_t.pipe = t.pipe
-	copy_t.born = t.born
-	copy_t.advance = t.advance
-	copy_t.ticks = t.ticks
-	copy_t.rip = t.rip
-	copy_t.timequeue = t.timequeue
-	copy_t.holderName = t.holderName
 	copy_t.parts = t.parts
 	copy_t.parameters = make(map[string]interface{})
 	for key, value := range t.parameters {
@@ -80,74 +70,79 @@ func (t *Transaction) Copy() ITransaction {
 }
 
 func (t *Transaction) SetID(id int) {
-	t.id = id
+	t.SetParameter("id", id)
 }
 
 func (t *Transaction) GetId() int {
-	return t.id
+	return t.parameters["id"].(int)
 }
 
 func (t *Transaction) GetLife() int {
-	return t.rip - t.born
+	return t.GetIntParameter("rip") - t.GetIntParameter("born")
 }
 
 func (t *Transaction) PrintInfo() {
 	trace := t.GetPipeline().GetLogger().GetTrace()
-	trace.Println("Transaction Id:\t", t.GetId(), "Borned:\t", t.born,
-		"Advance time:\t", t.advance, "Transaction life:\t",
-		t.GetPipeline().GetModelTime()-t.born, "Holder Name:\t", t.holderName,
-		"Tiks:\t\t", t.ticks, "Time in queue:\t", t.timequeue)
+	trace.Println("Transaction Id:\t", t.GetId(),
+		"Borned:\t", t.GetIntParameter("born"),
+		"Advance time:\t", t.GetIntParameter("advance"),
+		"Transaction life:\t", t.GetPipeline().GetModelTime()-t.GetIntParameter("born"),
+		"Holder Name:\t", t.GetIntParameter("holderName"),
+		"Tiks:\t\t", t.GetIntParameter("ticks"),
+		"Time in queue:\t", t.GetIntParameter("timequeue"))
 }
 
 // Set ticks and increases advance value to same value.
 func (t *Transaction) SetTiсks(interval int) {
-	t.ticks = interval
-	t.advance += interval
+	t.SetParameter("ticks", interval)
+	t.SetParameter("advance", t.GetIntParameter("advance")+interval)
 }
 
 func (t *Transaction) InqQueueTime() {
-	t.timequeue++
-	t.advance++
+	t.SetParameter("timequeue", t.GetIntParameter("timequeue")+1)
+	t.SetParameter("advance", t.GetIntParameter("advance")+1)
 }
 
 func (t *Transaction) GetTicks() int {
-	return t.ticks
+	return t.GetIntParameter("ticks")
 }
 
 func (t *Transaction) IsTheEnd() bool {
-	return bool(t.ticks == 0)
+	return bool(t.GetIntParameter("ticks") == 0)
 }
 
 func (t *Transaction) SetHolderName(holderName string) {
-	t.holderName = holderName
+	t.SetParameter("holderName", holderName)
 }
 
 func (t *Transaction) GetHolderName() string {
-	return t.holderName
+	return t.GetParameter("holderName").(string)
 }
 
 // Decremet ticks. If ticks is less than zero, set ticks value to zero.
 func (t *Transaction) DecTiсks() {
-	t.ticks--
-	if t.ticks < 0 {
-		t.ticks = 0
+	ticks := t.GetIntParameter("tiks")
+	ticks--
+	if ticks < 0 {
+		ticks = 0
 	}
+	t.SetParameter("tiks", ticks)
 }
 
 func (t *Transaction) Kill() {
-	t.rip = t.GetPipeline().GetModelTime()
+	t.SetParameter("rip", t.GetPipeline().GetModelTime())
 }
 
 func (t *Transaction) IsKilled() bool {
-	return bool(t.rip != 0)
+	return bool(t.GetIntParameter("rip") != 0)
 }
 
 func (t *Transaction) GetQueueTime() int {
-	return t.timequeue
+	return t.GetIntParameter("timequeue")
 }
 
 func (t *Transaction) GetAdvanceTime() int {
-	return t.advance
+	return t.GetIntParameter("advance")
 }
 
 func (t *Transaction) GetPipeline() IPipeline {
@@ -155,7 +150,7 @@ func (t *Transaction) GetPipeline() IPipeline {
 }
 
 func (t *Transaction) ResetQueueTime() {
-	t.timequeue = 0
+	t.SetParameter("timequeue", 0)
 }
 
 func (t *Transaction) GetParts() (int, int, int) {
@@ -176,10 +171,22 @@ func (t *Transaction) SetParameters(parameters []Parameter) {
 	}
 }
 
-func (t *Transaction) GetAllParameters() map[string]interface{} {
+func (t *Transaction) GetParameters() map[string]interface{} {
 	return t.parameters
 }
 
-func (t *Transaction) GetParameterByName(name string) interface{} {
+func (t Transaction) SetParameter(name string, value interface{}) {
+	t.parameters[name] = value
+}
+
+func (t *Transaction) GetParameter(name string) interface{} {
 	return t.parameters[name]
+}
+
+func (t *Transaction) GetIntParameter(name string) int {
+	return t.GetParameter(name).(int)
+}
+
+func (t *Transaction) GetStringParameter(name string) string {
+	return t.GetParameter(name).(string)
 }

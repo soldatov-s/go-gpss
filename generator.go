@@ -68,7 +68,7 @@ func NewGenerator(name string, interval, modificator, start, count int, hndl Han
 func (obj *Generator) GenerateTransact() {
 	var isTransactSended bool
 	obj.GetLogger().GetTrace().Println("Generate transact ", obj.id)
-	t := NewTransaction(obj.GetPipeline().GetIDNewTransaction(), obj.GetPipeline())
+	t := NewTransaction(obj.GetPipeline())
 	t.SetHolderName(obj.name)
 	for _, v := range obj.GetDst() {
 		isTransactSended = isTransactSended || v.AppendTransact(t)

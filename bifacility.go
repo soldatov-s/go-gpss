@@ -61,10 +61,10 @@ func (obj *InFacility) AppendTransact(transact ITransaction) bool {
 	}
 	obj.GetLogger().GetTrace().Println("Append transact ", transact.GetId(), " to Facility")
 	transact.SetHolderName(obj.name)
-	if transact.GetParameterByName("Facility") != nil {
-		obj.bakupFacilityName = transact.GetParameterByName("Facility").(string)
+	if transact.GetParameter("Facility") != nil {
+		obj.bakupFacilityName = transact.GetParameter("Facility").(string)
 	}
-	transact.SetParameters([]Parameter{{Name: "Facility", Value: obj.name}})
+	transact.SetParameter("Facility", obj.name)
 	obj.HoldedTransactID = transact.GetId()
 	obj.tb.Push(transact)
 	obj.cnt_transact++
@@ -97,10 +97,10 @@ func (obj *InFacility) IsEmpty() bool {
 func (obj *OutFacility) HandleTransact(transact ITransaction) {
 	transact.PrintInfo()
 	if obj.inFacility.bakupFacilityName != "" {
-		transact.SetParameters([]Parameter{{Name: "Facility",
-			Value: obj.inFacility.bakupFacilityName}})
+		transact.SetParameter("Facility",
+			obj.inFacility.bakupFacilityName)
 	} else {
-		transact.SetParameters([]Parameter{{Name: "Facility", Value: nil}})
+		transact.SetParameter("Facility", nil)
 	}
 
 	for _, v := range obj.GetDst() {

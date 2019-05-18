@@ -31,7 +31,7 @@ type HandleCheckingFunc func(obj *Check, transact ITransaction) bool
 // Default function for checking
 func Checking(obj *Check, transact ITransaction) bool {
 	for _, v := range obj.parameters {
-		parameter := transact.GetParameterByName(v.Name)
+		parameter := transact.GetParameter(v.Name)
 		if parameter != v.Value {
 			return false
 		}
