@@ -11,7 +11,7 @@ import (
 func TestTransaction_GetId(t *testing.T) {
 	pipe := NewPipeline("pipe", false)
 	id := 1
-	transact := NewTransaction(id, pipe)
+	transact := NewTransaction(pipe)
 	if transact.GetId() != id {
 		t.Error("Transact id, expected", id, "got", transact.GetId())
 	}

@@ -51,6 +51,11 @@ func NewTransaction(pipe IPipeline) ITransaction {
 	t.SetParameters([]Parameter{
 		{Name: "id", Value: pipe.GetIDNewTransaction()}, // Transact ID
 		{Name: "born", Value: pipe.GetModelTime()},      // Moment of borning
+		{Name: "advance", Value: 0},                     // Full time in advice state
+		{Name: "timequeue", Value: 0},                   // Time in queue at this moment
+		{Name: "ticks", Value: 0},                       // Tiks for change state
+		{Name: "rip", Value: 0},                         // Kill moment
+		{Name: "holderName", Value: ""},                 // Holder object name
 	})
 	t.pipe = pipe
 
@@ -87,7 +92,7 @@ func (t *Transaction) PrintInfo() {
 		"Borned:\t", t.GetIntParameter("born"),
 		"Advance time:\t", t.GetIntParameter("advance"),
 		"Transaction life:\t", t.GetPipeline().GetModelTime()-t.GetIntParameter("born"),
-		"Holder Name:\t", t.GetIntParameter("holderName"),
+		"Holder Name:\t", t.GetStringParameter("holderName"),
 		"Tiks:\t\t", t.GetIntParameter("ticks"),
 		"Time in queue:\t", t.GetIntParameter("timequeue"))
 }
@@ -121,12 +126,12 @@ func (t *Transaction) GetHolderName() string {
 
 // Decremet ticks. If ticks is less than zero, set ticks value to zero.
 func (t *Transaction) DecTiсks() {
-	ticks := t.GetIntParameter("tiks")
+	ticks := t.GetIntParameter("ticks")
 	ticks--
 	if ticks < 0 {
 		ticks = 0
 	}
-	t.SetParameter("tiks", ticks)
+	t.SetParameter("ticks", ticks)
 }
 
 func (t *Transaction) Kill() {

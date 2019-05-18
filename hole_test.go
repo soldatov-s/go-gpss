@@ -14,7 +14,7 @@ func TestHole_HandleTransact(t *testing.T) {
 	modeltime := 5
 	advance := 3
 	pipe.Append(hole)
-	transact := NewTransaction(1, pipe)
+	transact := NewTransaction(pipe)
 	transact.SetTiсks(advance)
 	pipe.modelTime = modeltime
 	hole.HandleTransact(transact)
