@@ -11,12 +11,6 @@ type Assign struct {
 	parameters []Parameter
 }
 
-// Parameter for modification
-type Parameter struct {
-	Name  string      // Name of parameter
-	Value interface{} // Value of parameter
-}
-
 // Creates new Assign.
 // name - name of object
 // parameters - parameters for assign.

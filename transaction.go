@@ -31,17 +31,15 @@ type ITransaction interface {
 	Copy() ITransaction                          // Create copy of transact
 }
 
-// Struct for splitting
-type Parts struct {
-	part      int // Part id
-	parts     int // Number of parts
-	parent_id int // ID of parent transaction, for splitting
+// Parameter for modification
+type Parameter struct {
+	Name  string      // Name of parameter
+	Value interface{} // Value of parameter
 }
 
+// Transaction
 type Transaction struct {
-	pipe  IPipeline // Pipeline
-	parts Parts     /* For splitting. Default is "0/0". After splitting
-	may be "1/6" - first part of six parts or "5/6" - fifth part of six parts */
+	pipe       IPipeline              // Pipeline
 	parameters map[string]interface{} // Parameters of transaction
 }
 
@@ -56,17 +54,20 @@ func NewTransaction(pipe IPipeline) ITransaction {
 		{Name: "ticks", Value: 0},                       // Tiks for change state
 		{Name: "rip", Value: 0},                         // Kill moment
 		{Name: "holderName", Value: ""},                 // Holder object name
+		/* For splitting. Default is "0/0". After splitting
+		may be "1/6" - first part of six parts or "5/6" - fifth part of six parts */
+		{Name: "part", Value: 0},      // Part id
+		{Name: "parts", Value: 0},     // Number of parts
+		{Name: "parent_id", Value: 0}, // ID of parent transaction, for splitting
 	})
 	t.pipe = pipe
 
-	t.parts = Parts{0, 0, 0}
 	return t
 }
 
 func (t *Transaction) Copy() ITransaction {
 	copy_t := &Transaction{}
 	copy_t.pipe = t.pipe
-	copy_t.parts = t.parts
 	copy_t.parameters = make(map[string]interface{})
 	for key, value := range t.parameters {
 		copy_t.parameters[key] = value
@@ -159,11 +160,17 @@ func (t *Transaction) ResetQueueTime() {
 }
 
 func (t *Transaction) GetParts() (int, int, int) {
-	return t.parts.part, t.parts.parts, t.parts.parent_id
+	return t.GetIntParameter("part"),
+		t.GetIntParameter("parts"),
+		t.GetIntParameter("parent_id")
 }
 
 func (t *Transaction) SetParts(part, parts, parent_id int) {
-	t.parts = Parts{part, parts, parent_id}
+	t.SetParameters([]Parameter{
+		{Name: "part", Value: part},
+		{Name: "parts", Value: parts},
+		{Name: "parent_id", Value: parent_id},
+	})
 }
 
 func (t *Transaction) SetParameters(parameters []Parameter) {
