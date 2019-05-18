@@ -9,7 +9,7 @@ import (
 )
 
 func TestTransaction_GetId(t *testing.T) {
-	pipe := NewPipeline("pipe", false)
+	pipe := NewPipeline("pipe")
 	id := 1
 	transact := NewTransaction(pipe)
 	if transact.GetId() != id {

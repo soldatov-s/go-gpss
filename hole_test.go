@@ -9,7 +9,7 @@ import (
 )
 
 func TestHole_HandleTransact(t *testing.T) {
-	pipe := NewPipeline("pipe", false)
+	pipe := NewPipeline("pipe")
 	hole := NewHole("hole")
 	modeltime := 5
 	advance := 3
