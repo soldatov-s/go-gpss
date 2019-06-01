@@ -19,7 +19,7 @@ func main() {
 	visitors_q := NewQueue("Visitors queue")
 	// 2. Create the Check for checking size the Queue of Visitors
 	CheckQueueHndl := func(obj *Check, transact *Transaction) bool {
-		queue := obj.GetPipeline().GetObjByName("Visitors queue")
+		queue := obj.Pipe.GetObjByName("Visitors queue")
 		if queue.(IQueue).GetLength() >= 6 {
 			return false
 		}
@@ -41,7 +41,7 @@ func main() {
 	CheckEmptyTableHndl := func(obj *Check, transact *Transaction) bool {
 		for i := 0; i < cnt_tables; i++ {
 			table_name := fmt.Sprintf("Table %d", i+1)
-			table := obj.GetPipeline().GetObjByName(table_name).(IFacility)
+			table := obj.Pipe.GetObjByName(table_name).(IFacility)
 			if table.IsEmpty() {
 				return true
 			}
@@ -165,6 +165,6 @@ func main() {
 
 	// Exit app if chan is closed
 	<-exit
-	restaurant.PrintReport()
+	restaurant.Report()
 	fmt.Println("Exit program")
 }

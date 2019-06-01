@@ -77,7 +77,7 @@ func (obj *Queue) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Queue) AppendTransact(transact *Transaction) bool {
-	Logger.Trace.Println("Append transact ", transact.GetID(), " to Queue")
+	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
 	if !obj.IsObjectAfterMeEmpty(transact) {
 		transact.ResetQueueTime()
@@ -93,14 +93,14 @@ func (obj *Queue) AppendTransact(transact *Transaction) bool {
 	return true
 }
 
-func (obj *Queue) PrintReport() {
-	obj.BaseObj.PrintReport()
-	fmt.Printf("Max content %d\tTotal entries %2.f\tZero entries %2.f\tPersent zero entries %.2f%%\n",
+func (obj *Queue) Report() {
+	obj.BaseObj.Report()
+	fmt.Printf("Max content \t%d\tTotal entries \t%2.f\tZero entries \t%2.f\tPersent zero entries \t%.2f%%\n",
 		obj.max_content, obj.sum_Entries, obj.sum_zeroEntries, 100*obj.sum_zeroEntries/obj.sum_Entries)
-	fmt.Printf("Current contents %d\tAverage content %.2f\tAverage time/trans %.2f\n", obj.tb.Len(),
-		obj.sum_content/float64(obj.GetPipeline().SimTime), obj.sum_timequeue/obj.sum_Entries)
+	fmt.Printf("Current contents \t%d\tAverage content \t%.2f\tAverage time/trans \t%.2f\n", obj.tb.Len(),
+		obj.sum_content/float64(obj.Pipe.SimTime), obj.sum_timequeue/obj.sum_Entries)
 	if obj.sum_Entries-obj.sum_zeroEntries > 0 {
-		fmt.Printf("Average time/trans without zero entries %.2f\n", obj.sum_timequeue/(obj.sum_Entries-obj.sum_zeroEntries))
+		fmt.Printf("Average time/trans without zero entries \t%.2f\n", obj.sum_timequeue/(obj.sum_Entries-obj.sum_zeroEntries))
 	}
 	fmt.Println()
 }

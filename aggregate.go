@@ -73,13 +73,13 @@ func (obj *Aggregate) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Aggregate) AppendTransact(transact *Transaction) bool {
-	Logger.Trace.Println("Append transact ", transact.GetID(), " to Aggregate")
+	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
 	return obj.HandleTransact(transact)
 }
 
-func (obj *Aggregate) PrintReport() {
-	obj.BaseObj.PrintReport()
+func (obj *Aggregate) Report() {
+	obj.BaseObj.Report()
 	fmt.Printf("Number of aggregated transact %.2f\n", obj.sum_transact)
 	if obj.tb.Len() > 0 {
 		fmt.Println("Await end aggregate:")

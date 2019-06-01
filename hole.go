@@ -50,14 +50,14 @@ func (obj *Hole) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Hole) AppendTransact(transact *Transaction) bool {
-	Logger.Trace.Println("Append transact ", transact.GetID(), " to Hole")
+	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
 	obj.tb.Push(transact)
 	return true
 }
 
-func (obj *Hole) PrintReport() {
-	obj.BaseObj.PrintReport()
+func (obj *Hole) Report() {
+	obj.BaseObj.Report()
 	fmt.Println("Killed", obj.cnt_transact)
 	fmt.Printf("Average advance %.2f\n", obj.sum_advance/obj.cnt_transact)
 	fmt.Printf("Average life %.2f\n", obj.sum_life/obj.cnt_transact)

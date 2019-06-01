@@ -59,7 +59,7 @@ func (obj *InFacility) AppendTransact(transact *Transaction) bool {
 		// Facility is busy
 		return false
 	}
-	Logger.Trace.Println("Append transact ", transact.GetID(), " to Facility")
+	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
 	if transact.GetParameter("Facility") != nil {
 		obj.bakupFacilityName = transact.GetParameter("Facility").(string)
@@ -68,16 +68,16 @@ func (obj *InFacility) AppendTransact(transact *Transaction) bool {
 	obj.HoldedTransactID = transact.GetID()
 	obj.tb.Push(transact)
 	obj.cnt_transact++
-	obj.timeOfInput = obj.GetPipeline().ModelTime
+	obj.timeOfInput = obj.Pipe.ModelTime
 	obj.HandleTransact(transact)
 	return true
 }
 
-func (obj *InFacility) PrintReport() {
-	obj.BaseObj.PrintReport()
+func (obj *InFacility) Report() {
+	obj.BaseObj.Report()
 	avr := obj.sum_advance / obj.cnt_transact
 	fmt.Printf("Average advance %.2f \tAverage utilization %.2f%%\tNumber entries %.2f \t", avr,
-		100*avr*obj.cnt_transact/float64(obj.GetPipeline().SimTime), obj.cnt_transact)
+		100*avr*obj.cnt_transact/float64(obj.Pipe.SimTime), obj.cnt_transact)
 	if obj.HoldedTransactID > 0 {
 		fmt.Print("Transact ", obj.HoldedTransactID, " in facility")
 	} else {
@@ -105,7 +105,7 @@ func (obj *OutFacility) HandleTransact(transact *Transaction) {
 
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
-			advance := obj.GetPipeline().ModelTime - obj.inFacility.timeOfInput
+			advance := obj.Pipe.ModelTime - obj.inFacility.timeOfInput
 			obj.inFacility.sum_advance += float64(advance)
 			obj.tb.Remove(transact)
 			obj.inFacility.HoldedTransactID = -1
@@ -119,7 +119,7 @@ func (obj *OutFacility) AppendTransact(transact *Transaction) bool {
 	if obj.inFacility.HoldedTransactID != transact.GetID() {
 		return false
 	}
-	Logger.Trace.Println("Append transact ", transact.GetID(), " to Facility")
+	obj.BaseObj.AppendTransact(transact)
 	obj.HandleTransact(transact)
 	if obj.tb.Len() == 0 {
 		return true
@@ -127,6 +127,6 @@ func (obj *OutFacility) AppendTransact(transact *Transaction) bool {
 	return false
 }
 
-func (obj *OutFacility) PrintReport() {
+func (obj *OutFacility) Report() {
 	return
 }

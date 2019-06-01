@@ -51,6 +51,6 @@ func main() {
 
 	// Exit app if chan is closed
 	<-exit
-	p.PrintReport()
+	p.Report()
 	fmt.Println("Exit program")
 }

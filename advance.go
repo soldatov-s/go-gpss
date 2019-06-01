@@ -72,7 +72,7 @@ func (obj *Advance) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Advance) AppendTransact(transact *Transaction) bool {
-	Logger.Trace.Println("Append transact ", transact.GetID(), " to Advance")
+	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)
@@ -82,8 +82,8 @@ func (obj *Advance) AppendTransact(transact *Transaction) bool {
 	return true
 }
 
-func (obj *Advance) PrintReport() {
-	obj.BaseObj.PrintReport()
+func (obj *Advance) Report() {
+	obj.BaseObj.Report()
 	fmt.Printf("Average advance %.2f\n", obj.sum_advance/obj.sum_transact)
 	fmt.Println()
 }

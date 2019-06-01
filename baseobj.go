@@ -16,17 +16,16 @@ type IBaseObj interface {
 	SetDst([]IBaseObj)                  // Set dst for object
 	GetDst() []IBaseObj                 // Get dst for object
 	SetPipeline(pipe *Pipeline)         // Set pipeline for object
-	GetPipeline() *Pipeline             // Get pipeline for object
 	AppendTransact(*Transaction) bool   // Append transact to object
 	HandleTransacts(wg *sync.WaitGroup) // Handle all transacts of object
-	PrintReport()                       // Print report
+	Report()                            // Print report
 }
 
 type BaseObj struct {
 	name    string
 	objTime int
 	dst     []IBaseObj
-	pipe    *Pipeline
+	Pipe    *Pipeline
 	tb      *TransactTable
 	id      int
 }
@@ -49,11 +48,7 @@ func (obj *BaseObj) GetDst() []IBaseObj {
 }
 
 func (obj *BaseObj) SetPipeline(pipe *Pipeline) {
-	obj.pipe = pipe
-}
-
-func (obj *BaseObj) GetPipeline() *Pipeline {
-	return obj.pipe
+	obj.Pipe = pipe
 }
 
 func (obj *BaseObj) SetID(id int) {
@@ -64,12 +59,8 @@ func (obj *BaseObj) GetID() int {
 	return obj.id
 }
 
-func (obj *BaseObj) GetTransactTable() *TransactTable {
-	return obj.tb
-}
-
 func (obj *BaseObj) AppendTransact(t *Transaction) bool {
-	obj.tb.Push(t)
+	Log.Trace.Println("Append transact ", t.GetID(), " to ", obj.name)
 	return true
 }
 
@@ -77,6 +68,6 @@ func (obj *BaseObj) HandleTransacts(wg *sync.WaitGroup) {
 	wg.Done()
 }
 
-func (obj *BaseObj) PrintReport() {
+func (obj *BaseObj) Report() {
 	fmt.Println("Object name \"", obj.name, "\"")
 }

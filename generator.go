@@ -36,8 +36,8 @@ func GenerateBorn(obj *Generator) int {
 	if obj.Modificator > 0 {
 		born += GetRandom(-obj.Modificator, obj.Modificator)
 	}
-	if obj.GetPipeline() != nil {
-		born += obj.GetPipeline().ModelTime
+	if obj.Pipe != nil {
+		born += obj.Pipe.ModelTime
 	}
 	return born
 }
@@ -67,8 +67,8 @@ func NewGenerator(name string, interval, modificator, start, count int, hndl Han
 // Generates transaction and it send into the simulation
 func (obj *Generator) GenerateTransact() {
 	var isTransactSended bool
-	Logger.Trace.Println("Generate transact ", obj.id)
-	t := NewTransaction(obj.GetPipeline())
+	Log.Trace.Println("Generate transact ", obj.id)
+	t := NewTransaction(obj.Pipe)
 	t.SetHolder(obj.name)
 	for _, v := range obj.GetDst() {
 		isTransactSended = isTransactSended || v.AppendTransact(t)
@@ -80,7 +80,7 @@ func (obj *Generator) GenerateTransact() {
 
 func (obj *Generator) HandleTransacts(wg *sync.WaitGroup) {
 	if (obj.Count != 0 && obj.id > obj.Count) ||
-		(obj.nextborn != obj.GetPipeline().ModelTime) {
+		(obj.nextborn != obj.Pipe.ModelTime) {
 		wg.Done()
 		return
 	}
@@ -98,15 +98,15 @@ func (obj *Generator) HandleTransacts(wg *sync.WaitGroup) {
 		for {
 			obj.GenerateTransact()
 			if obj.id > obj.Count {
-				Logger.Trace.Println("Stop generate")
+				Log.Trace.Println("Stop generate")
 				return
 			}
 		}
 	}()
 }
 
-func (obj *Generator) PrintReport() {
-	obj.BaseObj.PrintReport()
+func (obj *Generator) Report() {
+	obj.BaseObj.Report()
 	fmt.Println("Generated", obj.id-1)
 	fmt.Println()
 }

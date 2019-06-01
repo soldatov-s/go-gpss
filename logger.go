@@ -11,9 +11,9 @@ import (
 	"os"
 )
 
-var Logger *Log = NewLogger(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
+var Log *Logger = NewLogger(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
 
-type Log struct {
+type Logger struct {
 	Trace   *log.Logger
 	Info    *log.Logger
 	Warning *log.Logger
@@ -24,28 +24,19 @@ func NewLogger(
 	traceHandle io.Writer,
 	infoHandle io.Writer,
 	warningHandle io.Writer,
-	errorHandle io.Writer) *Log {
-	logger := &Log{}
-
-	logger.Trace = log.New(traceHandle,
-		"TRACE: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
-
-	logger.Info = log.New(infoHandle,
-		"INFO: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
-
-	logger.Warning = log.New(warningHandle,
-		"WARNING: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
-
-	logger.Error = log.New(errorHandle,
-		"ERROR: ",
-		log.Ldate|log.Ltime|log.Lshortfile)
-
-	return logger
+	errorHandle io.Writer) *Logger {
+	return &Logger{
+		Trace: log.New(traceHandle, "TRACE: ",
+			log.Ldate|log.Ltime|log.Lshortfile),
+		Info: log.New(infoHandle, "INFO: ",
+			log.Ldate|log.Ltime|log.Lshortfile),
+		Warning: log.New(warningHandle, "WARNING: ",
+			log.Ldate|log.Ltime|log.Lshortfile),
+		Error: log.New(errorHandle, "ERROR: ",
+			log.Ldate|log.Ltime|log.Lshortfile),
+	}
 }
 
 func EnableVerbose() {
-	Logger = NewLogger(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
+	Log = NewLogger(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
 }

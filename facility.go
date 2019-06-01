@@ -90,7 +90,7 @@ func (obj *Facility) AppendTransact(transact *Transaction) bool {
 		// Facility is busy
 		return false
 	}
-	Logger.Trace.Println("Append transact ", transact.GetID(), " to Facility")
+	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)
@@ -105,11 +105,11 @@ func (obj *Facility) AppendTransact(transact *Transaction) bool {
 	return true
 }
 
-func (obj *Facility) PrintReport() {
-	obj.BaseObj.PrintReport()
+func (obj *Facility) Report() {
+	obj.BaseObj.Report()
 	avr := obj.sum_advance / obj.cnt_transact
 	fmt.Printf("Average advance %.2f \tAverage utilization %.2f%%\tNumber entries %.2f \t", avr,
-		100*avr*obj.cnt_transact/float64(obj.GetPipeline().SimTime), obj.cnt_transact)
+		100*avr*obj.cnt_transact/float64(obj.Pipe.SimTime), obj.cnt_transact)
 	if obj.HoldedTransactID > 0 {
 		fmt.Print("Transact ", obj.HoldedTransactID, " in facility")
 		part, _, parent_id := obj.tb.Item(obj.HoldedTransactID).transact.GetParts()

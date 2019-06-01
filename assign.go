@@ -24,8 +24,7 @@ func NewAssign(name string, parameters ...Parameter) *Assign {
 }
 
 func (obj *Assign) AppendTransact(transact *Transaction) bool {
-	transact.PrintInfo()
-	Logger.Trace.Println("Append transact ", transact.GetID(), " to Assign")
+	obj.BaseObj.AppendTransact(transact)
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
 			transact.SetParameters(obj.parameters)
@@ -35,6 +34,6 @@ func (obj *Assign) AppendTransact(transact *Transaction) bool {
 	return false
 }
 
-func (obj *Assign) PrintReport() {
+func (obj *Assign) Report() {
 	return
 }

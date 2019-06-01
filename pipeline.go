@@ -80,7 +80,7 @@ func (p *Pipeline) Start(value int) {
 			case <-p.Done:
 				return
 			default:
-				Logger.Trace.Println("ModelTime ", p.ModelTime)
+				Log.Trace.Println("ModelTime ", p.ModelTime)
 				wg.Add(len(p.objects))
 				for _, o := range p.objects {
 					o.HandleTransacts(&wg)
@@ -100,7 +100,7 @@ func (p *Pipeline) Stop() {
 }
 
 // Print report about work of pipeline
-func (p *Pipeline) PrintReport() {
+func (p *Pipeline) Report() {
 	fmt.Println("Pipeline name \"", p.Name, "\"")
 	fmt.Println("Simulation time", p.ModelTime)
 	sortedObjects := make([]IBaseObj, 0, len(p.objects))
@@ -114,7 +114,7 @@ func (p *Pipeline) PrintReport() {
 
 	By(id).Sort(sortedObjects)
 	for _, v := range sortedObjects {
-		v.PrintReport()
+		v.Report()
 	}
 }
 

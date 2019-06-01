@@ -41,7 +41,7 @@ func Splitting(obj *Split, transact *Transaction) {
 		for i, v := range obj.GetDst() {
 			tr := transact.Copy()
 			parent_id := tr.GetID()
-			tr.SetID(obj.GetPipeline().NewID())
+			tr.SetID(obj.Pipe.NewID())
 			tr.SetParts(i+1, cntsplit, parent_id)
 			v.AppendTransact(tr) // Take in mind that after Split must be only Queues
 		}
@@ -55,7 +55,7 @@ func Splitting(obj *Split, transact *Transaction) {
 				if GetRandomBool() && !dsts[part_id-1] {
 					tr := transact.Copy()
 					parent_id := tr.GetID()
-					tr.SetID(obj.GetPipeline().NewID())
+					tr.SetID(obj.Pipe.NewID())
 					tr.SetParts(part_id, cntsplit, parent_id)
 					v.AppendTransact(tr)
 					dsts[part_id-1] = true
@@ -96,15 +96,15 @@ func (obj *Split) HandleTransacts(wg *sync.WaitGroup) {
 }
 
 func (obj *Split) AppendTransact(transact *Transaction) bool {
-	Logger.Trace.Println("Append transact ", transact.GetID(), " to Split")
+	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
 	obj.sum_transact++
 	obj.HandleTransact(transact)
 	return true
 }
 
-func (obj *Split) PrintReport() {
-	obj.BaseObj.PrintReport()
+func (obj *Split) Report() {
+	obj.BaseObj.Report()
 	fmt.Printf("Average split %.2f\n", obj.sum_split/obj.sum_transact)
 	fmt.Println()
 }

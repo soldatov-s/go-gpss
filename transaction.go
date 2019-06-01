@@ -75,7 +75,7 @@ func (t *Transaction) GetLife() int {
 
 // Print info about transact
 func (t *Transaction) PrintInfo() {
-	Logger.Trace.Println("Transaction ID:\t", t.GetID(),
+	Log.Trace.Println("Transaction ID:\t", t.GetID(),
 		"Borned:\t", t.GetIntParameter("born"),
 		"Advance time:\t", t.GetAdvanceTime(),
 		"Holder Name:\t", t.GetHolder(),
