@@ -8,20 +8,9 @@ import (
 	"sync"
 )
 
-type ITransactTable interface {
-	Push(item ITransaction)       // Push item to table
-	Pop() ITransaction            // Pop item from table
-	Remove(item ITransaction)     // Remove item from table
-	GetItems() map[int]*TableItem // Get all items from table
-	GetLen() int                  // Return length table
-	GetItem(int) *TableItem       // Get item in table by ID
-	GetFirstItem() *TableItem     // Get first item in table
-	LockTable()
-	UnlockTable()
-}
-
+// TableItem struct for TransactTable item
 type TableItem struct {
-	transact   ITransaction
+	transact   *Transaction
 	prevoiseID int
 	nextID     int
 }
@@ -35,19 +24,20 @@ type TransactTable struct {
 
 // Create new TransactTable
 func NewTransactTable() *TransactTable {
-	obj := &TransactTable{}
-	obj.lastID = -1
-	obj.firstID = -1
-	obj.mp = make(map[int]*TableItem)
-	obj.mu = &sync.Mutex{}
+	obj := &TransactTable{
+		lastID:  -1,
+		firstID: -1,
+		mp:      make(map[int]*TableItem),
+		mu:      &sync.Mutex{},
+	}
 	return obj
 }
 
 // Remove transact from table
-func (obj *TransactTable) Remove(transact ITransaction) {
+func (obj *TransactTable) Remove(transact *Transaction) {
 	defer obj.mu.Unlock()
 	obj.mu.Lock()
-	item := obj.mp[transact.GetId()]
+	item := obj.mp[transact.GetID()]
 	if item == nil {
 		return
 	}
@@ -57,12 +47,11 @@ func (obj *TransactTable) Remove(transact ITransaction) {
 			prevoiseItem.nextID = item.nextID
 		}
 	}
-	delete(obj.mp, transact.GetId())
-
+	delete(obj.mp, transact.GetID())
 }
 
 // Get all items of table
-func (obj *TransactTable) GetItems() map[int]*TableItem {
+func (obj *TransactTable) Items() map[int]*TableItem {
 	defer obj.mu.Unlock()
 	obj.mu.Lock()
 	items := make(map[int]*TableItem)
@@ -73,23 +62,23 @@ func (obj *TransactTable) GetItems() map[int]*TableItem {
 }
 
 // Push transact to end table
-func (obj *TransactTable) Push(transact ITransaction) {
+func (obj *TransactTable) Push(transact *Transaction) {
 	defer obj.mu.Unlock()
 	obj.mu.Lock()
 	if obj.firstID == -1 {
-		obj.firstID = transact.GetId()
+		obj.firstID = transact.GetID()
 	} else {
 		last_transact := obj.mp[obj.lastID]
 		if last_transact != nil {
-			last_transact.nextID = transact.GetId()
+			last_transact.nextID = transact.GetID()
 		}
 	}
-	obj.mp[transact.GetId()] = &TableItem{transact: transact, nextID: -1, prevoiseID: obj.lastID}
-	obj.lastID = transact.GetId()
+	obj.mp[transact.GetID()] = &TableItem{transact: transact, nextID: -1, prevoiseID: obj.lastID}
+	obj.lastID = transact.GetID()
 }
 
 // Return first transact from table and remove it from table
-func (obj *TransactTable) Pop() ITransaction {
+func (obj *TransactTable) Pop() *Transaction {
 	defer obj.mu.Unlock()
 	obj.mu.Lock()
 	item := obj.mp[obj.firstID]
@@ -101,26 +90,21 @@ func (obj *TransactTable) Pop() ITransaction {
 	return item.transact
 }
 
-func (obj *TransactTable) GetLen() int {
+// Return length table
+func (obj *TransactTable) Len() int {
 	return len(obj.mp)
 }
 
-func (obj *TransactTable) GetItem(id int) *TableItem {
+// Get item in table by ID
+func (obj *TransactTable) Item(id int) *TableItem {
 	defer obj.mu.Unlock()
 	obj.mu.Lock()
 	return obj.mp[id]
 }
 
-func (obj *TransactTable) GetFirstItem() *TableItem {
+// Get first item in table
+func (obj *TransactTable) First() *TableItem {
 	defer obj.mu.Unlock()
 	obj.mu.Lock()
 	return obj.mp[obj.firstID]
-}
-
-func (obj *TransactTable) LockTable() {
-	obj.mu.Lock()
-}
-
-func (obj *TransactTable) UnlockTable() {
-	//obj.mu.Unlock()
 }

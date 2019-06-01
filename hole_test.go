@@ -16,7 +16,7 @@ func TestHole_HandleTransact(t *testing.T) {
 	pipe.Append(hole)
 	transact := NewTransaction(pipe)
 	transact.SetTiсks(advance)
-	pipe.modelTime = modeltime
+	pipe.ModelTime = modeltime
 	hole.HandleTransact(transact)
 	if !transact.IsKilled() {
 		t.Error("Transact killing, expected", true, "got", transact.IsKilled())

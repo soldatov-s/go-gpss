@@ -11,60 +11,40 @@ import (
 	"sync"
 )
 
-type IPipeline interface {
-	Append(obj IBaseObj, src ...IBaseObj)           // Append  object to pipeline
-	AppendMultiple(obj []IBaseObj, dst ...IBaseObj) // Append  multiple objects to pipeline
-	AppendISlice(obj IBaseObj, dst []IBaseObj)      // Append slice IBaseObj
-	Delete(obj IBaseObj)                            // Delete object from pipeline
-	Start(value int)                                // Start simulation
-	Stop()                                          // Stop simulation
-	GetSimTime() int                                // Get Simulation time
-	GetModelTime() int                              // Get current model time
-	GetObjByName(name string) IBaseObj              // Get object from pipeline by name
-	GetIDNewTransaction() int                       // Get ID for new transaction
-	PrintReport()                                   // Print report
-}
-
+// Pipeline is structure for pipeline
 type Pipeline struct {
-	name      string              // Pipeline name
+	Name      string              // Pipeline name
 	objects   map[string]IBaseObj // Maps of objects
-	modelTime int                 // Current Model Time
+	ModelTime int                 // Current Model Time
 	Done      chan struct{}       // Chan for done
-	simTime   int                 // Simulation time
+	SimTime   int                 // Simulation time
 	id        int                 // ID of new transaction
 }
 
 // Create new Pipeline
 func NewPipeline(name string) *Pipeline {
-	p := &Pipeline{}
-	p.objects = make(map[string]IBaseObj)
-	p.name = name
-	p.Done = make(chan struct{})
-	p.modelTime = 0
-	p.id = 0
-	return p
+	return &Pipeline{
+		objects: make(map[string]IBaseObj),
+		Name:    name,
+		Done:    make(chan struct{}),
+	}
 }
 
 // Append object to pipeline. Src is multiple sources of transact for appended
 // object.
 func (p *Pipeline) Append(obj IBaseObj, dst ...IBaseObj) {
-	obj.SetDst(dst)
-	obj.SetPipeline(p)
-	obj.SetID(len(p.objects))
-	p.objects[obj.GetName()] = obj
+	p.AppendISlice(obj, dst)
 }
 
 // Append multiple objects to pipeline.  Src is multiple sources of transact
 // for appended object.
 func (p *Pipeline) AppendMultiple(obj []IBaseObj, dst ...IBaseObj) {
 	for _, o := range obj {
-		o.SetDst(dst)
-		o.SetPipeline(p)
-		o.SetID(len(p.objects))
-		p.objects[o.GetName()] = o
+		p.AppendISlice(o, dst)
 	}
 }
 
+// Append slice IBaseObj
 func (p *Pipeline) AppendISlice(obj IBaseObj, dst []IBaseObj) {
 	obj.SetDst(dst)
 	obj.SetPipeline(p)
@@ -74,8 +54,7 @@ func (p *Pipeline) AppendISlice(obj IBaseObj, dst []IBaseObj) {
 
 // Delete object from pipeline
 func (p *Pipeline) Delete(obj IBaseObj) {
-	o := obj.(IBaseObj)
-	delete(p.objects, o.GetName())
+	delete(p.objects, obj.GetName())
 }
 
 // Print list of objects ib pipeline
@@ -84,7 +63,7 @@ func (p *Pipeline) PrintObjects() {
 	for k := range p.objects {
 		keys = append(keys, k)
 	}
-	fmt.Println("Pipeline ", p.name)
+	fmt.Println("Pipeline ", p.Name)
 	for _, k := range keys {
 		fmt.Println("Key:", k, "Value:", reflect.TypeOf(p.objects[k]))
 	}
@@ -94,20 +73,20 @@ func (p *Pipeline) PrintObjects() {
 func (p *Pipeline) Start(value int) {
 	var wg sync.WaitGroup
 
-	p.simTime = value
+	p.SimTime = value
 	go func() {
 		for {
 			select {
 			case <-p.Done:
 				return
 			default:
-				Logger.Trace.Println("ModelTime ", p.modelTime)
+				Logger.Trace.Println("ModelTime ", p.ModelTime)
 				wg.Add(len(p.objects))
 				for _, o := range p.objects {
 					o.HandleTransacts(&wg)
 				}
 				wg.Wait()
-				if p.modelTime++; p.modelTime == value {
+				if p.ModelTime++; p.ModelTime == value {
 					p.Stop()
 				}
 			}
@@ -122,8 +101,8 @@ func (p *Pipeline) Stop() {
 
 // Print report about work of pipeline
 func (p *Pipeline) PrintReport() {
-	fmt.Println("Pipeline name \"", p.name, "\"")
-	fmt.Println("Simulation time", p.modelTime)
+	fmt.Println("Pipeline name \"", p.Name, "\"")
+	fmt.Println("Simulation time", p.ModelTime)
 	sortedObjects := make([]IBaseObj, 0, len(p.objects))
 	for _, v := range p.objects {
 		sortedObjects = append(sortedObjects, v)
@@ -137,17 +116,6 @@ func (p *Pipeline) PrintReport() {
 	for _, v := range sortedObjects {
 		v.PrintReport()
 	}
-
-}
-
-// Get value of simulation time
-func (p *Pipeline) GetSimTime() int {
-	return p.simTime
-}
-
-// Get current model time
-func (p *Pipeline) GetModelTime() int {
-	return p.modelTime
 }
 
 // Get object from pipeline by name
@@ -185,7 +153,8 @@ func (s *objectSorter) Less(i, j int) bool {
 	return s.by(s.objects[i], s.objects[j])
 }
 
-func (p *Pipeline) GetIDNewTransaction() int {
+// Get ID for new transaction
+func (p *Pipeline) NewID() int {
 	p.id++
 	return p.id
 }

@@ -37,7 +37,7 @@ func GenerateBorn(obj *Generator) int {
 		born += GetRandom(-obj.Modificator, obj.Modificator)
 	}
 	if obj.GetPipeline() != nil {
-		born += obj.GetPipeline().GetModelTime()
+		born += obj.GetPipeline().ModelTime
 	}
 	return born
 }
@@ -69,7 +69,7 @@ func (obj *Generator) GenerateTransact() {
 	var isTransactSended bool
 	Logger.Trace.Println("Generate transact ", obj.id)
 	t := NewTransaction(obj.GetPipeline())
-	t.SetHolderName(obj.name)
+	t.SetHolder(obj.name)
 	for _, v := range obj.GetDst() {
 		isTransactSended = isTransactSended || v.AppendTransact(t)
 	}
@@ -80,7 +80,7 @@ func (obj *Generator) GenerateTransact() {
 
 func (obj *Generator) HandleTransacts(wg *sync.WaitGroup) {
 	if (obj.Count != 0 && obj.id > obj.Count) ||
-		(obj.nextborn != obj.GetPipeline().GetModelTime()) {
+		(obj.nextborn != obj.GetPipeline().ModelTime) {
 		wg.Done()
 		return
 	}

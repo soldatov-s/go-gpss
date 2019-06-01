@@ -23,7 +23,7 @@ func NewAggregate(name string) *Aggregate {
 	return obj
 }
 
-func (obj *Aggregate) SendToDst(transact ITransaction) bool {
+func (obj *Aggregate) SendToDst(transact *Transaction) bool {
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
 			obj.tb.Remove(transact)
@@ -34,13 +34,13 @@ func (obj *Aggregate) SendToDst(transact ITransaction) bool {
 	return false
 }
 
-func (obj *Aggregate) HandleTransact(transact ITransaction) bool {
+func (obj *Aggregate) HandleTransact(transact *Transaction) bool {
 	transact.PrintInfo()
 	_, parts, parent_id := transact.GetParts()
 	if parent_id == 0 {
 		return obj.SendToDst(transact)
 	}
-	holded_tr := obj.tb.GetItem(parent_id)
+	holded_tr := obj.tb.Item(parent_id)
 	if holded_tr == nil {
 		tr := transact.Copy()
 		tr.SetID(parent_id)
@@ -72,20 +72,20 @@ func (obj *Aggregate) HandleTransacts(wg *sync.WaitGroup) {
 	return
 }
 
-func (obj *Aggregate) AppendTransact(transact ITransaction) bool {
-	Logger.Trace.Println("Append transact ", transact.GetId(), " to Aggregate")
-	transact.SetHolderName(obj.name)
+func (obj *Aggregate) AppendTransact(transact *Transaction) bool {
+	Logger.Trace.Println("Append transact ", transact.GetID(), " to Aggregate")
+	transact.SetHolder(obj.name)
 	return obj.HandleTransact(transact)
 }
 
 func (obj *Aggregate) PrintReport() {
 	obj.BaseObj.PrintReport()
 	fmt.Printf("Number of aggregated transact %.2f\n", obj.sum_transact)
-	if obj.tb.GetLen() > 0 {
+	if obj.tb.Len() > 0 {
 		fmt.Println("Await end aggregate:")
-		for _, item := range obj.tb.GetItems() {
+		for _, item := range obj.tb.Items() {
 			_, parts, _ := item.transact.GetParts()
-			fmt.Printf("transact %d wait %d parts\n", item.transact.GetId(), parts)
+			fmt.Printf("transact %d wait %d parts\n", item.transact.GetID(), parts)
 		}
 	}
 	fmt.Println()

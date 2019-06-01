@@ -26,10 +26,10 @@ type Check struct {
 }
 
 // Checking function signature
-type HandleCheckingFunc func(obj *Check, transact ITransaction) bool
+type HandleCheckingFunc func(obj *Check, transact *Transaction) bool
 
 // Default function for checking
-func Checking(obj *Check, transact ITransaction) bool {
+func Checking(obj *Check, transact *Transaction) bool {
 	for _, v := range obj.parameters {
 		parameter := transact.GetParameter(v.Name)
 		if parameter != v.Value {
@@ -54,9 +54,9 @@ func NewCheck(name string, hndl HandleCheckingFunc, falseObj IBaseObj, parameter
 	return obj
 }
 
-func (obj *Check) AppendTransact(transact ITransaction) bool {
+func (obj *Check) AppendTransact(transact *Transaction) bool {
 	transact.PrintInfo()
-	Logger.Trace.Println("Append transact ", transact.GetId(), " to Check")
+	Logger.Trace.Println("Append transact ", transact.GetID(), " to Check")
 	if !obj.HandleChecking(obj, transact) {
 		obj.cnt_false++
 		if obj.falseObj != nil {

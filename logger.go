@@ -11,9 +11,9 @@ import (
 	"os"
 )
 
-var Logger *LoggerGpss = NewLogger(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
+var Logger *Log = NewLogger(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
 
-type LoggerGpss struct {
+type Log struct {
 	Trace   *log.Logger
 	Info    *log.Logger
 	Warning *log.Logger
@@ -24,8 +24,8 @@ func NewLogger(
 	traceHandle io.Writer,
 	infoHandle io.Writer,
 	warningHandle io.Writer,
-	errorHandle io.Writer) *LoggerGpss {
-	logger := &LoggerGpss{}
+	errorHandle io.Writer) *Log {
+	logger := &Log{}
 
 	logger.Trace = log.New(traceHandle,
 		"TRACE: ",

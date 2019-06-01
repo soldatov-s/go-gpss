@@ -32,12 +32,12 @@ func NewCount(name string, inc_value, dec_value int) (*Count, *Count) {
 	return inc, dec
 }
 
-func (obj *Count) AppendTransact(transact ITransaction) bool {
+func (obj *Count) AppendTransact(transact *Transaction) bool {
 	transact.PrintInfo()
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
 			*obj.value += obj.inc_dec
-			Logger.Trace.Println("Append transact ", transact.GetId(), " to Count")
+			Logger.Trace.Println("Append transact ", transact.GetID(), " to Count")
 			return true
 		}
 	}

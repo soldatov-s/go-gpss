@@ -10,7 +10,7 @@ import (
 )
 
 type IQueue interface {
-	IsObjectAfterMeEmpty(transact ITransaction) bool // Check that after queue exist empty object
+	IsObjectAfterMeEmpty(transact *Transaction) bool // Check that after queue exist empty object
 	GetLength() int                                  // Get queue length
 }
 
@@ -32,13 +32,13 @@ func NewQueue(name string) *Queue {
 	return obj
 }
 
-func (obj *Queue) HandleTransact(transact ITransaction) {
+func (obj *Queue) HandleTransact(transact *Transaction) {
 	transact.InqQueueTime()
 	transact.PrintInfo()
 }
 
 // Check that after queue exist empty object
-func (obj *Queue) IsObjectAfterMeEmpty(transact ITransaction) bool {
+func (obj *Queue) IsObjectAfterMeEmpty(transact *Transaction) bool {
 	for _, o := range obj.GetDst() {
 		if o.AppendTransact(transact) {
 			return true
@@ -49,42 +49,42 @@ func (obj *Queue) IsObjectAfterMeEmpty(transact ITransaction) bool {
 
 // Get queue length
 func (obj *Queue) GetLength() int {
-	return obj.tb.GetLen()
+	return obj.tb.Len()
 }
 
 func (obj *Queue) HandleTransacts(wg *sync.WaitGroup) {
 	go func() {
 		defer wg.Done()
 		// Queue not empty
-		if obj.tb.GetLen() > 0 {
-			tr := obj.tb.GetFirstItem()
+		if obj.tb.Len() > 0 {
+			tr := obj.tb.First()
 			for tr != nil {
 				if obj.IsObjectAfterMeEmpty(tr.transact) {
 					obj.sum_timequeue += float64(tr.transact.GetQueueTime())
 					obj.tb.Pop()
-					tr = obj.tb.GetFirstItem()
+					tr = obj.tb.First()
 				} else {
 					break
 				}
 			}
 		}
-		transacts := obj.tb.GetItems()
+		transacts := obj.tb.Items()
 		for _, tr := range transacts {
 			obj.HandleTransact(tr.transact)
 		}
-		obj.sum_content += float64(obj.tb.GetLen())
+		obj.sum_content += float64(obj.tb.Len())
 	}()
 }
 
-func (obj *Queue) AppendTransact(transact ITransaction) bool {
-	Logger.Trace.Println("Append transact ", transact.GetId(), " to Queue")
-	transact.SetHolderName(obj.name)
+func (obj *Queue) AppendTransact(transact *Transaction) bool {
+	Logger.Trace.Println("Append transact ", transact.GetID(), " to Queue")
+	transact.SetHolder(obj.name)
 	if !obj.IsObjectAfterMeEmpty(transact) {
 		transact.ResetQueueTime()
 		obj.tb.Push(transact)
 		transact.InqQueueTime()
-		if obj.max_content < obj.tb.GetLen() {
-			obj.max_content = obj.tb.GetLen()
+		if obj.max_content < obj.tb.Len() {
+			obj.max_content = obj.tb.Len()
 		}
 	} else {
 		obj.sum_zeroEntries++
@@ -97,8 +97,8 @@ func (obj *Queue) PrintReport() {
 	obj.BaseObj.PrintReport()
 	fmt.Printf("Max content %d\tTotal entries %2.f\tZero entries %2.f\tPersent zero entries %.2f%%\n",
 		obj.max_content, obj.sum_Entries, obj.sum_zeroEntries, 100*obj.sum_zeroEntries/obj.sum_Entries)
-	fmt.Printf("Current contents %d\tAverage content %.2f\tAverage time/trans %.2f\n", obj.tb.GetLen(),
-		obj.sum_content/float64(obj.GetPipeline().GetSimTime()), obj.sum_timequeue/obj.sum_Entries)
+	fmt.Printf("Current contents %d\tAverage content %.2f\tAverage time/trans %.2f\n", obj.tb.Len(),
+		obj.sum_content/float64(obj.GetPipeline().SimTime), obj.sum_timequeue/obj.sum_Entries)
 	if obj.sum_Entries-obj.sum_zeroEntries > 0 {
 		fmt.Printf("Average time/trans without zero entries %.2f\n", obj.sum_timequeue/(obj.sum_Entries-obj.sum_zeroEntries))
 	}

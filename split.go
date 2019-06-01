@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-type HandleSplittingFunc func(obj *Split, transact ITransaction)
+type HandleSplittingFunc func(obj *Split, transact *Transaction)
 
 // A Split creates assembly set of sub-transactions of a Transaction
 type Split struct {
@@ -22,7 +22,7 @@ type Split struct {
 }
 
 // Default splitting function
-func Splitting(obj *Split, transact ITransaction) {
+func Splitting(obj *Split, transact *Transaction) {
 	cntsplit := obj.Cntsplit
 	if obj.Modificator > 0 {
 		cntsplit += GetRandom(-obj.Modificator, obj.Modificator)
@@ -40,8 +40,8 @@ func Splitting(obj *Split, transact ITransaction) {
 		// Default case, cntsplit equal to length of GetDst()
 		for i, v := range obj.GetDst() {
 			tr := transact.Copy()
-			parent_id := tr.GetId()
-			tr.SetID(obj.GetPipeline().GetIDNewTransaction())
+			parent_id := tr.GetID()
+			tr.SetID(obj.GetPipeline().NewID())
 			tr.SetParts(i+1, cntsplit, parent_id)
 			v.AppendTransact(tr) // Take in mind that after Split must be only Queues
 		}
@@ -54,8 +54,8 @@ func Splitting(obj *Split, transact ITransaction) {
 			for _, v := range obj.GetDst() {
 				if GetRandomBool() && !dsts[part_id-1] {
 					tr := transact.Copy()
-					parent_id := tr.GetId()
-					tr.SetID(obj.GetPipeline().GetIDNewTransaction())
+					parent_id := tr.GetID()
+					tr.SetID(obj.GetPipeline().NewID())
 					tr.SetParts(part_id, cntsplit, parent_id)
 					v.AppendTransact(tr)
 					dsts[part_id-1] = true
@@ -85,7 +85,7 @@ func NewSplit(name string, cntsplit, modificator int, hndl HandleSplittingFunc) 
 	return obj
 }
 
-func (obj *Split) HandleTransact(transact ITransaction) {
+func (obj *Split) HandleTransact(transact *Transaction) {
 	transact.PrintInfo()
 	obj.HandleSplitting(obj, transact)
 }
@@ -95,9 +95,9 @@ func (obj *Split) HandleTransacts(wg *sync.WaitGroup) {
 	return
 }
 
-func (obj *Split) AppendTransact(transact ITransaction) bool {
-	Logger.Trace.Println("Append transact ", transact.GetId(), " to Split")
-	transact.SetHolderName(obj.name)
+func (obj *Split) AppendTransact(transact *Transaction) bool {
+	Logger.Trace.Println("Append transact ", transact.GetID(), " to Split")
+	transact.SetHolder(obj.name)
 	obj.sum_transact++
 	obj.HandleTransact(transact)
 	return true

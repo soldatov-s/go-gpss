@@ -43,7 +43,7 @@ func (obj *Advance) GenerateAdvance() int {
 	return advance
 }
 
-func (obj *Advance) HandleTransact(transact ITransaction) {
+func (obj *Advance) HandleTransact(transact *Transaction) {
 	transact.DecTiсks()
 	transact.PrintInfo()
 	if transact.IsTheEnd() {
@@ -58,22 +58,22 @@ func (obj *Advance) HandleTransact(transact ITransaction) {
 
 func (obj *Advance) HandleTransacts(wg *sync.WaitGroup) {
 	if obj.Interval == 0 ||
-		obj.tb.GetLen() == 0 {
+		obj.tb.Len() == 0 {
 		wg.Done()
 		return
 	}
 	go func() {
 		defer wg.Done()
-		transacts := obj.tb.GetItems()
+		transacts := obj.tb.Items()
 		for _, tr := range transacts {
 			obj.HandleTransact(tr.transact)
 		}
 	}()
 }
 
-func (obj *Advance) AppendTransact(transact ITransaction) bool {
-	Logger.Trace.Println("Append transact ", transact.GetId(), " to Advance")
-	transact.SetHolderName(obj.name)
+func (obj *Advance) AppendTransact(transact *Transaction) bool {
+	Logger.Trace.Println("Append transact ", transact.GetID(), " to Advance")
+	transact.SetHolder(obj.name)
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)
 	transact.SetTiсks(advance)

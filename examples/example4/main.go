@@ -18,7 +18,7 @@ func main() {
 	out := NewHole("Out")
 	visitors_q := NewQueue("Visitors queue")
 	// 2. Create the Check for checking size the Queue of Visitors
-	CheckQueueHndl := func(obj *Check, transact ITransaction) bool {
+	CheckQueueHndl := func(obj *Check, transact *Transaction) bool {
 		queue := obj.GetPipeline().GetObjByName("Visitors queue")
 		if queue.(IQueue).GetLength() >= 6 {
 			return false
@@ -38,7 +38,7 @@ func main() {
 		tables_in[i], tables_out[i] = NewBifacility(table_name)
 	}
 	// 5. Check that we have empty table
-	CheckEmptyTableHndl := func(obj *Check, transact ITransaction) bool {
+	CheckEmptyTableHndl := func(obj *Check, transact *Transaction) bool {
 		for i := 0; i < cnt_tables; i++ {
 			table_name := fmt.Sprintf("Table %d", i+1)
 			table := obj.GetPipeline().GetObjByName(table_name).(IFacility)
@@ -85,7 +85,7 @@ func main() {
 	// 11. Create the Checks for checking that this dishes for this table
 	// id_table is a number of first table in group which served by waiter
 	check_tb_number := func(id_table int) HandleCheckingFunc {
-		return func(obj *Check, transact ITransaction) bool {
+		return func(obj *Check, transact *Transaction) bool {
 			for i := 0; i < 3; i++ {
 				table_name := fmt.Sprintf("Table %d", i+id_table)
 				if transact.GetParameter("Facility").(string) == table_name {

@@ -45,7 +45,7 @@ func NewBifacility(name string) (*InFacility, *OutFacility) {
 	return inObj, outObj
 }
 
-func (obj *InFacility) HandleTransact(transact ITransaction) {
+func (obj *InFacility) HandleTransact(transact *Transaction) {
 	transact.PrintInfo()
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
@@ -54,21 +54,21 @@ func (obj *InFacility) HandleTransact(transact ITransaction) {
 	}
 }
 
-func (obj *InFacility) AppendTransact(transact ITransaction) bool {
-	if obj.tb.GetLen() != 0 {
+func (obj *InFacility) AppendTransact(transact *Transaction) bool {
+	if obj.tb.Len() != 0 {
 		// Facility is busy
 		return false
 	}
-	Logger.Trace.Println("Append transact ", transact.GetId(), " to Facility")
-	transact.SetHolderName(obj.name)
+	Logger.Trace.Println("Append transact ", transact.GetID(), " to Facility")
+	transact.SetHolder(obj.name)
 	if transact.GetParameter("Facility") != nil {
 		obj.bakupFacilityName = transact.GetParameter("Facility").(string)
 	}
 	transact.SetParameter("Facility", obj.name)
-	obj.HoldedTransactID = transact.GetId()
+	obj.HoldedTransactID = transact.GetID()
 	obj.tb.Push(transact)
 	obj.cnt_transact++
-	obj.timeOfInput = obj.GetPipeline().GetModelTime()
+	obj.timeOfInput = obj.GetPipeline().ModelTime
 	obj.HandleTransact(transact)
 	return true
 }
@@ -77,7 +77,7 @@ func (obj *InFacility) PrintReport() {
 	obj.BaseObj.PrintReport()
 	avr := obj.sum_advance / obj.cnt_transact
 	fmt.Printf("Average advance %.2f \tAverage utilization %.2f%%\tNumber entries %.2f \t", avr,
-		100*avr*obj.cnt_transact/float64(obj.GetPipeline().GetSimTime()), obj.cnt_transact)
+		100*avr*obj.cnt_transact/float64(obj.GetPipeline().SimTime), obj.cnt_transact)
 	if obj.HoldedTransactID > 0 {
 		fmt.Print("Transact ", obj.HoldedTransactID, " in facility")
 	} else {
@@ -87,14 +87,14 @@ func (obj *InFacility) PrintReport() {
 }
 
 func (obj *InFacility) IsEmpty() bool {
-	if obj.tb.GetLen() != 0 {
+	if obj.tb.Len() != 0 {
 		// Facility is busy
 		return false
 	}
 	return true
 }
 
-func (obj *OutFacility) HandleTransact(transact ITransaction) {
+func (obj *OutFacility) HandleTransact(transact *Transaction) {
 	transact.PrintInfo()
 	if obj.inFacility.bakupFacilityName != "" {
 		transact.SetParameter("Facility",
@@ -105,7 +105,7 @@ func (obj *OutFacility) HandleTransact(transact ITransaction) {
 
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
-			advance := obj.GetPipeline().GetModelTime() - obj.inFacility.timeOfInput
+			advance := obj.GetPipeline().ModelTime - obj.inFacility.timeOfInput
 			obj.inFacility.sum_advance += float64(advance)
 			obj.tb.Remove(transact)
 			obj.inFacility.HoldedTransactID = -1
@@ -115,13 +115,13 @@ func (obj *OutFacility) HandleTransact(transact ITransaction) {
 	transact.SetParameters([]Parameter{{Name: "Facility", Value: obj.name}})
 }
 
-func (obj *OutFacility) AppendTransact(transact ITransaction) bool {
-	if obj.inFacility.HoldedTransactID != transact.GetId() {
+func (obj *OutFacility) AppendTransact(transact *Transaction) bool {
+	if obj.inFacility.HoldedTransactID != transact.GetID() {
 		return false
 	}
-	Logger.Trace.Println("Append transact ", transact.GetId(), " to Facility")
+	Logger.Trace.Println("Append transact ", transact.GetID(), " to Facility")
 	obj.HandleTransact(transact)
-	if obj.tb.GetLen() == 0 {
+	if obj.tb.Len() == 0 {
 		return true
 	}
 	return false

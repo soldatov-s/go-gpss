@@ -25,7 +25,7 @@ func NewHole(name string) *Hole {
 	return obj
 }
 
-func (obj *Hole) HandleTransact(transact ITransaction) {
+func (obj *Hole) HandleTransact(transact *Transaction) {
 	if !transact.IsKilled() {
 		transact.Kill()
 		transact.PrintInfo()
@@ -36,23 +36,22 @@ func (obj *Hole) HandleTransact(transact ITransaction) {
 }
 
 func (obj *Hole) HandleTransacts(wg *sync.WaitGroup) {
-	if obj.tb.GetLen() == 0 {
+	if obj.tb.Len() == 0 {
 		wg.Done()
 		return
 	}
 	go func() {
 		defer wg.Done()
-		transacts := obj.tb.GetItems()
-		defer obj.tb.UnlockTable()
+		transacts := obj.tb.Items()
 		for _, tr := range transacts {
 			obj.HandleTransact(tr.transact)
 		}
 	}()
 }
 
-func (obj *Hole) AppendTransact(transact ITransaction) bool {
-	Logger.Trace.Println("Append transact ", transact.GetId(), " to Hole")
-	transact.SetHolderName(obj.name)
+func (obj *Hole) AppendTransact(transact *Transaction) bool {
+	Logger.Trace.Println("Append transact ", transact.GetID(), " to Hole")
+	transact.SetHolder(obj.name)
 	obj.tb.Push(transact)
 	return true
 }

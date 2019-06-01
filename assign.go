@@ -23,9 +23,9 @@ func NewAssign(name string, parameters ...Parameter) *Assign {
 	return obj
 }
 
-func (obj *Assign) AppendTransact(transact ITransaction) bool {
+func (obj *Assign) AppendTransact(transact *Transaction) bool {
 	transact.PrintInfo()
-	Logger.Trace.Println("Append transact ", transact.GetId(), " to Assign")
+	Logger.Trace.Println("Append transact ", transact.GetID(), " to Assign")
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
 			transact.SetParameters(obj.parameters)

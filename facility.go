@@ -51,7 +51,7 @@ func (obj *Facility) GenerateAdvance() int {
 	return advance
 }
 
-func (obj *Facility) HandleTransact(transact ITransaction) {
+func (obj *Facility) HandleTransact(transact *Transaction) {
 	transact.DecTiсks()
 	transact.PrintInfo()
 	if transact.IsTheEnd() {
@@ -72,26 +72,26 @@ func (obj *Facility) HandleTransact(transact ITransaction) {
 	}
 }
 func (obj *Facility) HandleTransacts(wg *sync.WaitGroup) {
-	if obj.tb.GetLen() == 0 {
+	if obj.tb.Len() == 0 {
 		wg.Done()
 		return
 	}
 	go func() {
 		defer wg.Done()
-		transacts := obj.tb.GetItems()
+		transacts := obj.tb.Items()
 		for _, tr := range transacts {
 			obj.HandleTransact(tr.transact)
 		}
 	}()
 }
 
-func (obj *Facility) AppendTransact(transact ITransaction) bool {
-	if obj.tb.GetLen() != 0 {
+func (obj *Facility) AppendTransact(transact *Transaction) bool {
+	if obj.tb.Len() != 0 {
 		// Facility is busy
 		return false
 	}
-	Logger.Trace.Println("Append transact ", transact.GetId(), " to Facility")
-	transact.SetHolderName(obj.name)
+	Logger.Trace.Println("Append transact ", transact.GetID(), " to Facility")
+	transact.SetHolder(obj.name)
 	advance := obj.GenerateAdvance()
 	obj.sum_advance += float64(advance)
 	transact.SetTiсks(advance)
@@ -99,7 +99,7 @@ func (obj *Facility) AppendTransact(transact ITransaction) bool {
 		obj.bakupFacilityName = transact.GetParameter("Facility").(string)
 	}
 	transact.SetParameter("Facility", obj.name)
-	obj.HoldedTransactID = transact.GetId()
+	obj.HoldedTransactID = transact.GetID()
 	obj.tb.Push(transact)
 	obj.cnt_transact++
 	return true
@@ -109,10 +109,10 @@ func (obj *Facility) PrintReport() {
 	obj.BaseObj.PrintReport()
 	avr := obj.sum_advance / obj.cnt_transact
 	fmt.Printf("Average advance %.2f \tAverage utilization %.2f%%\tNumber entries %.2f \t", avr,
-		100*avr*obj.cnt_transact/float64(obj.GetPipeline().GetSimTime()), obj.cnt_transact)
+		100*avr*obj.cnt_transact/float64(obj.GetPipeline().SimTime), obj.cnt_transact)
 	if obj.HoldedTransactID > 0 {
 		fmt.Print("Transact ", obj.HoldedTransactID, " in facility")
-		part, _, parent_id := obj.tb.GetItem(obj.HoldedTransactID).transact.GetParts()
+		part, _, parent_id := obj.tb.Item(obj.HoldedTransactID).transact.GetParts()
 		if parent_id > 0 {
 			fmt.Print(", parent transact ", parent_id, " part ", part)
 		}
@@ -123,7 +123,7 @@ func (obj *Facility) PrintReport() {
 }
 
 func (obj *Facility) IsEmpty() bool {
-	if obj.tb.GetLen() != 0 {
+	if obj.tb.Len() != 0 {
 		// Facility is busy
 		return false
 	}
