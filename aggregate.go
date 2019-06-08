@@ -12,7 +12,7 @@ import (
 // Aggregate multiple sub-transactions in Transaction
 type Aggregate struct {
 	BaseObj
-	sum_transact float64 // Counter of all fully aggregated transactions
+	sumTransact float64 // Counter of all fully aggregated transactions
 }
 
 // NewAggregate creates new Aggregate
@@ -28,7 +28,7 @@ func (obj *Aggregate) SendToDst(transact *Transaction) bool {
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
 			obj.tb.Remove(transact)
-			obj.sum_transact++
+			obj.sumTransact++
 			return true
 		}
 	}
@@ -38,14 +38,14 @@ func (obj *Aggregate) SendToDst(transact *Transaction) bool {
 // HandleTransact handle transact
 func (obj *Aggregate) HandleTransact(transact *Transaction) bool {
 	transact.PrintInfo()
-	_, parts, parent_id := transact.GetParts()
-	if parent_id == 0 {
+	_, parts, parentID := transact.GetParts()
+	if parentID == 0 {
 		return obj.SendToDst(transact)
 	}
-	holded_tr := obj.tb.Item(parent_id)
-	if holded_tr == nil {
+	holdedTr := obj.tb.Item(parentID)
+	if holdedTr == nil {
 		tr := transact.Copy()
-		tr.SetID(parent_id)
+		tr.SetID(parentID)
 		tr.SetParts(0, parts-1, 0)
 		if parts-1 == 0 {
 			return obj.SendToDst(tr)
@@ -53,23 +53,22 @@ func (obj *Aggregate) HandleTransact(transact *Transaction) bool {
 		obj.tb.Push(tr)
 	} else {
 		// Update Advance
-		if holded_tr.transact.GetAdvanceTime() < transact.GetAdvanceTime() {
-			holded_tr.transact.SetTiсks(transact.GetAdvanceTime())
-			holded_tr.transact.SetTiсks(0)
+		if holdedTr.transact.GetAdvanceTime() < transact.GetAdvanceTime() {
+			holdedTr.transact.SetTiсks(transact.GetAdvanceTime())
+			holdedTr.transact.SetTiсks(0)
 		}
-		_, holded_parts, _ := holded_tr.transact.GetParts()
-		if holded_parts-1 == 0 {
+		_, holdedParts, _ := holdedTr.transact.GetParts()
+		if holdedParts-1 == 0 {
 			// We aggregate all parts
-			holded_tr.transact.SetParts(0, 0, 0)
-			return obj.SendToDst(holded_tr.transact)
-		} else {
-			holded_tr.transact.SetParts(0, holded_parts-1, 0)
+			holdedTr.transact.SetParts(0, 0, 0)
+			return obj.SendToDst(holdedTr.transact)
 		}
+		holdedTr.transact.SetParts(0, holdedParts-1, 0)
 	}
 	return true
 }
 
-// HandleTransact handle transact
+// HandleTransacts handle transacts
 func (obj *Aggregate) HandleTransacts(wg *sync.WaitGroup) {
 	wg.Done()
 	return
@@ -85,7 +84,7 @@ func (obj *Aggregate) AppendTransact(transact *Transaction) bool {
 // Report - print report about object
 func (obj *Aggregate) Report() {
 	obj.BaseObj.Report()
-	fmt.Printf("Number of aggregated transact %.2f\n", obj.sum_transact)
+	fmt.Printf("Number of aggregated transact %.2f\n", obj.sumTransact)
 	if obj.tb.Len() > 0 {
 		fmt.Println("Await end aggregate:")
 		for _, item := range obj.tb.Items() {

@@ -21,13 +21,13 @@ func TestHole_HandleTransact(t *testing.T) {
 	if !transact.IsKilled() {
 		t.Error("Transact killing, expected", true, "got", transact.IsKilled())
 	}
-	if hole.cnt_transact != 1 {
-		t.Error("Transact cnt_transact, expected", 1, "got", hole.cnt_transact)
+	if hole.cntTransact != 1 {
+		t.Error("Transact cnt_transact, expected", 1, "got", hole.cntTransact)
 	}
-	if hole.sum_life != float64(modeltime) {
-		t.Error("Transact sum_life, expected", modeltime, "got", hole.sum_life)
+	if hole.sumLife != float64(modeltime) {
+		t.Error("Transact sum_life, expected", modeltime, "got", hole.sumLife)
 	}
-	if hole.sum_advance != float64(advance) {
-		t.Error("Transact sum_life, expected", advance, "got", hole.sum_advance)
+	if hole.sumAdvance != float64(advance) {
+		t.Error("Transact sum_life, expected", advance, "got", hole.sumAdvance)
 	}
 }

@@ -12,9 +12,9 @@ import (
 // Hole in which fall in transactions
 type Hole struct {
 	BaseObj
-	sum_life     float64 // For count average transact life
-	sum_advance  float64 // For count average advance
-	cnt_transact float64 // How much killed
+	sumLife     float64 // For count average transact life
+	sumAdvance  float64 // For count average advance
+	cntTransact float64 // How much killed
 }
 
 // NewHole creates new Hole
@@ -30,9 +30,9 @@ func (obj *Hole) HandleTransact(transact *Transaction) {
 	if !transact.IsKilled() {
 		transact.Kill()
 		transact.PrintInfo()
-		obj.sum_life += float64(transact.GetLife())
-		obj.sum_advance += float64(transact.GetAdvanceTime())
-		obj.cnt_transact++
+		obj.sumLife += float64(transact.GetLife())
+		obj.sumAdvance += float64(transact.GetAdvanceTime())
+		obj.cntTransact++
 	}
 }
 
@@ -62,8 +62,8 @@ func (obj *Hole) AppendTransact(transact *Transaction) bool {
 // Report - print report about object
 func (obj *Hole) Report() {
 	obj.BaseObj.Report()
-	fmt.Println("Killed", obj.cnt_transact)
-	fmt.Printf("Average advance %.2f\n", obj.sum_advance/obj.cnt_transact)
-	fmt.Printf("Average life %.2f\n", obj.sum_life/obj.cnt_transact)
+	fmt.Println("Killed", obj.cntTransact)
+	fmt.Printf("Average advance %.2f\n", obj.sumAdvance/obj.cntTransact)
+	fmt.Printf("Average life %.2f\n", obj.sumLife/obj.cntTransact)
 	fmt.Println()
 }

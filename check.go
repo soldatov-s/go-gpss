@@ -20,9 +20,9 @@ type Check struct {
 	// Parameters of transact for checking
 	parameters []Parameter
 	// For counting true result checking
-	cnt_true int
+	cntTrue int
 	// For counting false result checking
-	cnt_false int
+	cntFalse int
 }
 
 // HandleCheckingFunc is a checking function signature
@@ -58,17 +58,15 @@ func NewCheck(name string, hndl HandleCheckingFunc, falseObj IBaseObj, parameter
 func (obj *Check) AppendTransact(transact *Transaction) bool {
 	obj.BaseObj.AppendTransact(transact)
 	if !obj.HandleChecking(obj, transact) {
-		obj.cnt_false++
+		obj.cntFalse++
 		if obj.falseObj != nil {
 			if obj.falseObj.AppendTransact(transact) {
 				return true
-			} else {
-				return false
 			}
 		}
 		return false
 	}
-	obj.cnt_true++
+	obj.cntTrue++
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
 			return true
@@ -80,6 +78,6 @@ func (obj *Check) AppendTransact(transact *Transaction) bool {
 // Report - print report about object
 func (obj *Check) Report() {
 	obj.BaseObj.Report()
-	fmt.Printf("Check result true %d\tCheck result false %d\n\n", obj.cnt_true, obj.cnt_false)
+	fmt.Printf("Check result true %d\tCheck result false %d\n\n", obj.cntTrue, obj.cntFalse)
 	return
 }

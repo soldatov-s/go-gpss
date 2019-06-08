@@ -9,6 +9,7 @@ import (
 	"sync"
 )
 
+// HandleSplittingFunc is a splitting function signature
 type HandleSplittingFunc func(obj *Split, transact *Transaction)
 
 // A Split creates assembly set of sub-transactions of a Transaction
@@ -16,12 +17,12 @@ type Split struct {
 	BaseObj
 	Cntsplit        int                 // Number of related Transactions to be created
 	Modificator     int                 // The count half-range
-	sum_split       float64             // Counter of sub-transactions
-	sum_transact    float64             // Counter of transactions
+	sumSplit        float64             // Counter of sub-transactions
+	sumTransact     float64             // Counter of transactions
 	HandleSplitting HandleSplittingFunc // Function for splitting transaction
 }
 
-// Default splitting function
+// Splitting - default splitting function
 func Splitting(obj *Split, transact *Transaction) {
 	cntsplit := obj.Cntsplit
 	if obj.Modificator > 0 {
@@ -35,7 +36,7 @@ func Splitting(obj *Split, transact *Transaction) {
 		cntsplit = len(obj.GetDst())
 	}
 
-	obj.sum_split += float64(cntsplit)
+	obj.sumSplit += float64(cntsplit)
 	if cntsplit == len(obj.GetDst()) {
 		// Default case, cntsplit equal to length of GetDst()
 		for i, v := range obj.GetDst() {
@@ -69,7 +70,7 @@ func Splitting(obj *Split, transact *Transaction) {
 	}
 }
 
-// Creates new Split.
+// NewSplit creates new Split.
 // name - name of object; cntsplit - number of related Transactions to be created;
 // modificator - the count half-range; hndl - function for splitting transaction
 func NewSplit(name string, cntsplit, modificator int, hndl HandleSplittingFunc) *Split {
@@ -85,26 +86,24 @@ func NewSplit(name string, cntsplit, modificator int, hndl HandleSplittingFunc) 
 	return obj
 }
 
+// HandleTransact handle transact
 func (obj *Split) HandleTransact(transact *Transaction) {
 	transact.PrintInfo()
 	obj.HandleSplitting(obj, transact)
 }
 
-func (obj *Split) HandleTransacts(wg *sync.WaitGroup) {
-	wg.Done()
-	return
-}
-
+// AppendTransact append transact to object
 func (obj *Split) AppendTransact(transact *Transaction) bool {
 	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
-	obj.sum_transact++
+	obj.sumTransact++
 	obj.HandleTransact(transact)
 	return true
 }
 
+// Report - print report about object
 func (obj *Split) Report() {
 	obj.BaseObj.Report()
-	fmt.Printf("Average split %.2f\n", obj.sum_split/obj.sum_transact)
+	fmt.Printf("Average split %.2f\n", obj.sumSplit/obj.sumTransact)
 	fmt.Println()
 }

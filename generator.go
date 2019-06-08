@@ -15,6 +15,7 @@ type IGenerator interface {
 	GenerateTransact()
 }
 
+// HandleBornFunc is a born transact function signature
 type HandleBornFunc func(obj *Generator) int
 
 // A Generator sequentially generates transactions

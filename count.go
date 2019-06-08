@@ -13,7 +13,7 @@ import (
 type Count struct {
 	BaseObj
 	value   *int // Value of counter
-	inc_dec int  // Value of increment/decrement
+	incDec int  // Value of increment/decrement
 }
 
 // NewCount creates two objects, for incremet and decrement. After enter transact in
@@ -25,10 +25,10 @@ func NewCount(name string, incValue, decValue int) (*Count, *Count) {
 	dec := &Count{}
 	inc.name = name + "_INC"
 	inc.value = &value
-	inc.inc_dec = incValue
+	inc.incDec = incValue
 	dec.name = name + "_DEC"
 	dec.value = inc.value
-	dec.inc_dec = decValue
+	dec.incDec = decValue
 	return inc, dec
 }
 
@@ -36,7 +36,7 @@ func NewCount(name string, incValue, decValue int) (*Count, *Count) {
 func (obj *Count) AppendTransact(transact *Transaction) bool {
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
-			*obj.value += obj.inc_dec
+			*obj.value += obj.incDec
 			obj.BaseObj.AppendTransact(transact)
 			return true
 		}

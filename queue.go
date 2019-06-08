@@ -18,11 +18,11 @@ type IQueue interface {
 // Queue of transaction
 type Queue struct {
 	BaseObj
-	sum_timequeue   float64 // Sum all transact queue time
-	sum_zeroEntries float64 // Sum zero entrise
-	sum_Entries     float64 // Sum all entries
-	max_content     int     // Max content in queue
-	sum_content     float64 // Sum content in queue
+	sumTimequeue   float64 // Sum all transact queue time
+	sumZeroEntries float64 // Sum zero entrise
+	sumEntries     float64 // Sum all entries
+	maxContent     int     // Max content in queue
+	sumContent     float64 // Sum content in queue
 }
 
 // NewQueue creates new Queue.
@@ -63,7 +63,7 @@ func (obj *Queue) HandleTransacts(wg *sync.WaitGroup) {
 			tr := obj.tb.First()
 			for tr != nil {
 				if obj.IsObjectAfterMeEmpty(tr.transact) {
-					obj.sum_timequeue += float64(tr.transact.GetQueueTime())
+					obj.sumTimequeue += float64(tr.transact.GetQueueTime())
 					obj.tb.Pop()
 					tr = obj.tb.First()
 				} else {
@@ -75,7 +75,7 @@ func (obj *Queue) HandleTransacts(wg *sync.WaitGroup) {
 		for _, tr := range transacts {
 			obj.HandleTransact(tr.transact)
 		}
-		obj.sum_content += float64(obj.tb.Len())
+		obj.sumContent += float64(obj.tb.Len())
 	}()
 }
 
@@ -87,13 +87,13 @@ func (obj *Queue) AppendTransact(transact *Transaction) bool {
 		transact.ResetQueueTime()
 		obj.tb.Push(transact)
 		transact.InqQueueTime()
-		if obj.max_content < obj.tb.Len() {
-			obj.max_content = obj.tb.Len()
+		if obj.maxContent < obj.tb.Len() {
+			obj.maxContent = obj.tb.Len()
 		}
 	} else {
-		obj.sum_zeroEntries++
+		obj.sumZeroEntries++
 	}
-	obj.sum_Entries++
+	obj.sumEntries++
 	return true
 }
 
@@ -101,11 +101,11 @@ func (obj *Queue) AppendTransact(transact *Transaction) bool {
 func (obj *Queue) Report() {
 	obj.BaseObj.Report()
 	fmt.Printf("Max content \t%d\tTotal entries \t%2.f\tZero entries \t%2.f\tPersent zero entries \t%.2f%%\n",
-		obj.max_content, obj.sum_Entries, obj.sum_zeroEntries, 100*obj.sum_zeroEntries/obj.sum_Entries)
+		obj.maxContent, obj.sumEntries, obj.sumZeroEntries, 100*obj.sumZeroEntries/obj.sumEntries)
 	fmt.Printf("Current contents \t%d\tAverage content \t%.2f\tAverage time/trans \t%.2f\n", obj.tb.Len(),
-		obj.sum_content/float64(obj.Pipe.SimTime), obj.sum_timequeue/obj.sum_Entries)
-	if obj.sum_Entries-obj.sum_zeroEntries > 0 {
-		fmt.Printf("Average time/trans without zero entries \t%.2f\n", obj.sum_timequeue/(obj.sum_Entries-obj.sum_zeroEntries))
+		obj.sumContent/float64(obj.Pipe.SimTime), obj.sumTimequeue/obj.sumEntries)
+	if obj.sumEntries-obj.sumZeroEntries > 0 {
+		fmt.Printf("Average time/trans without zero entries \t%.2f\n", obj.sumTimequeue/(obj.sumEntries-obj.sumZeroEntries))
 	}
 	fmt.Println()
 }

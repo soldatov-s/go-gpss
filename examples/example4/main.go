@@ -25,7 +25,7 @@ func main() {
 		}
 		return true
 	}
-	check_queue := gpss.NewCheck("Check size of Visitors queue", CheckQueueHndl, out)
+	checkQueue := gpss.NewCheck("Check size of Visitors queue", CheckQueueHndl, out)
 	// 3. Create are Hostess
 	hostes1F := gpss.NewFacility("hostess 1", 5, 3)
 	hostes2F := gpss.NewFacility("Hostess 2", 5, 3)
@@ -34,14 +34,14 @@ func main() {
 	tablesIN := make([]gpss.IBaseObj, cntTables)
 	tablesOUT := make([]gpss.IBaseObj, cntTables)
 	for i := 0; i < cntTables; i++ {
-		table_name := fmt.Sprintf("Table %d", i+1)
-		tablesIN[i], tablesOUT[i] = gpss.NewBifacility(table_name)
+		tableName := fmt.Sprintf("Table %d", i+1)
+		tablesIN[i], tablesOUT[i] = gpss.NewBifacility(tableName)
 	}
 	// 5. Check that we have empty table
 	CheckEmptyTableHndl := func(obj *gpss.Check, transact *gpss.Transaction) bool {
 		for i := 0; i < cntTables; i++ {
-			table_name := fmt.Sprintf("Table %d", i+1)
-			table := obj.Pipe.GetObjByName(table_name).(gpss.IFacility)
+			tableName := fmt.Sprintf("Table %d", i+1)
+			table := obj.Pipe.GetObjByName(tableName).(gpss.IFacility)
 			if table.IsEmpty() {
 				return true
 			}
@@ -101,14 +101,14 @@ func main() {
 		checkTb[i] = gpss.NewCheck(checkName, checkTbNumber(i*3+1), nil)
 	}
 	// 12. Create the Advance for eating simulation
-	visitors_eating := gpss.NewAdvance("Visitors eating", 45, 10)
+	visitorsEating := gpss.NewAdvance("Visitors eating", 45, 10)
 	// 13. Create the Aggregate for aggregate dishes to order
 	aggregate := gpss.NewAggregate("Aggregate dishes")
 	// 14. Create the Advance for payment simulation
-	visitors_pays := gpss.NewAdvance("Visitors pays", 5, 2)
+	visitorsPays := gpss.NewAdvance("Visitors pays", 5, 2)
 	// 15. Append objects to a pipeline
-	restaurant.Append(visitorsG, check_queue)
-	restaurant.Append(check_queue, visitorsQ)
+	restaurant.Append(visitorsG, checkQueue)
+	restaurant.Append(checkQueue, visitorsQ)
 	restaurant.Append(visitorsQ, checkEmptyTable)
 	restaurant.Append(checkEmptyTable, hostes1F, hostes2F)
 	restaurant.AppendISlice(hostes1F, tablesIN)
@@ -141,10 +141,10 @@ func main() {
 	for i := 0; i < cntWaiters; i++ {
 		restaurant.Append(checkTb[i], waitersQueue[i])
 	}
-	restaurant.Append(checkIsCooked, visitors_eating)
-	restaurant.Append(visitors_eating, aggregate)
-	restaurant.Append(aggregate, visitors_pays)
-	restaurant.AppendISlice(visitors_pays, tablesOUT)
+	restaurant.Append(checkIsCooked, visitorsEating)
+	restaurant.Append(visitorsEating, aggregate)
+	restaurant.Append(aggregate, visitorsPays)
+	restaurant.AppendISlice(visitorsPays, tablesOUT)
 	restaurant.AppendMultiple(tablesOUT, out)
 	restaurant.Append(out)
 	restaurant.Start(480)

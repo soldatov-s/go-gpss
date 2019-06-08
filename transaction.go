@@ -49,16 +49,16 @@ func NewTransaction(pipe *Pipeline) *Transaction {
 
 // Copy create copy of transact
 func (t *Transaction) Copy() *Transaction {
-	copy_t := &Transaction{}
-	copy_t.pipe = t.pipe
-	copy_t.parameters = make(map[string]interface{})
+	copyTr := &Transaction{}
+	copyTr.pipe = t.pipe
+	copyTr.parameters = make(map[string]interface{})
 	for key, value := range t.parameters {
-		copy_t.parameters[key] = value
+		copyTr.parameters[key] = value
 	}
-	return copy_t
+	return copyTr
 }
 
-// Set transact ID
+// SetID set transact ID
 func (t *Transaction) SetID(id int) {
 	t.SetParameter("id", id)
 }
@@ -68,12 +68,12 @@ func (t *Transaction) GetID() int {
 	return t.GetIntParameter("id")
 }
 
-// Get transact time of life, rip - born
+// GetLife get transact time of life, rip - born
 func (t *Transaction) GetLife() int {
 	return t.GetIntParameter("rip") - t.GetIntParameter("born")
 }
 
-// Print info about transact
+// PrintInfo - print info about transact
 func (t *Transaction) PrintInfo() {
 	Log.Trace.Println("Transaction ID:\t", t.GetID(),
 		"Borned:\t", t.GetIntParameter("born"),
@@ -83,39 +83,39 @@ func (t *Transaction) PrintInfo() {
 		"Time in queue:\t", t.GetQueueTime())
 }
 
-// Set ticks and increases advance value to same value.
+// SetTiсks - set ticks and increases advance value to same value.
 func (t *Transaction) SetTiсks(interval int) {
 	t.SetParameter("ticks", interval)
 	t.SetParameter("advance", t.GetAdvanceTime()+interval)
 }
 
-// Increment time in queue
+// InqQueueTime - increment time in queue
 func (t *Transaction) InqQueueTime() {
 	t.SetParameter("timequeue", t.GetQueueTime()+1)
 	t.SetParameter("advance", t.GetAdvanceTime()+1)
 }
 
-// Get current value of ticks
+// GetTicks - get current value of ticks
 func (t *Transaction) GetTicks() int {
 	return t.GetIntParameter("ticks")
 }
 
-// Is ticks value equal zero?
+// IsTheEnd - is ticks value equal zero?
 func (t *Transaction) IsTheEnd() bool {
 	return bool(t.GetIntParameter("ticks") == 0)
 }
 
-// Set holder of transact
+// SetHolder - set holder of transact
 func (t *Transaction) SetHolder(holderName string) {
 	t.SetParameter("holder", holderName)
 }
 
-// Get current holder of transact
+// GetHolder - get current holder of transact
 func (t *Transaction) GetHolder() string {
 	return t.GetStringParameter("holder")
 }
 
-// Decremet ticks. If ticks is less than zero, set ticks value to zero.
+// DecTiсks - decremet ticks, if ticks is less than zero, set ticks value to zero.
 func (t *Transaction) DecTiсks() {
 	ticks := t.GetTicks()
 	ticks--
@@ -130,39 +130,39 @@ func (t *Transaction) Kill() {
 	t.SetParameter("rip", t.pipe.ModelTime)
 }
 
-// Is transact killed?
+// IsKilled - is transact killed?
 func (t *Transaction) IsKilled() bool {
 	return bool(t.GetIntParameter("rip") != 0)
 }
 
-// Get current value of time in queue
+// GetQueueTime - get current value of time in queue
 func (t *Transaction) GetQueueTime() int {
 	return t.GetIntParameter("timequeue")
 }
 
-// Get full time in advice state
+// GetAdvanceTime - get full time in advice state
 func (t *Transaction) GetAdvanceTime() int {
 	return t.GetIntParameter("advance")
 }
 
-// Get pipeline for object
+// GetPipeline - get pipeline for object
 func (t *Transaction) GetPipeline() *Pipeline {
 	return t.pipe
 }
 
-// Reset time in queue
+// ResetQueueTime - reset time in queue
 func (t *Transaction) ResetQueueTime() {
 	t.SetParameter("timequeue", 0)
 }
 
-// Get parts info
+// GetParts - get parts info
 func (t *Transaction) GetParts() (int, int, int) {
 	return t.GetIntParameter("part"),
 		t.GetIntParameter("parts"),
 		t.GetIntParameter("parent_id")
 }
 
-// Set parts info
+// SetParts - set parts info
 func (t *Transaction) SetParts(part, parts, parent_id int) {
 	t.SetParameters([]Parameter{
 		{Name: "part", Value: part},
@@ -171,7 +171,7 @@ func (t *Transaction) SetParts(part, parts, parent_id int) {
 	})
 }
 
-// Set parameters to transuct
+// SetParameters - set parameters to transuct
 func (t *Transaction) SetParameters(parameters []Parameter) {
 	for _, v := range parameters {
 		if v.Value != nil {
@@ -182,25 +182,27 @@ func (t *Transaction) SetParameters(parameters []Parameter) {
 	}
 }
 
-// Get all parameters of trunsact
+// GetParameters - get all parameters of transact
 func (t *Transaction) GetParameters() map[string]interface{} {
 	return t.parameters
 }
 
-// Set value of parameter
+// SetParameter - set value of parameter
 func (t Transaction) SetParameter(name string, value interface{}) {
 	t.parameters[name] = value
 }
 
-// Get parameter of trunsact by name
+// GetParameter - get parameter of transact by name
 func (t *Transaction) GetParameter(name string) interface{} {
 	return t.parameters[name]
 }
 
+// GetIntParameter - get int parameter of transact by name
 func (t *Transaction) GetIntParameter(name string) int {
 	return t.GetParameter(name).(int)
 }
 
+// GetIntParameter - get string parameter of transact by name
 func (t *Transaction) GetStringParameter(name string) string {
 	return t.GetParameter(name).(string)
 }

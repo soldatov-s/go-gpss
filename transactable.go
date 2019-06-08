@@ -51,7 +51,7 @@ func (obj *TransactTable) Remove(transact *Transaction) {
 	delete(obj.mp, transact.GetID())
 }
 
-// Get all items of table
+// Items get all items of table
 func (obj *TransactTable) Items() map[int]*TableItem {
 	defer obj.mu.Unlock()
 	obj.mu.Lock()
@@ -69,9 +69,9 @@ func (obj *TransactTable) Push(transact *Transaction) {
 	if obj.firstID == -1 {
 		obj.firstID = transact.GetID()
 	} else {
-		last_transact := obj.mp[obj.lastID]
-		if last_transact != nil {
-			last_transact.nextID = transact.GetID()
+		lastTransact := obj.mp[obj.lastID]
+		if lastTransact != nil {
+			lastTransact.nextID = transact.GetID()
 		}
 	}
 	obj.mp[transact.GetID()] = &TableItem{transact: transact, nextID: -1, prevoiseID: obj.lastID}

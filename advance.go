@@ -20,8 +20,8 @@ type Advance struct {
 	BaseObj
 	Interval     int     // The mean time increment
 	Modificator  int     // The time half-range
-	sum_advance  float64 // Totalize advance for all transacts
-	sum_transact float64 // Counter of transacts
+	sumAdvance  float64 // Totalize advance for all transacts
+	sumTransact float64 // Counter of transacts
 }
 
 // NewAdvance creates new Advance.
@@ -79,16 +79,16 @@ func (obj *Advance) AppendTransact(transact *Transaction) bool {
 	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
 	advance := obj.GenerateAdvance()
-	obj.sum_advance += float64(advance)
+	obj.sumAdvance += float64(advance)
 	transact.SetTiсks(advance)
 	obj.tb.Push(transact)
-	obj.sum_transact++
+	obj.sumTransact++
 	return true
 }
 
 // Report - print report about object
 func (obj *Advance) Report() {
 	obj.BaseObj.Report()
-	fmt.Printf("Average advance %.2f\n", obj.sum_advance/obj.sum_transact)
+	fmt.Printf("Average advance %.2f\n", obj.sumAdvance/obj.sumTransact)
 	fmt.Println()
 }
