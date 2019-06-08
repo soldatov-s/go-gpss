@@ -26,12 +26,12 @@ type Facility struct {
 	// For backuping Facility/Bifacility name if we includes Facility in Bifacility
 	bakupFacilityName string
 	// For counting the advance of transact
-	sum_advance float64
+	sumAdvance float64
 	// For counting the transacts that go through Bifacility
-	cnt_transact float64
+	cntTransact float64
 }
 
-// Creates new Facility.
+// NewFacility creates new Facility.
 // name - name of object; interval - the mean time increment;
 // modificator - the time half-range
 func NewFacility(name string, interval, modificator int) *Facility {
@@ -43,6 +43,7 @@ func NewFacility(name string, interval, modificator int) *Facility {
 	return obj
 }
 
+// GenerateAdvance generate advance for facility
 func (obj *Facility) GenerateAdvance() int {
 	advance := obj.Interval
 	if obj.Modificator > 0 {
@@ -51,6 +52,7 @@ func (obj *Facility) GenerateAdvance() int {
 	return advance
 }
 
+// HandleTransact handle transact
 func (obj *Facility) HandleTransact(transact *Transaction) {
 	transact.DecTiсks()
 	transact.PrintInfo()
@@ -71,6 +73,8 @@ func (obj *Facility) HandleTransact(transact *Transaction) {
 		transact.SetParameter("Facility", obj.name)
 	}
 }
+
+// HandleTransacts handle transacts in goroutine
 func (obj *Facility) HandleTransacts(wg *sync.WaitGroup) {
 	if obj.tb.Len() == 0 {
 		wg.Done()
@@ -85,6 +89,7 @@ func (obj *Facility) HandleTransacts(wg *sync.WaitGroup) {
 	}()
 }
 
+// AppendTransact append transact to object
 func (obj *Facility) AppendTransact(transact *Transaction) bool {
 	if obj.tb.Len() != 0 {
 		// Facility is busy
@@ -93,7 +98,7 @@ func (obj *Facility) AppendTransact(transact *Transaction) bool {
 	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
 	advance := obj.GenerateAdvance()
-	obj.sum_advance += float64(advance)
+	obj.sumAdvance += float64(advance)
 	transact.SetTiсks(advance)
 	if transact.GetParameter("Facility") != nil {
 		obj.bakupFacilityName = transact.GetParameter("Facility").(string)
@@ -101,20 +106,21 @@ func (obj *Facility) AppendTransact(transact *Transaction) bool {
 	transact.SetParameter("Facility", obj.name)
 	obj.HoldedTransactID = transact.GetID()
 	obj.tb.Push(transact)
-	obj.cnt_transact++
+	obj.cntTransact++
 	return true
 }
 
+// Report - print report about object
 func (obj *Facility) Report() {
 	obj.BaseObj.Report()
-	avr := obj.sum_advance / obj.cnt_transact
+	avr := obj.sumAdvance / obj.cntTransact
 	fmt.Printf("Average advance %.2f \tAverage utilization %.2f%%\tNumber entries %.2f \t", avr,
-		100*avr*obj.cnt_transact/float64(obj.Pipe.SimTime), obj.cnt_transact)
+		100*avr*obj.cntTransact/float64(obj.Pipe.SimTime), obj.cntTransact)
 	if obj.HoldedTransactID > 0 {
 		fmt.Print("Transact ", obj.HoldedTransactID, " in facility")
-		part, _, parent_id := obj.tb.Item(obj.HoldedTransactID).transact.GetParts()
-		if parent_id > 0 {
-			fmt.Print(", parent transact ", parent_id, " part ", part)
+		part, _, parentID := obj.tb.Item(obj.HoldedTransactID).transact.GetParts()
+		if parentID > 0 {
+			fmt.Print(", parent transact ", parentID, " part ", part)
 		}
 	} else {
 		fmt.Print("Facility is empty")
@@ -122,6 +128,7 @@ func (obj *Facility) Report() {
 	fmt.Printf("\n\n")
 }
 
+// IsEmpty check that facility is empty
 func (obj *Facility) IsEmpty() bool {
 	if obj.tb.Len() != 0 {
 		// Facility is busy

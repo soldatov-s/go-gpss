@@ -9,6 +9,7 @@ import (
 	"sync"
 )
 
+// IQueue is interface of Queue object
 type IQueue interface {
 	IsObjectAfterMeEmpty(transact *Transaction) bool // Check that after queue exist empty object
 	GetLength() int                                  // Get queue length
@@ -24,7 +25,7 @@ type Queue struct {
 	sum_content     float64 // Sum content in queue
 }
 
-// Creates new Queue.
+// NewQueue creates new Queue.
 // name - name of object
 func NewQueue(name string) *Queue {
 	obj := &Queue{}
@@ -32,12 +33,13 @@ func NewQueue(name string) *Queue {
 	return obj
 }
 
+// HandleTransact handle transact
 func (obj *Queue) HandleTransact(transact *Transaction) {
 	transact.InqQueueTime()
 	transact.PrintInfo()
 }
 
-// Check that after queue exist empty object
+// IsObjectAfterMeEmpty check that after queue exist empty object
 func (obj *Queue) IsObjectAfterMeEmpty(transact *Transaction) bool {
 	for _, o := range obj.GetDst() {
 		if o.AppendTransact(transact) {
@@ -47,11 +49,12 @@ func (obj *Queue) IsObjectAfterMeEmpty(transact *Transaction) bool {
 	return false
 }
 
-// Get queue length
+// GetLength get queue length
 func (obj *Queue) GetLength() int {
 	return obj.tb.Len()
 }
 
+// HandleTransacts handle transacts in goroutine
 func (obj *Queue) HandleTransacts(wg *sync.WaitGroup) {
 	go func() {
 		defer wg.Done()
@@ -76,6 +79,7 @@ func (obj *Queue) HandleTransacts(wg *sync.WaitGroup) {
 	}()
 }
 
+// AppendTransact append transact to object
 func (obj *Queue) AppendTransact(transact *Transaction) bool {
 	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
@@ -93,6 +97,7 @@ func (obj *Queue) AppendTransact(transact *Transaction) bool {
 	return true
 }
 
+// Report - print report about object
 func (obj *Queue) Report() {
 	obj.BaseObj.Report()
 	fmt.Printf("Max content \t%d\tTotal entries \t%2.f\tZero entries \t%2.f\tPersent zero entries \t%.2f%%\n",

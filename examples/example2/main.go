@@ -7,18 +7,18 @@ import (
 	"os/signal"
 	"syscall"
 
-	. "github.com/soldatov-s/go-gpss"
+	"github.com/soldatov-s/go-gpss"
 )
 
 func main() {
-	p := NewPipeline("Water Closet Simulation")
-	g := NewGenerator("Office", 0, 0, 0, 10, nil)
-	a1 := NewAdvance("Wanted to use the toilet", 90, 60)
-	a2 := NewAdvance("Path to WC", 5, 3)
-	q := NewQueue("Queue to the WC")
-	f1 := NewFacility("WC1", 15, 10)
-	f2 := NewFacility("WC2", 15, 10)
-	a3 := NewAdvance("Path from WC", 5, 3)
+	p := gpss.NewPipeline("Water Closet Simulation")
+	g := gpss.NewGenerator("Office", 0, 0, 0, 10, nil)
+	a1 := gpss.NewAdvance("Wanted to use the toilet", 90, 60)
+	a2 := gpss.NewAdvance("Path to WC", 5, 3)
+	q := gpss.NewQueue("Queue to the WC")
+	f1 := gpss.NewFacility("WC1", 15, 10)
+	f2 := gpss.NewFacility("WC2", 15, 10)
+	a3 := gpss.NewAdvance("Path from WC", 5, 3)
 	p.Append(g, a1)
 	p.Append(a1, a2)
 	p.Append(a2, q)

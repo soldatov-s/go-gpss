@@ -4,14 +4,14 @@
 
 package gpss
 
-// Modify Transaction Parameters of Active Transaction
+// Assign - modify Transaction Parameters of Active Transaction
 type Assign struct {
 	BaseObj
 	// Parameters for modification
 	parameters []Parameter
 }
 
-// Creates new Assign.
+// NewAssign creates new Assign.
 // name - name of object
 // parameters - parameters for assign.
 // Example:
@@ -23,6 +23,7 @@ func NewAssign(name string, parameters ...Parameter) *Assign {
 	return obj
 }
 
+// AppendTransact append transact to object
 func (obj *Assign) AppendTransact(transact *Transaction) bool {
 	obj.BaseObj.AppendTransact(transact)
 	for _, v := range obj.GetDst() {
@@ -34,6 +35,7 @@ func (obj *Assign) AppendTransact(transact *Transaction) bool {
 	return false
 }
 
+// Report - print report about object
 func (obj *Assign) Report() {
 	return
 }

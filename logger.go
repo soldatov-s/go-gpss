@@ -11,8 +11,10 @@ import (
 	"os"
 )
 
+// Log is global var of structure for logging
 var Log *Logger = NewLogger(ioutil.Discard, os.Stdout, os.Stdout, os.Stderr)
 
+// Logger is a structure for logging
 type Logger struct {
 	Trace   *log.Logger
 	Info    *log.Logger
@@ -20,6 +22,7 @@ type Logger struct {
 	Error   *log.Logger
 }
 
+// NewLogger creates new logger
 func NewLogger(
 	traceHandle io.Writer,
 	infoHandle io.Writer,
@@ -37,6 +40,7 @@ func NewLogger(
 	}
 }
 
+// Enable verbose
 func EnableVerbose() {
 	Log = NewLogger(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
 }

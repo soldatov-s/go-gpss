@@ -11,7 +11,7 @@ import (
 	"fmt"
 )
 
-// The first part of a Bifacility, it takes ownership of a Facility
+// InFacility is the first part of a Bifacility, it takes ownership of a Facility
 type InFacility struct {
 	BaseObj
 	// Holded transast ID
@@ -19,21 +19,21 @@ type InFacility struct {
 	// For backuping Facility/Bifacility name if we includes Bifacility in Bifacility
 	bakupFacilityName string
 	// For counting the transacts that go through Bifacility
-	cnt_transact float64
+	cntTransact float64
 	// For counting the advance of transact
-	sum_advance float64
+	sumAdvance float64
 	// For saving time of input transact in Bifacility
 	timeOfInput int
 }
 
-// The second part of a Bifacility, for release ownership of a Facility
+// OutFacility is the second part of a Bifacility, for release ownership of a Facility
 type OutFacility struct {
 	BaseObj
 	// Pointer to inFacility structure
 	inFacility *InFacility
 }
 
-// Creates new Bifacility (InFacility + OutFacility).
+// NewBifacility creates new Bifacility (InFacility + OutFacility).
 // name - name of object
 func NewBifacility(name string) (*InFacility, *OutFacility) {
 	inObj := &InFacility{}
@@ -45,6 +45,7 @@ func NewBifacility(name string) (*InFacility, *OutFacility) {
 	return inObj, outObj
 }
 
+// HandleTransact handle transact
 func (obj *InFacility) HandleTransact(transact *Transaction) {
 	transact.PrintInfo()
 	for _, v := range obj.GetDst() {
@@ -54,6 +55,7 @@ func (obj *InFacility) HandleTransact(transact *Transaction) {
 	}
 }
 
+// AppendTransact append transact to object
 func (obj *InFacility) AppendTransact(transact *Transaction) bool {
 	if obj.tb.Len() != 0 {
 		// Facility is busy
@@ -67,17 +69,18 @@ func (obj *InFacility) AppendTransact(transact *Transaction) bool {
 	transact.SetParameter("Facility", obj.name)
 	obj.HoldedTransactID = transact.GetID()
 	obj.tb.Push(transact)
-	obj.cnt_transact++
+	obj.cntTransact++
 	obj.timeOfInput = obj.Pipe.ModelTime
 	obj.HandleTransact(transact)
 	return true
 }
 
+// Report - print report about object
 func (obj *InFacility) Report() {
 	obj.BaseObj.Report()
-	avr := obj.sum_advance / obj.cnt_transact
+	avr := obj.sumAdvance / obj.cntTransact
 	fmt.Printf("Average advance %.2f \tAverage utilization %.2f%%\tNumber entries %.2f \t", avr,
-		100*avr*obj.cnt_transact/float64(obj.Pipe.SimTime), obj.cnt_transact)
+		100*avr*obj.cntTransact/float64(obj.Pipe.SimTime), obj.cntTransact)
 	if obj.HoldedTransactID > 0 {
 		fmt.Print("Transact ", obj.HoldedTransactID, " in facility")
 	} else {
@@ -86,6 +89,7 @@ func (obj *InFacility) Report() {
 	fmt.Printf("\n\n")
 }
 
+// IsEmpty check that facility is empty
 func (obj *InFacility) IsEmpty() bool {
 	if obj.tb.Len() != 0 {
 		// Facility is busy
@@ -94,6 +98,7 @@ func (obj *InFacility) IsEmpty() bool {
 	return true
 }
 
+// HandleTransact handle transact
 func (obj *OutFacility) HandleTransact(transact *Transaction) {
 	transact.PrintInfo()
 	if obj.inFacility.bakupFacilityName != "" {
@@ -106,7 +111,7 @@ func (obj *OutFacility) HandleTransact(transact *Transaction) {
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
 			advance := obj.Pipe.ModelTime - obj.inFacility.timeOfInput
-			obj.inFacility.sum_advance += float64(advance)
+			obj.inFacility.sumAdvance += float64(advance)
 			obj.tb.Remove(transact)
 			obj.inFacility.HoldedTransactID = -1
 			return
@@ -115,6 +120,7 @@ func (obj *OutFacility) HandleTransact(transact *Transaction) {
 	transact.SetParameters([]Parameter{{Name: "Facility", Value: obj.name}})
 }
 
+// AppendTransact append transact to object
 func (obj *OutFacility) AppendTransact(transact *Transaction) bool {
 	if obj.inFacility.HoldedTransactID != transact.GetID() {
 		return false
@@ -127,6 +133,7 @@ func (obj *OutFacility) AppendTransact(transact *Transaction) bool {
 	return false
 }
 
+// Report - print report about object
 func (obj *OutFacility) Report() {
 	return
 }
