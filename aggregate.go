@@ -15,7 +15,7 @@ type Aggregate struct {
 	sum_transact float64 // Counter of all fully aggregated transactions
 }
 
-// Creates new Aggregate
+// NewAggregate creates new Aggregate
 // name - name of object
 func NewAggregate(name string) *Aggregate {
 	obj := &Aggregate{}
@@ -23,6 +23,7 @@ func NewAggregate(name string) *Aggregate {
 	return obj
 }
 
+// SendToDst - send transact to sedtination
 func (obj *Aggregate) SendToDst(transact *Transaction) bool {
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
@@ -34,6 +35,7 @@ func (obj *Aggregate) SendToDst(transact *Transaction) bool {
 	return false
 }
 
+// HandleTransact handle transact
 func (obj *Aggregate) HandleTransact(transact *Transaction) bool {
 	transact.PrintInfo()
 	_, parts, parent_id := transact.GetParts()
@@ -67,17 +69,20 @@ func (obj *Aggregate) HandleTransact(transact *Transaction) bool {
 	return true
 }
 
+// HandleTransact handle transact
 func (obj *Aggregate) HandleTransacts(wg *sync.WaitGroup) {
 	wg.Done()
 	return
 }
 
+// AppendTransact append transact to object
 func (obj *Aggregate) AppendTransact(transact *Transaction) bool {
 	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
 	return obj.HandleTransact(transact)
 }
 
+// Report - print report about object
 func (obj *Aggregate) Report() {
 	obj.BaseObj.Report()
 	fmt.Printf("Number of aggregated transact %.2f\n", obj.sum_transact)

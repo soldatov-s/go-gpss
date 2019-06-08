@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-// Counts all Transactions which pass through the block, it present in two parts,
+// Count counts all Transactions which pass through the block, it present in two parts,
 // first for increment Count value, second for decrement Count value
 type Count struct {
 	BaseObj
@@ -16,22 +16,23 @@ type Count struct {
 	inc_dec int  // Value of increment/decrement
 }
 
-// Creates two objects, for incremet and decrement. After enter transact in
+// NewCount creates two objects, for incremet and decrement. After enter transact in
 // inc_obj, value incremented by inc_value. After enter transact in dec_obj,
 // value decremented by dec_value.
-func NewCount(name string, inc_value, dec_value int) (*Count, *Count) {
+func NewCount(name string, incValue, decValue int) (*Count, *Count) {
 	value := 0
 	inc := &Count{}
 	dec := &Count{}
 	inc.name = name + "_INC"
 	inc.value = &value
-	inc.inc_dec = inc_value
+	inc.inc_dec = incValue
 	dec.name = name + "_DEC"
 	dec.value = inc.value
-	dec.inc_dec = dec_value
+	dec.inc_dec = decValue
 	return inc, dec
 }
 
+// AppendTransact append transact to object
 func (obj *Count) AppendTransact(transact *Transaction) bool {
 	for _, v := range obj.GetDst() {
 		if v.AppendTransact(transact) {
@@ -43,6 +44,7 @@ func (obj *Count) AppendTransact(transact *Transaction) bool {
 	return false
 }
 
+// Report - print report about object
 func (obj *Count) Report() {
 	fmt.Printf("Count value %d\n", obj.value)
 }

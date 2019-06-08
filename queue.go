@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-// IQueue is interface of Queue object
+// IQueue implements Queue interface
 type IQueue interface {
 	IsObjectAfterMeEmpty(transact *Transaction) bool // Check that after queue exist empty object
 	GetLength() int                                  // Get queue length

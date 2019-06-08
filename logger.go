@@ -40,7 +40,7 @@ func NewLogger(
 	}
 }
 
-// Enable verbose
+// EnableVerbose - enable verbose
 func EnableVerbose() {
 	Log = NewLogger(os.Stdout, os.Stdout, os.Stdout, os.Stderr)
 }

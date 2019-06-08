@@ -29,7 +29,7 @@ type Generator struct {
 	HandleBorn  HandleBornFunc // Function for generate born time of transaction
 }
 
-// Default function for generate born time of transaction
+// GenerateBorn - default function for generate born time of transaction
 func GenerateBorn(obj *Generator) int {
 	var born int
 	born += obj.Interval
@@ -42,7 +42,7 @@ func GenerateBorn(obj *Generator) int {
 	return born
 }
 
-// Creates new Generator.
+// NewGenerator creates new Generator.
 // name - name of object; interval - mean inter generation time;
 // modificator - inter generation time half-range; start - start delay time;
 // count - creation limit, max count of transactions; hndl - function for generate
@@ -64,7 +64,7 @@ func NewGenerator(name string, interval, modificator, start, count int, hndl Han
 	return obj
 }
 
-// Generates transaction and it send into the simulation
+// GenerateTransact - generates transaction and it send into the simulation
 func (obj *Generator) GenerateTransact() {
 	var isTransactSended bool
 	Log.Trace.Println("Generate transact ", obj.id)
@@ -78,6 +78,7 @@ func (obj *Generator) GenerateTransact() {
 	}
 }
 
+// HandleTransacts handle transacts in goroutine
 func (obj *Generator) HandleTransacts(wg *sync.WaitGroup) {
 	if (obj.Count != 0 && obj.id > obj.Count) ||
 		(obj.nextborn != obj.Pipe.ModelTime) {
@@ -105,6 +106,7 @@ func (obj *Generator) HandleTransacts(wg *sync.WaitGroup) {
 	}()
 }
 
+// Report - print report about object
 func (obj *Generator) Report() {
 	obj.BaseObj.Report()
 	fmt.Println("Generated", obj.id-1)

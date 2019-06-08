@@ -9,6 +9,7 @@ import (
 	"sync"
 )
 
+// IBaseObj implements BaseObj interface
 type IBaseObj interface {
 	SetID(int)                          // Set object ID
 	GetID() int                         // Get object ID
@@ -21,6 +22,7 @@ type IBaseObj interface {
 	Report()                            // Print report
 }
 
+// BaseObj is the base object of simulation system
 type BaseObj struct {
 	name    string
 	objTime int
@@ -30,44 +32,54 @@ type BaseObj struct {
 	id      int
 }
 
+// Init - initializate BaseObj
 func (obj *BaseObj) Init(name string) {
 	obj.name = name
 	obj.tb = NewTransactTable()
 }
 
+// GetName - get name of BaseObj
 func (obj *BaseObj) GetName() string {
 	return obj.name
 }
 
+// SetDst - set destination of BaseObj
 func (obj *BaseObj) SetDst(dst []IBaseObj) {
 	obj.dst = dst
 }
 
+// GetDst - get destination of BaseObj
 func (obj *BaseObj) GetDst() []IBaseObj {
 	return obj.dst
 }
 
+// SetPipeline - set pipeline of BaseObj
 func (obj *BaseObj) SetPipeline(pipe *Pipeline) {
 	obj.Pipe = pipe
 }
 
+// SetID set ID of BaseObj
 func (obj *BaseObj) SetID(id int) {
 	obj.id = id
 }
 
+// GetID get id of BaseObj
 func (obj *BaseObj) GetID() int {
 	return obj.id
 }
 
+// AppendTransact append transact to object
 func (obj *BaseObj) AppendTransact(t *Transaction) bool {
 	Log.Trace.Println("Append transact ", t.GetID(), " to ", obj.name)
 	return true
 }
 
+// HandleTransacts handle transacts
 func (obj *BaseObj) HandleTransacts(wg *sync.WaitGroup) {
 	wg.Done()
 }
 
+// Report - print report about object
 func (obj *BaseObj) Report() {
 	fmt.Println("Object name \"", obj.name, "\"")
 }

@@ -15,6 +15,7 @@ type TableItem struct {
 	nextID     int
 }
 
+// TransactTable is structure for description a table of transactions
 type TransactTable struct {
 	firstID int                // ID of first transact in table
 	lastID  int                // ID of last transact in table
@@ -22,7 +23,7 @@ type TransactTable struct {
 	mu      *sync.Mutex
 }
 
-// Create new TransactTable
+// NewTransactTable create new TransactTable
 func NewTransactTable() *TransactTable {
 	obj := &TransactTable{
 		lastID:  -1,
@@ -77,7 +78,7 @@ func (obj *TransactTable) Push(transact *Transaction) {
 	obj.lastID = transact.GetID()
 }
 
-// Return first transact from table and remove it from table
+// Pop - return first transact from table and remove it from table
 func (obj *TransactTable) Pop() *Transaction {
 	defer obj.mu.Unlock()
 	obj.mu.Lock()
@@ -90,19 +91,19 @@ func (obj *TransactTable) Pop() *Transaction {
 	return item.transact
 }
 
-// Return length table
+// Len - return length table
 func (obj *TransactTable) Len() int {
 	return len(obj.mp)
 }
 
-// Get item in table by ID
+// Item - get item in table by ID
 func (obj *TransactTable) Item(id int) *TableItem {
 	defer obj.mu.Unlock()
 	obj.mu.Lock()
 	return obj.mp[id]
 }
 
-// Get first item in table
+// First - get first item in table
 func (obj *TransactTable) First() *TableItem {
 	defer obj.mu.Unlock()
 	obj.mu.Lock()

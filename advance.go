@@ -14,7 +14,7 @@ type IAdvance interface {
 	GenerateAdvance() int
 }
 
-// An Advance block delays the progress of a Transaction for a specified amount
+// Advance block delays the progress of a Transaction for a specified amount
 // of simulated time
 type Advance struct {
 	BaseObj
@@ -24,7 +24,7 @@ type Advance struct {
 	sum_transact float64 // Counter of transacts
 }
 
-// Creates new Advance.
+// NewAdvance creates new Advance.
 // name - name of object; interval - the mean time increment;
 // modificator - the time half-range
 func NewAdvance(name string, interval, modificator int) *Advance {
@@ -35,6 +35,7 @@ func NewAdvance(name string, interval, modificator int) *Advance {
 	return obj
 }
 
+// GenerateAdvance generate advance
 func (obj *Advance) GenerateAdvance() int {
 	advance := obj.Interval
 	if obj.Modificator > 0 {
@@ -43,6 +44,7 @@ func (obj *Advance) GenerateAdvance() int {
 	return advance
 }
 
+// HandleTransact handle transact
 func (obj *Advance) HandleTransact(transact *Transaction) {
 	transact.DecTiсks()
 	transact.PrintInfo()
@@ -56,6 +58,7 @@ func (obj *Advance) HandleTransact(transact *Transaction) {
 	}
 }
 
+// HandleTransacts handle transacts in goroutine
 func (obj *Advance) HandleTransacts(wg *sync.WaitGroup) {
 	if obj.Interval == 0 ||
 		obj.tb.Len() == 0 {
@@ -71,6 +74,7 @@ func (obj *Advance) HandleTransacts(wg *sync.WaitGroup) {
 	}()
 }
 
+// AppendTransact append transact to object
 func (obj *Advance) AppendTransact(transact *Transaction) bool {
 	obj.BaseObj.AppendTransact(transact)
 	transact.SetHolder(obj.name)
@@ -82,6 +86,7 @@ func (obj *Advance) AppendTransact(transact *Transaction) bool {
 	return true
 }
 
+// Report - print report about object
 func (obj *Advance) Report() {
 	obj.BaseObj.Report()
 	fmt.Printf("Average advance %.2f\n", obj.sum_advance/obj.sum_transact)
