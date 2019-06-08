@@ -18,8 +18,8 @@ type IAdvance interface {
 // of simulated time
 type Advance struct {
 	BaseObj
-	Interval     int     // The mean time increment
-	Modificator  int     // The time half-range
+	Interval    int     // The mean time increment
+	Modificator int     // The time half-range
 	sumAdvance  float64 // Totalize advance for all transacts
 	sumTransact float64 // Counter of transacts
 }

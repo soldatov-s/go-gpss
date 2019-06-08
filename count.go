@@ -12,7 +12,7 @@ import (
 // first for increment Count value, second for decrement Count value
 type Count struct {
 	BaseObj
-	value   *int // Value of counter
+	value  *int // Value of counter
 	incDec int  // Value of increment/decrement
 }
 
