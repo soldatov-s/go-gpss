@@ -63,7 +63,7 @@ func (t *Transaction) SetID(id int) {
 	t.SetParameter("id", id)
 }
 
-// Get transact ID
+// GetID - get transact ID
 func (t *Transaction) GetID() int {
 	return t.GetIntParameter("id")
 }
@@ -163,11 +163,11 @@ func (t *Transaction) GetParts() (int, int, int) {
 }
 
 // SetParts - set parts info
-func (t *Transaction) SetParts(part, parts, parent_id int) {
+func (t *Transaction) SetParts(part, parts, parentID int) {
 	t.SetParameters([]Parameter{
 		{Name: "part", Value: part},
 		{Name: "parts", Value: parts},
-		{Name: "parent_id", Value: parent_id},
+		{Name: "parent_id", Value: parentID},
 	})
 }
 
@@ -202,7 +202,7 @@ func (t *Transaction) GetIntParameter(name string) int {
 	return t.GetParameter(name).(int)
 }
 
-// GetIntParameter - get string parameter of transact by name
+// GetStringParameter - get string parameter of transact by name
 func (t *Transaction) GetStringParameter(name string) string {
 	return t.GetParameter(name).(string)
 }

@@ -21,7 +21,7 @@ type Pipeline struct {
 	id        int                 // ID of new transaction
 }
 
-// Create new Pipeline
+// NewPipeline create new Pipeline
 func NewPipeline(name string) *Pipeline {
 	return &Pipeline{
 		objects: make(map[string]IBaseObj),
@@ -36,7 +36,7 @@ func (p *Pipeline) Append(obj IBaseObj, dst ...IBaseObj) {
 	p.AppendISlice(obj, dst)
 }
 
-// Append multiple objects to pipeline.  Src is multiple sources of transact
+// AppendMultiple - append multiple objects to pipeline.  Src is multiple sources of transact
 // for appended object.
 func (p *Pipeline) AppendMultiple(obj []IBaseObj, dst ...IBaseObj) {
 	for _, o := range obj {
@@ -44,7 +44,7 @@ func (p *Pipeline) AppendMultiple(obj []IBaseObj, dst ...IBaseObj) {
 	}
 }
 
-// Append slice IBaseObj
+// AppendISlice - append slice IBaseObj
 func (p *Pipeline) AppendISlice(obj IBaseObj, dst []IBaseObj) {
 	obj.SetDst(dst)
 	obj.SetPipeline(p)
@@ -57,7 +57,7 @@ func (p *Pipeline) Delete(obj IBaseObj) {
 	delete(p.objects, obj.GetName())
 }
 
-// Print list of objects ib pipeline
+// PrintObjects - print list of objects ib pipeline
 func (p *Pipeline) PrintObjects() {
 	keys := make([]string, 0, len(p.objects))
 	for k := range p.objects {
@@ -99,7 +99,7 @@ func (p *Pipeline) Stop() {
 	close(p.Done)
 }
 
-// Print report about work of pipeline
+// Report - print report about work of pipeline
 func (p *Pipeline) Report() {
 	fmt.Println("Pipeline name \"", p.Name, "\"")
 	fmt.Println("Simulation time", p.ModelTime)
@@ -118,13 +118,15 @@ func (p *Pipeline) Report() {
 	}
 }
 
-// Get object from pipeline by name
+// GetObjByName get object from pipeline by name
 func (p *Pipeline) GetObjByName(name string) IBaseObj {
 	return p.objects[name]
 }
 
+// By is a signature for sort
 type By func(p1, p2 IBaseObj) bool
 
+// Sort - sort object in pipeline
 func (by By) Sort(objects []IBaseObj) {
 	objs := &objectSorter{
 		objects: objects,
@@ -153,7 +155,7 @@ func (s *objectSorter) Less(i, j int) bool {
 	return s.by(s.objects[i], s.objects[j])
 }
 
-// Get ID for new transaction
+// NewID - get ID for new transaction
 func (p *Pipeline) NewID() int {
 	p.id++
 	return p.id

@@ -6,7 +6,6 @@ package gpss
 
 import (
 	"fmt"
-	"sync"
 )
 
 // HandleSplittingFunc is a splitting function signature
@@ -41,27 +40,27 @@ func Splitting(obj *Split, transact *Transaction) {
 		// Default case, cntsplit equal to length of GetDst()
 		for i, v := range obj.GetDst() {
 			tr := transact.Copy()
-			parent_id := tr.GetID()
+			parentID := tr.GetID()
 			tr.SetID(obj.Pipe.NewID())
-			tr.SetParts(i+1, cntsplit, parent_id)
+			tr.SetParts(i+1, cntsplit, parentID)
 			v.AppendTransact(tr) // Take in mind that after Split must be only Queues
 		}
 	} else {
 		// Another case, cntsplit can be smaller than length of GetDst()
 		// Randomized selections of dst for send transact
 		dsts := make([]bool, cntsplit)
-		part_id := 1
+		partID := 1
 		for {
 			for _, v := range obj.GetDst() {
-				if GetRandomBool() && !dsts[part_id-1] {
+				if GetRandomBool() && !dsts[partID-1] {
 					tr := transact.Copy()
-					parent_id := tr.GetID()
+					parentID := tr.GetID()
 					tr.SetID(obj.Pipe.NewID())
-					tr.SetParts(part_id, cntsplit, parent_id)
+					tr.SetParts(partID, cntsplit, parentID)
 					v.AppendTransact(tr)
-					dsts[part_id-1] = true
-					part_id++
-					if part_id > cntsplit {
+					dsts[partID-1] = true
+					partID++
+					if partID > cntsplit {
 						return
 					}
 				}
