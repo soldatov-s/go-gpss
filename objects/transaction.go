@@ -2,7 +2,11 @@
 // This software may be modified and distributed under the terms
 // of the Apache license. See the LICENSE file for details.
 
-package gpss
+package objects
+
+import (
+	"github.com/soldatov-s/go-gpss/internal"
+)
 
 // Parameter for modification
 type Parameter struct {
@@ -75,7 +79,7 @@ func (t *Transaction) GetLife() int {
 
 // PrintInfo - print info about transact
 func (t *Transaction) PrintInfo() {
-	Log.Trace.Println("Transaction ID:\t", t.GetID(),
+	utils.Log.Trace.Println("Transaction ID:\t", t.GetID(),
 		"Borned:\t", t.GetIntParameter("born"),
 		"Advance time:\t", t.GetAdvanceTime(),
 		"Holder Name:\t", t.GetHolder(),

@@ -2,11 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache license. See the LICENSE file for details.
 
-package gpss
+package objects
 
 import (
 	"fmt"
 	"sync"
+
+	"github.com/soldatov-s/go-gpss/internal"
 )
 
 // IAdvance implements Advance interface
@@ -39,7 +41,7 @@ func NewAdvance(name string, interval, modificator int) *Advance {
 func (obj *Advance) GenerateAdvance() int {
 	advance := obj.Interval
 	if obj.Modificator > 0 {
-		advance += GetRandom(-obj.Modificator, obj.Modificator)
+		advance += utils.GetRandom(-obj.Modificator, obj.Modificator)
 	}
 	return advance
 }

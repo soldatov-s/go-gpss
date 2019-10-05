@@ -2,11 +2,13 @@
 // This software may be modified and distributed under the terms
 // of the Apache license. See the LICENSE file for details.
 
-package gpss
+package objects
 
 import (
 	"fmt"
 	"sync"
+
+	"github.com/soldatov-s/go-gpss/internal"
 )
 
 // IGenerator implements Generator interface
@@ -35,7 +37,7 @@ func GenerateBorn(obj *Generator) int {
 	var born int
 	born += obj.Interval
 	if obj.Modificator > 0 {
-		born += GetRandom(-obj.Modificator, obj.Modificator)
+		born += utils.GetRandom(-obj.Modificator, obj.Modificator)
 	}
 	if obj.Pipe != nil {
 		born += obj.Pipe.ModelTime
@@ -68,7 +70,7 @@ func NewGenerator(name string, interval, modificator, start, count int, hndl Han
 // GenerateTransact - generates transaction and it send into the simulation
 func (obj *Generator) GenerateTransact() {
 	var isTransactSended bool
-	Log.Trace.Println("Generate transact ", obj.id)
+	utils.Log.Trace.Println("Generate transact ", obj.id)
 	t := NewTransaction(obj.Pipe)
 	t.SetHolder(obj.name)
 	for _, v := range obj.GetDst() {
@@ -100,7 +102,7 @@ func (obj *Generator) HandleTransacts(wg *sync.WaitGroup) {
 		for {
 			obj.GenerateTransact()
 			if obj.id > obj.Count {
-				Log.Trace.Println("Stop generate")
+				utils.Log.Trace.Println("Stop generate")
 				return
 			}
 		}

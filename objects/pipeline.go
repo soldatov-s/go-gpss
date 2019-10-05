@@ -2,13 +2,15 @@
 // This software may be modified and distributed under the terms
 // of the Apache license. See the LICENSE file for details.
 
-package gpss
+package objects
 
 import (
 	"fmt"
 	"reflect"
 	"sort"
 	"sync"
+
+	"github.com/soldatov-s/go-gpss/internal"
 )
 
 // Pipeline is structure for pipeline
@@ -21,6 +23,11 @@ type Pipeline struct {
 	id        int                 // ID of new transaction
 }
 
+type IPipeline interface {
+	// Add object to pipeline
+	AddObject(obj IBaseObj) IBaseObj
+}
+
 // NewPipeline create new Pipeline
 func NewPipeline(name string) *Pipeline {
 	return &Pipeline{
@@ -28,6 +35,14 @@ func NewPipeline(name string) *Pipeline {
 		Name:    name,
 		Done:    make(chan struct{}),
 	}
+}
+
+// Add object to pipeline
+func (p *Pipeline) AddObject(obj IBaseObj) IBaseObj {
+	obj.SetPipeline(p)
+	obj.SetID(len(p.objects))
+	p.objects[obj.GetName()] = obj
+	return obj
 }
 
 // Append object to pipeline. Src is multiple sources of transact for appended
@@ -50,6 +65,8 @@ func (p *Pipeline) AppendISlice(obj IBaseObj, dst []IBaseObj) {
 	obj.SetPipeline(p)
 	obj.SetID(len(p.objects))
 	p.objects[obj.GetName()] = obj
+	fmt.Printf("%+v\n", obj)
+	fmt.Printf("%+v\n", p)
 }
 
 // Delete object from pipeline
@@ -80,7 +97,7 @@ func (p *Pipeline) Start(value int) {
 			case <-p.Done:
 				return
 			default:
-				Log.Trace.Println("ModelTime ", p.ModelTime)
+				utils.Log.Trace.Println("ModelTime ", p.ModelTime)
 				wg.Add(len(p.objects))
 				for _, o := range p.objects {
 					o.HandleTransacts(&wg)

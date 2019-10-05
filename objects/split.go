@@ -2,10 +2,12 @@
 // This software may be modified and distributed under the terms
 // of the Apache license. See the LICENSE file for details.
 
-package gpss
+package objects
 
 import (
 	"fmt"
+
+	"github.com/soldatov-s/go-gpss/internal"
 )
 
 // HandleSplittingFunc is a splitting function signature
@@ -25,7 +27,7 @@ type Split struct {
 func Splitting(obj *Split, transact *Transaction) {
 	cntsplit := obj.Cntsplit
 	if obj.Modificator > 0 {
-		cntsplit += GetRandom(-obj.Modificator, obj.Modificator)
+		cntsplit += utils.GetRandom(-obj.Modificator, obj.Modificator)
 	}
 
 	if cntsplit <= 0 {
@@ -52,7 +54,7 @@ func Splitting(obj *Split, transact *Transaction) {
 		partID := 1
 		for {
 			for _, v := range obj.GetDst() {
-				if GetRandomBool() && !dsts[partID-1] {
+				if utils.GetRandomBool() && !dsts[partID-1] {
 					tr := transact.Copy()
 					parentID := tr.GetID()
 					tr.SetID(obj.Pipe.NewID())
