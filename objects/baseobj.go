@@ -2,11 +2,14 @@
 // This software may be modified and distributed under the terms
 // of the Apache license. See the LICENSE file for details.
 
-package gpss
+package objects
 
 import (
+	// stdlib
 	"fmt"
 	"sync"
+
+	"github.com/soldatov-s/go-gpss/internal"
 )
 
 // IBaseObj implements BaseObj interface
@@ -20,6 +23,7 @@ type IBaseObj interface {
 	AppendTransact(*Transaction) bool   // Append transact to object
 	HandleTransacts(wg *sync.WaitGroup) // Handle all transacts of object
 	Report()                            // Print report
+	AddObject(obj IBaseObj) IBaseObj    // Add object to pipeline
 }
 
 // BaseObj is the base object of simulation system
@@ -30,6 +34,14 @@ type BaseObj struct {
 	Pipe    *Pipeline
 	tb      *TransactTable
 	id      int
+}
+
+// Add object to pipeline
+func (o *BaseObj) AddObject(obj IBaseObj) IBaseObj {
+	fmt.Printf("%+v\n", o)
+	fmt.Printf("%+v\n", obj)
+	o.Pipe.Append(o, obj)
+	return obj
 }
 
 // Init - initializate BaseObj
@@ -70,7 +82,7 @@ func (obj *BaseObj) GetID() int {
 
 // AppendTransact append transact to object
 func (obj *BaseObj) AppendTransact(t *Transaction) bool {
-	Log.Trace.Println("Append transact ", t.GetID(), " to ", obj.name)
+	utils.Log.Trace.Println("Append transact ", t.GetID(), " to ", obj.name)
 	return true
 }
 

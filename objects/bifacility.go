@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache license. See the LICENSE file for details.
 
-package gpss
+package objects
 
 // A Bifacility as facility, but without advance in it and present in two parts,
 // first for takes ownership of a Facility, second for release ownership of a Facility

@@ -2,7 +2,7 @@
 // This software may be modified and distributed under the terms
 // of the Apache license. See the LICENSE file for details.
 
-package gpss
+package utils
 
 import (
 	"io"
