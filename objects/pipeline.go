@@ -17,10 +17,12 @@ import (
 type Pipeline struct {
 	Name      string              // Pipeline name
 	objects   map[string]IBaseObj // Maps of objects
+	lstObject []IBaseObj          // Last object in map of objects
 	ModelTime int                 // Current Model Time
 	Done      chan struct{}       // Chan for done
 	SimTime   int                 // Simulation time
 	id        int                 // ID of new transaction
+	doneHndl  []func(p *Pipeline) // Handler of done event
 }
 
 type IPipeline interface {
@@ -29,20 +31,37 @@ type IPipeline interface {
 }
 
 // NewPipeline create new Pipeline
-func NewPipeline(name string) *Pipeline {
+func NewPipeline(name string, doneHndl ...func(p *Pipeline)) *Pipeline {
 	return &Pipeline{
-		objects: make(map[string]IBaseObj),
-		Name:    name,
-		Done:    make(chan struct{}),
+		objects:  make(map[string]IBaseObj),
+		Name:     name,
+		Done:     make(chan struct{}),
+		doneHndl: doneHndl,
 	}
 }
 
 // Add object to pipeline
-func (p *Pipeline) AddObject(obj IBaseObj) IBaseObj {
-	obj.SetPipeline(p)
-	obj.SetID(len(p.objects))
-	p.objects[obj.GetName()] = obj
-	return obj
+func (p *Pipeline) AddObject(obj ...IBaseObj) *Pipeline {
+	if p.lstObject != nil {
+		for _, item := range p.lstObject {
+			item.SetDst(obj)
+		}
+	}
+	for _, item := range obj {
+		item.SetPipeline(p)
+		item.SetID(len(p.objects))
+		p.objects[item.GetName()] = item
+	}
+	p.lstObject = obj
+	return p
+}
+
+// Loop pipeline to selected object
+func (p *Pipeline) Loop(objName string) *Pipeline {
+	for _, item := range p.lstObject {
+		item.SetDst([]IBaseObj{p.GetObjByName(objName)})
+	}
+	return p
 }
 
 // Append object to pipeline. Src is multiple sources of transact for appended
@@ -65,8 +84,6 @@ func (p *Pipeline) AppendISlice(obj IBaseObj, dst []IBaseObj) {
 	obj.SetPipeline(p)
 	obj.SetID(len(p.objects))
 	p.objects[obj.GetName()] = obj
-	fmt.Printf("%+v\n", obj)
-	fmt.Printf("%+v\n", p)
 }
 
 // Delete object from pipeline
@@ -95,6 +112,9 @@ func (p *Pipeline) Start(value int) {
 		for {
 			select {
 			case <-p.Done:
+				for _, f := range p.doneHndl {
+					f(p)
+				}
 				return
 			default:
 				utils.Log.Trace.Println("ModelTime ", p.ModelTime)

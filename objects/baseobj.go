@@ -38,9 +38,10 @@ type BaseObj struct {
 
 // Add object to pipeline
 func (o *BaseObj) AddObject(obj IBaseObj) IBaseObj {
-	fmt.Printf("%+v\n", o)
-	fmt.Printf("%+v\n", obj)
-	o.Pipe.Append(o, obj)
+	o.SetDst([]IBaseObj{obj})
+	obj.SetPipeline(o.Pipe)
+	obj.SetID(len(o.Pipe.objects))
+	o.Pipe.objects[obj.GetName()] = obj
 	return obj
 }
 
