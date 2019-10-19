@@ -29,7 +29,7 @@ All blocks need to add in Pipeline and than start simulation. For generate rando
 values used pseudo-random generation function from math/rand. After simulation 
 you can print report about simulation.
 
-# Example 1
+# Example 1.1
 Barbershop: random client go to Barbershop every 18 minutes with deviation 6 minutes.
 We have only one barber. Barber spends for each client 16 minutes with deviation
 4 minutes. How many people will get a haircut per day? How many people will be in queue?
@@ -92,7 +92,9 @@ client in queue. 11 client not waiting in queue (42.31 percent), but are
 immediately served. Average waiting time in queue 4.47 minutes. Barber busy at 
 89.17 percent.
 
-# Example 1.1
+Full source [example1](examples/example1.1/main.go).
+
+# Example 1.2
 Same as Example 1, but used bifacility. Bifacility is a component that inlcude
 two parts - in_elemet and out_element. Between theise elements we can insert 
 any anower component, for example advance. This allow build more complex models.
@@ -114,7 +116,7 @@ p.Start(480)
 p.PrintReport() 
 ```
 
-Full source [example1](examples/example1/main.go).  
+Full source [example1](examples/example1.2/main.go).  
 
 **Important**, 
 The advance and facility components count the average for all transactions that 
