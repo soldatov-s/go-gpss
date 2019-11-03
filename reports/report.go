@@ -6,6 +6,8 @@ package reports
 
 import (
 	"fmt"
+
+	"github.com/soldatov-s/go-gpss/objects"
 )
 
 type Config struct {
@@ -16,10 +18,10 @@ type Report struct {
 	Config Config
 }
 
-type ReportOfObject {
+type ReportOfObject struct {
 	Report
 }
 
-func (rp * ReportOfObject) Build(obj IBaseObj) {
+func (rp *ReportOfObject) Build(obj objects.IBaseObj) {
 	fmt.Println("Object name \"", obj.GetName(), "\"")
 }
