@@ -36,6 +36,4 @@ func (obj *Assign) AppendTransact(transact *Transaction) bool {
 }
 
 // Report - print report about object
-func (obj *Assign) Report() {
-	return
-}
+func (obj *Assign) Report() {}

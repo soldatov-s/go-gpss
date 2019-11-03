@@ -19,10 +19,10 @@ type Count struct {
 // NewCount creates two objects, for incremet and decrement. After enter transact in
 // inc_obj, value incremented by inc_value. After enter transact in dec_obj,
 // value decremented by dec_value.
-func NewCount(name string, incValue, decValue int) (*Count, *Count) {
+func NewCount(name string, incValue, decValue int) (inc, dec *Count) {
 	value := 0
-	inc := &Count{}
-	dec := &Count{}
+	inc = &Count{}
+	dec = &Count{}
 	inc.name = name + "_INC"
 	inc.value = &value
 	inc.incDec = incValue

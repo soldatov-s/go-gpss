@@ -14,8 +14,8 @@ type Config struct {
 }
 
 type Report struct {
-	Name   string
 	Config Config
+	Name   string
 }
 
 type ReportOfObject struct {

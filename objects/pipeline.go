@@ -10,7 +10,7 @@ import (
 	"sort"
 	"sync"
 
-	"github.com/soldatov-s/go-gpss/internal"
+	utils "github.com/soldatov-s/go-gpss/internal"
 )
 
 // Pipeline is structure for pipeline
@@ -133,7 +133,8 @@ func (p *Pipeline) Start(value int) {
 					o.HandleTransacts(&wg)
 				}
 				wg.Wait()
-				if p.ModelTime++; p.ModelTime == value {
+				p.ModelTime++
+				if p.ModelTime == value {
 					p.Stop()
 				}
 			}

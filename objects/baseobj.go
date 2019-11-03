@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/soldatov-s/go-gpss/internal"
+	utils "github.com/soldatov-s/go-gpss/internal"
 )
 
 // IBaseObj implements BaseObj interface
@@ -28,21 +28,20 @@ type IBaseObj interface {
 
 // BaseObj is the base object of simulation system
 type BaseObj struct {
-	name    string
-	objTime int
-	dst     []IBaseObj
-	Pipe    *Pipeline
-	tb      *TransactTable
-	id      int
+	name string
+	dst  []IBaseObj
+	Pipe *Pipeline
+	tb   *TransactTable
+	id   int
 }
 
 // Add object to pipeline
-func (o *BaseObj) LinkObject(objs ...IBaseObj) []IBaseObj {
-	o.SetDst(objs...)
-	for _, obj := range objs {
-		obj.SetPipeline(o.Pipe)
-		obj.SetID(len(o.Pipe.objects))
-		o.Pipe.objects[obj.GetName()] = obj
+func (obj *BaseObj) LinkObject(objs ...IBaseObj) []IBaseObj {
+	obj.SetDst(objs...)
+	for _, o := range objs {
+		o.SetPipeline(obj.Pipe)
+		o.SetID(len(obj.Pipe.objects))
+		obj.Pipe.objects[o.GetName()] = o
 	}
 
 	return objs

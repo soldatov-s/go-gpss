@@ -23,11 +23,7 @@ type Logger struct {
 }
 
 // NewLogger creates new logger
-func NewLogger(
-	traceHandle io.Writer,
-	infoHandle io.Writer,
-	warningHandle io.Writer,
-	errorHandle io.Writer) *Logger {
+func NewLogger(traceHandle, infoHandle, warningHandle, errorHandle io.Writer) *Logger {
 	return &Logger{
 		Trace: log.New(traceHandle, "TRACE: ",
 			log.Ldate|log.Ltime|log.Lshortfile),

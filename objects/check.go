@@ -79,5 +79,4 @@ func (obj *Check) AppendTransact(transact *Transaction) bool {
 func (obj *Check) Report() {
 	obj.BaseObj.Report()
 	fmt.Printf("Check result true %d\tCheck result false %d\n\n", obj.cntTrue, obj.cntFalse)
-	return
 }

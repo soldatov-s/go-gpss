@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/soldatov-s/go-gpss/internal"
+	utils "github.com/soldatov-s/go-gpss/internal"
 )
 
 // IAdvance implements Advance interface
