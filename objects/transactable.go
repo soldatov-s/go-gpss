@@ -19,7 +19,7 @@ type TableItem struct {
 type TransactTable struct {
 	firstID int                // ID of first transact in table
 	lastID  int                // ID of last transact in table
-	mp      map[int]*TableItem //Map with items
+	mp      map[int]*TableItem // Map with items
 	mu      *sync.Mutex
 }
 
@@ -59,7 +59,7 @@ func (obj *TransactTable) Items() map[int]*TableItem {
 	for k, v := range obj.mp {
 		items[k] = v
 	}
-	return items //obj.mp
+	return items
 }
 
 // Push transact to end table

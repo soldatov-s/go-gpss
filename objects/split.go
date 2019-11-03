@@ -7,7 +7,7 @@ package objects
 import (
 	"fmt"
 
-	"github.com/soldatov-s/go-gpss/internal"
+	utils "github.com/soldatov-s/go-gpss/internal"
 )
 
 // HandleSplittingFunc is a splitting function signature
@@ -54,17 +54,18 @@ func Splitting(obj *Split, transact *Transaction) {
 		partID := 1
 		for {
 			for _, v := range obj.GetDst() {
-				if utils.GetRandomBool() && !dsts[partID-1] {
-					tr := transact.Copy()
-					parentID := tr.GetID()
-					tr.SetID(obj.Pipe.NewID())
-					tr.SetParts(partID, cntsplit, parentID)
-					v.AppendTransact(tr)
-					dsts[partID-1] = true
-					partID++
-					if partID > cntsplit {
-						return
-					}
+				if !(utils.GetRandomBool() && !dsts[partID-1]) {
+					continue
+				}
+				tr := transact.Copy()
+				parentID := tr.GetID()
+				tr.SetID(obj.Pipe.NewID())
+				tr.SetParts(partID, cntsplit, parentID)
+				v.AppendTransact(tr)
+				dsts[partID-1] = true
+				partID++
+				if partID > cntsplit {
+					return
 				}
 			}
 		}

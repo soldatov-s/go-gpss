@@ -71,7 +71,6 @@ func (obj *Aggregate) HandleTransact(transact *Transaction) bool {
 // HandleTransacts handle transacts
 func (obj *Aggregate) HandleTransacts(wg *sync.WaitGroup) {
 	wg.Done()
-	return
 }
 
 // AppendTransact append transact to object

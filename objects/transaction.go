@@ -5,7 +5,7 @@
 package objects
 
 import (
-	"github.com/soldatov-s/go-gpss/internal"
+	utils "github.com/soldatov-s/go-gpss/internal"
 )
 
 // Parameter for modification
@@ -160,7 +160,7 @@ func (t *Transaction) ResetQueueTime() {
 }
 
 // GetParts - get parts info
-func (t *Transaction) GetParts() (int, int, int) {
+func (t *Transaction) GetParts() (part, parts, parentID int) {
 	return t.GetIntParameter("part"),
 		t.GetIntParameter("parts"),
 		t.GetIntParameter("parent_id")

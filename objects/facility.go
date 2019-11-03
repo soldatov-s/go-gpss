@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/soldatov-s/go-gpss/internal"
+	utils "github.com/soldatov-s/go-gpss/internal"
 )
 
 // IFacility implements Facility interface
@@ -132,9 +132,5 @@ func (obj *Facility) Report() {
 
 // IsEmpty check that facility is empty
 func (obj *Facility) IsEmpty() bool {
-	if obj.tb.Len() != 0 {
-		// Facility is busy
-		return false
-	}
-	return true
+	return obj.tb.Len() == 0
 }

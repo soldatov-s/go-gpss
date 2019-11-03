@@ -91,11 +91,7 @@ func (obj *InFacility) Report() {
 
 // IsEmpty check that facility is empty
 func (obj *InFacility) IsEmpty() bool {
-	if obj.tb.Len() != 0 {
-		// Facility is busy
-		return false
-	}
-	return true
+	return obj.tb.Len() == 0
 }
 
 // HandleTransact handle transact
@@ -109,13 +105,14 @@ func (obj *OutFacility) HandleTransact(transact *Transaction) {
 	}
 
 	for _, v := range obj.GetDst() {
-		if v.AppendTransact(transact) {
-			advance := obj.Pipe.ModelTime - obj.inFacility.timeOfInput
-			obj.inFacility.sumAdvance += float64(advance)
-			obj.tb.Remove(transact)
-			obj.inFacility.HoldedTransactID = -1
-			return
+		if !v.AppendTransact(transact) {
+			continue
 		}
+		advance := obj.Pipe.ModelTime - obj.inFacility.timeOfInput
+		obj.inFacility.sumAdvance += float64(advance)
+		obj.tb.Remove(transact)
+		obj.inFacility.HoldedTransactID = -1
+		return
 	}
 	transact.SetParameters([]Parameter{{Name: "Facility", Value: obj.name}})
 }
@@ -127,13 +124,8 @@ func (obj *OutFacility) AppendTransact(transact *Transaction) bool {
 	}
 	obj.BaseObj.AppendTransact(transact)
 	obj.HandleTransact(transact)
-	if obj.tb.Len() == 0 {
-		return true
-	}
-	return false
+	return obj.tb.Len() == 0
 }
 
 // Report - print report about object
-func (obj *OutFacility) Report() {
-	return
-}
+func (obj *OutFacility) Report() {}
