@@ -14,16 +14,16 @@ import (
 
 // IBaseObj implements BaseObj interface
 type IBaseObj interface {
-	SetID(int)                          // Set object ID
-	GetID() int                         // Get object ID
-	GetName() string                    // Get object name
-	SetDst([]IBaseObj)                  // Set dst for object
-	GetDst() []IBaseObj                 // Get dst for object
-	SetPipeline(pipe *Pipeline)         // Set pipeline for object
-	AppendTransact(*Transaction) bool   // Append transact to object
-	HandleTransacts(wg *sync.WaitGroup) // Handle all transacts of object
-	Report()                            // Print report
-	AddObject(obj IBaseObj) IBaseObj    // Add object to pipeline
+	SetID(int)                             // Set object ID
+	GetID() int                            // Get object ID
+	GetName() string                       // Get object name
+	SetDst(...IBaseObj)                    // Set dst for object
+	GetDst() []IBaseObj                    // Get dst for object
+	SetPipeline(pipe *Pipeline)            // Set pipeline for object
+	AppendTransact(*Transaction) bool      // Append transact to object
+	HandleTransacts(wg *sync.WaitGroup)    // Handle all transacts of object
+	Report()                               // Print report
+	LinkObject(obj ...IBaseObj) []IBaseObj // Link current object with new obj
 }
 
 // BaseObj is the base object of simulation system
@@ -37,12 +37,15 @@ type BaseObj struct {
 }
 
 // Add object to pipeline
-func (o *BaseObj) AddObject(obj IBaseObj) IBaseObj {
-	o.SetDst([]IBaseObj{obj})
-	obj.SetPipeline(o.Pipe)
-	obj.SetID(len(o.Pipe.objects))
-	o.Pipe.objects[obj.GetName()] = obj
-	return obj
+func (o *BaseObj) LinkObject(objs ...IBaseObj) []IBaseObj {
+	o.SetDst(objs...)
+	for _, obj := range objs {
+		obj.SetPipeline(o.Pipe)
+		obj.SetID(len(o.Pipe.objects))
+		o.Pipe.objects[obj.GetName()] = obj
+	}
+
+	return objs
 }
 
 // Init - initializate BaseObj
@@ -57,7 +60,7 @@ func (obj *BaseObj) GetName() string {
 }
 
 // SetDst - set destination of BaseObj
-func (obj *BaseObj) SetDst(dst []IBaseObj) {
+func (obj *BaseObj) SetDst(dst ...IBaseObj) {
 	obj.dst = dst
 }
 

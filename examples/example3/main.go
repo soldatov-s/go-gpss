@@ -7,50 +7,72 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/soldatov-s/go-gpss"
+	"github.com/soldatov-s/go-gpss/objects"
 )
 
-func main() {
-	// Test small cafe with barista and cook. Used split and aggregate components
-	p := gpss.NewPipeline("Cafe Simulation")
-	g := gpss.NewGenerator("Visitors", 18, 6, 0, 0, nil)
-	q := gpss.NewQueue("Visitors queue")
-	ordersF := gpss.NewFacility("Order Acceptance", 5, 3)
-	split := gpss.NewSplit("Split orders", 1, 1, nil)
-	baristaQ := gpss.NewQueue("Queue of orders to barista")
-	baristaF := gpss.NewFacility("Barista", 5, 2)
-	cookQ := gpss.NewQueue("Queue of orders to cook")
-	cookF := gpss.NewFacility("Cook", 10, 5)
-	aggregate := gpss.NewAggregate("Aggregate orders")
-	h := gpss.NewHole("Out")
-	p.Append(g, q)
-	p.Append(q, ordersF)
-	p.Append(ordersF, split)
-	p.Append(split, baristaQ, cookQ)
-	p.Append(baristaQ, baristaF)
-	p.Append(cookQ, cookF)
-	p.Append(baristaF, aggregate)
-	p.Append(cookF, aggregate)
-	p.Append(aggregate, h)
-	p.Append(h)
-	p.Start(480)
+var (
+	exit chan struct{}
+)
 
-	// Exit handler
-	exit := make(chan struct{})
+func doneHandler(p *objects.Pipeline) {
+	p.Report()
+	close(exit)
+}
+
+func signalLoop() {
 	closeSignal := make(chan os.Signal)
 	signal.Notify(closeSignal, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-closeSignal
 		close(exit)
 	}()
+}
 
-	go func() {
-		<-p.Done
-		close(exit)
-	}()
+func main() {
+	// Init exit chan
+	exit = make(chan struct{})
 
-	// Exit app if chan is closed
+	// Build pipeline
+	// Generator -> Queue1 -> Facility1 -> Split ---> ...
+	//                                            |
+	//                                            --> ...
+	p := objects.NewPipeline("Cafe Simulation", doneHandler).
+		AddObject(objects.NewGenerator("Visitors", 18, 6, 0, 0, nil)).
+		AddObject(objects.NewQueue("Visitors queue")).
+		AddObject(objects.NewFacility("Order Acceptance", 5, 3)).
+		AddObject(objects.NewSplit("Split orders", 1, 1, nil))
+
+	//  ... -> Split ---> Queue2 -> ...
+	//                |
+	//                --> Queue3 -> ...
+	baristaQ := objects.NewQueue("Queue of orders to barista")
+	cookQ := objects.NewQueue("Queue of orders to cook")
+	p.AddObject(baristaQ, cookQ)
+
+	//  ... -> Queue2 -> Facility2 -> ...
+	//
+	//  ... -> Queue3 -> Facility3 -> ...
+	baristaF := objects.NewFacility("Barista", 5, 2)
+	cookF := objects.NewFacility("Cook", 10, 5)
+	baristaQ.LinkObject(baristaF)
+	cookQ.LinkObject(cookF)
+
+	//  ... -> Facility2 ---> Aggregate -> Hole
+	//                    ^
+	//                    |
+	//  ... -> Facility3 --
+	aggregate := objects.NewAggregate("Aggregate orders")
+	baristaF.LinkObject(aggregate)
+	cookF.LinkObject(aggregate)
+	aggregate.LinkObject(objects.NewHole("Out"))
+
+	// Start simulation
+	p.Start(480)
+
+	// Signal handler
+	signalLoop()
+
+	// Exit
 	<-exit
-	p.Report()
 	fmt.Println("Exit program")
 }
