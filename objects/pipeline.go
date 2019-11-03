@@ -44,7 +44,7 @@ func NewPipeline(name string, doneHndl ...func(p *Pipeline)) *Pipeline {
 func (p *Pipeline) AddObject(obj ...IBaseObj) *Pipeline {
 	if p.lstObject != nil {
 		for _, item := range p.lstObject {
-			item.SetDst(obj)
+			item.SetDst(obj...)
 		}
 	}
 	for _, item := range obj {
@@ -59,7 +59,17 @@ func (p *Pipeline) AddObject(obj ...IBaseObj) *Pipeline {
 // Loop pipeline to selected object
 func (p *Pipeline) Loop(objName string) *Pipeline {
 	for _, item := range p.lstObject {
-		item.SetDst([]IBaseObj{p.GetObjByName(objName)})
+		item.SetDst(p.GetObjByName(objName))
+		fmt.Println(item.GetName())
+	}
+	return p
+}
+
+// Loop pipeline to selected object
+func (p *Pipeline) LoopByObj(obj IBaseObj) *Pipeline {
+	for _, item := range p.lstObject {
+		item.SetDst(obj)
+		fmt.Println(obj.GetName())
 	}
 	return p
 }
@@ -80,7 +90,7 @@ func (p *Pipeline) AppendMultiple(obj []IBaseObj, dst ...IBaseObj) {
 
 // AppendISlice - append slice IBaseObj
 func (p *Pipeline) AppendISlice(obj IBaseObj, dst []IBaseObj) {
-	obj.SetDst(dst)
+	obj.SetDst(dst...)
 	obj.SetPipeline(p)
 	obj.SetID(len(p.objects))
 	p.objects[obj.GetName()] = obj
@@ -196,4 +206,10 @@ func (s *objectSorter) Less(i, j int) bool {
 func (p *Pipeline) NewID() int {
 	p.id++
 	return p.id
+}
+
+// EnableTrace enable trace log
+// TODO: refactoring required, because logging enabled for all pipelines, not for selected
+func (p *Pipeline) EnableTrace() {
+	utils.EnableVerbose()
 }

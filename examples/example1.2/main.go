@@ -42,7 +42,7 @@ func main() {
 	fIN, fOUT := objects.NewBifacility("Master")
 
 	// Build pipeline
-	// ... -> BiFacilityIn -> Adbvance -> BeFacilityOut -> Hole
+	// ... -> BiFacilityIn -> Advance -> BeFacilityOut -> Hole
 	p.
 		AddObject(fIN).
 		AddObject(objects.NewAdvance("Master work", 16, 4)).
