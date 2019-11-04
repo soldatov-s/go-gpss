@@ -33,16 +33,15 @@ func main() {
 	// Init exit chan
 	exit = make(chan struct{})
 
-	restaurant := objects.NewPipeline("Restaurant  Simulation")
+	restaurant := objects.NewPipeline("Restaurant  Simulation", doneHandler)
 	// 1. Create the Generator and Queue of Visitors, create a Hole
 	visitorsG := objects.NewGenerator("Visitors", 10, 5, 0, 0, nil)
-	// visitors_g := NewGenerator("Visitors", 0, 0, 0, 1, nil)
 	out := objects.NewHole("Out")
 	visitorsQ := objects.NewQueue("Visitors queue")
 	// 2. Create the Check for checking size the Queue of Visitors
 	checkQueueHndl := func(obj *objects.Check, transact *objects.Transaction) bool {
 		queue := obj.Pipe.GetObjByName("Visitors queue")
-		return !(queue.(objects.IQueue).GetLength() >= 6)
+		return queue.(objects.IQueue).GetLength() < 6
 	}
 	checkQueue := objects.NewCheck("Check size of Visitors queue", checkQueueHndl, out)
 	// 3. Create are Hostess
@@ -73,11 +72,9 @@ func main() {
 	waitersQueue := make([]objects.IBaseObj, cntWaiters)
 	waitersFacility := make([]objects.IBaseObj, cntWaiters)
 	for i := 0; i < cntWaiters; i++ {
-		queueName := fmt.Sprintf("Queue waiter %d", i+1)
-		waitersQueue[i] = objects.NewQueue(queueName)
-		facilityName := fmt.Sprintf("Waiter %d", i+1)
-		waitersFacility[i] = objects.NewFacility(facilityName, 5, 3)
-
+		ID := strconv.Itoa(i + 1)
+		waitersQueue[i] = objects.NewQueue("Waiter Queue " + ID)
+		waitersFacility[i] = objects.NewFacility("Waiter "+ID, 5, 3)
 	}
 	// 7. Create the Split for splitting Visitors order to dishes
 	// Maybe 1 or 5 dishes, includes bar
@@ -106,8 +103,8 @@ func main() {
 	checkTbNumber := func(id_table int) objects.HandleCheckingFunc {
 		return func(obj *objects.Check, transact *objects.Transaction) bool {
 			for i := 0; i < 3; i++ {
-				tableName := fmt.Sprintf("Table %d", i+id_table)
-				if transact.GetParameter("Facility").(string) == tableName {
+				ID := strconv.Itoa(i + 1)
+				if transact.GetParameter("Facility").(string) == "Table "+ID {
 					return true
 				}
 			}
@@ -126,37 +123,37 @@ func main() {
 	// 14. Create the Advance for payment simulation
 	visitorsPays := objects.NewAdvance("Visitors pays", 5, 2)
 	// 15. Append objects to a pipeline
-	restaurant.Append(visitorsG, checkQueue)
-	restaurant.Append(checkQueue, visitorsQ)
-	restaurant.Append(visitorsQ, checkEmptyTable)
-	restaurant.Append(checkEmptyTable, hostes1F, hostes2F)
-	restaurant.AppendISlice(hostes1F, tablesIN)
-	restaurant.AppendISlice(hostes2F, tablesIN)
+	restaurant.AddObject(visitorsG).
+		AddObject(checkQueue).
+		AddObject(visitorsQ).
+		AddObject(checkEmptyTable).
+		AddObject(hostes1F, hostes2F)
+	hostes1F.LinkObject(tablesIN...)
+	hostes2F.LinkObject(tablesIN...)
 
 	for i := 0; i < cntWaiters; i++ {
 		for j := 0; j < 3; j++ {
-			restaurant.Append(tablesIN[j+i*3], waitersQueue[i])
+			tablesIN[j+i*3].LinkObject(waitersQueue[i])
 		}
+		waitersQueue[i].LinkObject(waitersFacility[i])
+		waitersFacility[i].LinkObject(checkIsCooked)
 	}
 
-	for i := 0; i < cntWaiters; i++ {
-		restaurant.Append(waitersQueue[i], waitersFacility[i])
-	}
+	restaurant.Append(dishesSP, nil)
+	dishesSP.LinkObject(cook1Q, cook2Q, cook3Q, cook4Q, barQ)
+	cook1Q.LinkObject(cook1F)
+	cook1F.LinkObject(assign)
+	cook2Q.LinkObject(cook2F)
+	cook2F.LinkObject(assign)
+	cook3Q.LinkObject(cook3F)
+	cook3F.LinkObject(assign)
+	cook4Q.LinkObject(cook4F)
+	cook4F.LinkObject(assign)
+	barQ.LinkObject(barman1F, barman2F)
+	barman1F.LinkObject(assign)
+	barman2F.LinkObject(assign)
+	assign.LinkObject(checkTb...)
 
-	restaurant.AppendMultiple(waitersFacility, checkIsCooked)
-	restaurant.Append(dishesSP, cook1Q, cook2Q, cook3Q, cook4Q, barQ)
-	restaurant.Append(cook1Q, cook1F)
-	restaurant.Append(cook2Q, cook2F)
-	restaurant.Append(cook3Q, cook3F)
-	restaurant.Append(cook4Q, cook4F)
-	restaurant.Append(barQ, barman1F, barman2F)
-	restaurant.Append(cook1Q, assign)
-	restaurant.Append(cook2Q, assign)
-	restaurant.Append(cook3F, assign)
-	restaurant.Append(cook4F, assign)
-	restaurant.Append(barman1F, assign)
-	restaurant.Append(barman2F, assign)
-	restaurant.AppendISlice(assign, checkTb)
 	for i := 0; i < cntWaiters; i++ {
 		restaurant.Append(checkTb[i], waitersQueue[i])
 	}
