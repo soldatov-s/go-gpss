@@ -40,7 +40,7 @@ func NewPipeline(name string, doneHndl ...func(p *Pipeline)) *Pipeline {
 	}
 }
 
-// Add object to pipeline
+// Adds an object to the pipeline, a new object is added to the end of the pipeline
 func (p *Pipeline) AddObject(obj ...IBaseObj) *Pipeline {
 	if p.lstObject != nil {
 		for _, item := range p.lstObject {
