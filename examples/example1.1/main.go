@@ -34,7 +34,7 @@ func main() {
 
 	// Build pipeline
 	// Generator -> Queue -> Facility -> Hole
-	p := objects.NewPipeline("Barbershop", doneHandler).
+	p := objects.NewPipeline("Barbershop").
 		AddObject(objects.NewGenerator("Clients", 18, 6, 0, 0, nil)).
 		AddObject(objects.NewQueue("Chairs")).
 		AddObject(objects.NewFacility("Master", 16, 4)).
@@ -42,10 +42,9 @@ func main() {
 	// Start simulation
 	p.Start(480)
 
-	// Signal handler
-	signalLoop()
+	<-p.Done
+	p.Report()
 
 	// Exit
-	<-exit
 	fmt.Println("Exit program")
 }

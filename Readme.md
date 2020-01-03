@@ -29,18 +29,11 @@ All blocks need to add in Pipeline and than start simulation. For generate rando
 values used pseudo-random generation function from math/rand. After simulation 
 you can print report about simulation.
 
-# Example 1.1
-Barbershop: random client go to Barbershop every 18 minutes with deviation 6 minutes.
-We have only one barber. Barber spends for each client 16 minutes with deviation
-4 minutes. How many people will get a haircut per day? How many people will be in queue?
-How long does one haircut last?
+# The difference between version 0.2 and 0.1
+The new version supports a simpler construction of a simulation pipeline.
+You can add objects to the pipeline one by one.
 
-<p align="center">
-  <img src="/images/pic01.jpg" width="300" height="400" alt="Pic01"/>
-  <br /> 
-  <b>Pic 01 - Barbershop simulation</b>
-</p>
-
+Old code
 ```Golang
 p := NewPipeline("Barbershop", false)
 g := NewGenerator("Clients", 18, 6, 0, 0, nil)
@@ -56,7 +49,53 @@ p.Start(480)
 p.PrintReport()
 ```
 
-Full source [example1](examples/example1/main.go).  
+New code
+```Golang
+p := objects.NewPipeline("Barbershop").
+	AddObject(objects.NewGenerator("Clients", 18, 6, 0, 0, nil)).
+	AddObject(objects.NewQueue("Chairs")).
+	AddObject(objects.NewFacility("Master", 16, 4)).
+	AddObject(objects.NewHole("Out"))
+p.Start(480)
+<-p.Done
+p.Report()
+```
+
+You can link objects, for example, link barista-facility to barista-queue:
+
+```Golang
+baristaQ.LinkObject(baristaF)
+```
+That is mean baristaQ->baristaF
+
+# Example 1.1
+Barbershop: random client go to Barbershop every 18 minutes with deviation 6 minutes.
+We have only one barber. Barber spends for each client 16 minutes with deviation
+4 minutes. How many people will get a haircut per day? How many people will be in queue?
+How long does one haircut last?
+
+<p align="center">
+  <img src="/images/pic01.jpg" width="300" height="400" alt="Pic01"/>
+  <br /> 
+  <b>Pic 01 - Barbershop simulation</b>
+</p>
+
+```Golang
+// Build pipeline
+// Generator -> Queue -> Facility -> Hole
+p := objects.NewPipeline("Barbershop").
+	AddObject(objects.NewGenerator("Clients", 18, 6, 0, 0, nil)).
+	AddObject(objects.NewQueue("Chairs")).
+	AddObject(objects.NewFacility("Master", 16, 4)).
+	AddObject(objects.NewHole("Out"))
+// Start simulation
+p.Start(480)
+
+<-p.Done
+p.Report()
+```
+
+Full source [example1](examples/example1.1/main.go).  
 
 In report we will see next information (may be diferent values, becouse 
 timing was randomized):
@@ -92,31 +131,36 @@ client in queue. 11 client not waiting in queue (42.31 percent), but are
 immediately served. Average waiting time in queue 4.47 minutes. Barber busy at 
 89.17 percent.
 
-Full source [example1](examples/example1.1/main.go).
+Full source [example1.1](examples/example1.1/main.go).
 
 # Example 1.2
-Same as Example 1, but used bifacility. Bifacility is a component that inlcude
+Same as Example 1.1, but used bifacility. Bifacility is a component that inlcude
 two parts - in_elemet and out_element. Between theise elements we can insert 
 any anower component, for example advance. This allow build more complex models.
 ```Golang
-p := NewPipeline("Barbershop", false)
-g := NewGenerator("Clients", 18, 6, 0, 0, nil)
-q := NewQueue("Chairs")
-f_in, f_out := NewBifacility("Master")
-a := NewAdvance("Master work", 16, 4)
-h := NewHole("Out")
-p.Append(g, q)
-p.Append(q, f_in)
-p.Append(f_in, a)
-p.Append(a, f_out)
-p.Append(f_out, h)
-p.Append(h)
+// Build pipeline
+// Generator -> Queue -> ...
+p := objects.NewPipeline("Barbershop", doneHandler).
+	AddObject(objects.NewGenerator("Clients", 18, 6, 0, 0, nil)).
+	AddObject(objects.NewQueue("Chairs"))
+
+// Create BiFacility
+fIN, fOUT := objects.NewBifacility("Master")
+
+// Build pipeline
+// ... -> BiFacilityIn -> Advance -> BeFacilityOut -> Hole
+p.
+	AddObject(fIN).
+	AddObject(objects.NewAdvance("Master work", 16, 4)).
+	AddObject(fOUT).
+	AddObject(objects.NewHole("Out"))
+// Start simulation
 p.Start(480)
 <-p.Done
-p.PrintReport() 
+p.Report() 
 ```
 
-Full source [example1](examples/example1.2/main.go).  
+Full source [example1.2](examples/example1.2/main.go).  
 
 **Important**, 
 The advance and facility components count the average for all transactions that 
@@ -138,24 +182,17 @@ to be empty? How much time will each toilet be occupied?
 </p>
 
 ```Golang
-p := NewPipeline("Water Closet Simulation", false)
-g := NewGenerator("Office", 0, 0, 0, 10, nil)
-a1 := NewAdvance("Wanted to use the toilet", 90, 60)
-a2 := NewAdvance("Path to WC", 5, 3)
-q := NewQueue("Queue to the WC")
-f1 := NewFacility("WC1", 15, 10)
-f2 := NewFacility("WC2", 15, 10)
-a3 := NewAdvance("Path from WC", 5, 3)
-p.Append(g, a1)
-p.Append(a1, a2)
-p.Append(a2, q)
-p.Append(q, f1, f2)
-p.Append(f1, a3)
-p.Append(f2, a3)
-p.Append(a3, a1)
+p := objects.NewPipeline("Water Closet Simulation", doneHandler).
+	AddObject(objects.NewGenerator("Office", 0, 0, 0, 10, nil)).
+	AddObject(objects.NewAdvance("Wanted to use the toilet", 90, 60)).
+	AddObject(objects.NewAdvance("Path to WC", 5, 3)).
+	AddObject(objects.NewQueue("Queue to the WC")).
+	AddObject(objects.NewFacility("WC1", 15, 10), objects.NewFacility("WC2", 15, 10)).
+	AddObject(objects.NewAdvance("Path from WC", 5, 3)).
+	Loop("Wanted to use the toilet")
 p.Start(540)
 <-p.Done
-p.PrintReport()
+p.Report()
 ```
 
 Full source [example2](examples/example2/main.go).  
@@ -219,30 +256,25 @@ How many people can be served in a cafe? How many people will be in queue?
 </p>
 
 ```Golang
-p := NewPipeline("Cafe Simulation", false)
-g := NewGenerator("Visitors", 18, 6, 0, 0, nil)
-q := NewQueue("Visitors queue")
-orders_f := NewFacility("Order Acceptance", 5, 3)
-split := NewSplit("Split orders", 1, 1, nil)
-barista_q := NewQueue("Queue of orders to barista")
-barista_f := NewFacility("Barista", 5, 2)
-cook_q := NewQueue("Queue of orders to cook")
-cook_f := NewFacility("Cook", 10, 5)
-aggregate := NewAggregate("Aggregate orders")
-h := NewHole("Out")
-p.Append(g, q)
-p.Append(q, orders_f)
-p.Append(orders_f, split)
-p.Append(split, barista_q, cook_q)
-p.Append(barista_q, barista_f)
-p.Append(cook_q, cook_f)
-p.Append(barista_f, aggregate)
-p.Append(cook_f, aggregate)
-p.Append(aggregate, h)
-p.Append(h)
+p := objects.NewPipeline("Cafe Simulation", doneHandler).
+	AddObject(objects.NewGenerator("Visitors", 18, 6, 0, 0, nil)).
+	AddObject(objects.NewQueue("Visitors queue")).
+	AddObject(objects.NewFacility("Order Acceptance", 5, 3)).
+	AddObject(objects.NewSplit("Split orders", 1, 1, nil))
+baristaQ := objects.NewQueue("Queue of orders to barista")
+cookQ := objects.NewQueue("Queue of orders to cook")
+p.AddObject(baristaQ, cookQ)
+baristaF := objects.NewFacility("Barista", 5, 2)
+cookF := objects.NewFacility("Cook", 10, 5)
+baristaQ.LinkObject(baristaF)
+cookQ.LinkObject(cookF)
+aggregate := objects.NewAggregate("Aggregate orders")
+baristaF.LinkObject(aggregate)
+cookF.LinkObject(aggregate)
+aggregate.LinkObject(objects.NewHole("Out"))
 p.Start(480)
 <-p.Done
-p.PrintReport()
+p.Report()
 ```
 
 Full source [example3](examples/example3/main.go).  
@@ -357,6 +389,7 @@ If it necessary developer can change how will be splits orders between cooks or 
 - Fixed report, ordered by id in Pipeline
 - Fixed HoldedTransactID in facility, zeroing after removing transact
 - Fixed Generator, Modificator is used now
+- Fixed examples after linter
 
 # TODO
 - Extend list of blocks

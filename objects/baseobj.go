@@ -39,9 +39,11 @@ type BaseObj struct {
 func (obj *BaseObj) LinkObject(objs ...IBaseObj) []IBaseObj {
 	obj.SetDst(objs...)
 	for _, o := range objs {
-		o.SetPipeline(obj.Pipe)
-		o.SetID(len(obj.Pipe.objects))
-		obj.Pipe.objects[o.GetName()] = o
+		if _, ok := obj.Pipe.objects[o.GetName()]; !ok {
+			o.SetPipeline(obj.Pipe)
+			o.SetID(len(obj.Pipe.objects))
+			obj.Pipe.objects[o.GetName()] = o
+		}
 	}
 
 	return objs
